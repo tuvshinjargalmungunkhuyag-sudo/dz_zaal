@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import '../models/models.dart';
 import '../widgets/widgets.dart';
 import '../theme/app_theme.dart';
-import 'detail_screen.dart';
+import 'booking_sheet.dart';
+import 'notifications_screen.dart';
+import '../services/notification_store.dart';
 
 class HomeScreen extends StatefulWidget {
-  final VoidCallback? onSearchTap;
-  const HomeScreen({super.key, this.onSearchTap});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -14,18 +15,283 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String _selectedCategory = 'Бүгд';
+  String _searchQuery = '';
+  String _selectedSort = 'Үнэлгээ';
+  bool _onlyAvailable = false;
+  final _searchController = TextEditingController();
+  final _notifStore = NotificationStore.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _notifStore.addListener(_rebuild);
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _notifStore.removeListener(_rebuild);
+    super.dispose();
+  }
+
+  void _rebuild() => setState(() {});
+
   final List<String> _categories = [
     'Бүгд',
     'Сагсан бөмбөг',
-    'Фитнес',
-    'Теннис',
-    'Хөл бөмбөг',
-    'Бөх',
+    'Волейбол',
   ];
 
+  bool get _hasActiveFilters =>
+      _selectedSort != 'Үнэлгээ' || _onlyAvailable;
+
+  int _parsePrice(String price) =>
+      int.tryParse(price.replaceAll(RegExp(r'[^\d]'), '')) ?? 0;
+
   List<SportVenue> get _filteredVenues {
-    if (_selectedCategory == 'Бүгд') return AppData.venues;
-    return AppData.venues.where((v) => v.type == _selectedCategory).toList();
+    List<SportVenue> list = AppData.venues;
+
+    if (_selectedCategory != 'Бүгд') {
+      list = list.where((v) => v.type == _selectedCategory).toList();
+    }
+    if (_onlyAvailable) {
+      list = list.where((v) => v.isAvailable).toList();
+    }
+    if (_searchQuery.isNotEmpty) {
+      final q = _searchQuery.toLowerCase();
+      list = list
+          .where((v) =>
+              v.name.toLowerCase().contains(q) ||
+              v.type.toLowerCase().contains(q) ||
+              v.location.toLowerCase().contains(q))
+          .toList();
+    }
+    switch (_selectedSort) {
+      case 'Үнэлгээ':
+        list = [...list]..sort((a, b) => b.rating.compareTo(a.rating));
+      case 'Үнэ: бага':
+        list = [...list]..sort(
+            (a, b) => _parsePrice(a.pricePerHour).compareTo(_parsePrice(b.pricePerHour)));
+      case 'Үнэ: өндөр':
+        list = [...list]..sort(
+            (a, b) => _parsePrice(b.pricePerHour).compareTo(_parsePrice(a.pricePerHour)));
+    }
+    return list;
+  }
+
+  void _showFilterSheet() {
+    String tempSort = _selectedSort;
+    bool tempAvailable = _onlyAvailable;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setSheet) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: AppTheme.surface,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+                border: Border(
+                  top: BorderSide(color: AppTheme.divider),
+                  left: BorderSide(color: AppTheme.divider),
+                  right: BorderSide(color: AppTheme.divider),
+                ),
+              ),
+              padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Drag handle
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: AppTheme.divider,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Header
+                  Row(
+                    children: [
+                      const Text(
+                        'Шүүлтүүр',
+                        style: TextStyle(
+                          color: AppTheme.textPrimary,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      const Spacer(),
+                      GestureDetector(
+                        onTap: () {
+                          setSheet(() {
+                            tempSort = 'Үнэлгээ';
+                            tempAvailable = false;
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: AppTheme.divider,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Text(
+                            'Арилгах',
+                            style: TextStyle(
+                              color: AppTheme.textSecondary,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Sort section
+                  const Text(
+                    'Эрэмбэлэх',
+                    style: TextStyle(
+                      color: AppTheme.textSecondary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      _SortChip(
+                        label: 'Үнэлгээ',
+                        icon: Icons.star_rounded,
+                        isSelected: tempSort == 'Үнэлгээ',
+                        onTap: () => setSheet(() => tempSort = 'Үнэлгээ'),
+                      ),
+                      _SortChip(
+                        label: 'Үнэ: бага → өндөр',
+                        icon: Icons.arrow_upward_rounded,
+                        isSelected: tempSort == 'Үнэ: бага',
+                        onTap: () => setSheet(() => tempSort = 'Үнэ: бага'),
+                      ),
+                      _SortChip(
+                        label: 'Үнэ: өндөр → бага',
+                        icon: Icons.arrow_downward_rounded,
+                        isSelected: tempSort == 'Үнэ: өндөр',
+                        onTap: () => setSheet(() => tempSort = 'Үнэ: өндөр'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Availability section
+                  const Text(
+                    'Нээлттэй байдал',
+                    style: TextStyle(
+                      color: AppTheme.textSecondary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  GestureDetector(
+                    onTap: () => setSheet(() => tempAvailable = !tempAvailable),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 14),
+                      decoration: BoxDecoration(
+                        color: tempAvailable
+                            ? AppTheme.success.withValues(alpha: 0.1)
+                            : AppTheme.cardColor,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: tempAvailable
+                              ? AppTheme.success
+                              : AppTheme.divider,
+                          width: tempAvailable ? 1.5 : 1,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: AppTheme.success,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          const Text(
+                            'Зөвхөн нээлттэй заалнууд',
+                            style: TextStyle(
+                              color: AppTheme.textPrimary,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const Spacer(),
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 180),
+                            width: 22,
+                            height: 22,
+                            decoration: BoxDecoration(
+                              color: tempAvailable
+                                  ? AppTheme.success
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: tempAvailable
+                                    ? AppTheme.success
+                                    : AppTheme.divider,
+                                width: 1.5,
+                              ),
+                            ),
+                            child: tempAvailable
+                                ? const Icon(Icons.check_rounded,
+                                    color: Colors.white, size: 14)
+                                : null,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+
+                  // Apply button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedSort = tempSort;
+                          _onlyAvailable = tempAvailable;
+                        });
+                        Navigator.pop(ctx);
+                      },
+                      child: const Text('Хэрэглэх'),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -44,22 +310,6 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.only(top: 4),
               child: Row(
                 children: [
-                  // 🦅 Ёл шувуу лого
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: AppTheme.secondary.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: AppTheme.secondary.withValues(alpha: 0.3),
-                      ),
-                    ),
-                    child: const Center(
-                      child: Text('🦅', style: TextStyle(fontSize: 20)),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -69,59 +319,81 @@ class _HomeScreenState extends State<HomeScreen> {
                           const Icon(
                             Icons.location_on_rounded,
                             color: AppTheme.secondary,
-                            size: 14,
+                            size: 13,
                           ),
-                          const SizedBox(width: 3),
+                          const SizedBox(width: 2),
                           const Text(
                             'Даланзадгад',
                             style: TextStyle(
-                              color: AppTheme.secondary,
+                              color: AppTheme.textSecondary,
                               fontSize: 12,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ],
                       ),
+                      const SizedBox(height: 2),
                       const Text(
                         'Говийн Спорт',
                         style: TextStyle(
                           color: AppTheme.textPrimary,
-                          fontSize: 18,
+                          fontSize: 20,
                           fontWeight: FontWeight.w800,
+                          letterSpacing: -0.5,
                         ),
                       ),
                     ],
                   ),
                   const Spacer(),
-                  // Мэдэгдэл
-                  Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      color: AppTheme.cardColor,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppTheme.divider),
+                  GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const NotificationsScreen(),
+                      ),
                     ),
                     child: Stack(
-                      alignment: Alignment.center,
+                      clipBehavior: Clip.none,
                       children: [
-                        const Icon(
-                          Icons.notifications_outlined,
-                          color: AppTheme.textPrimary,
-                          size: 22,
+                        Icon(
+                          _notifStore.unreadCount > 0
+                              ? Icons.notifications_rounded
+                              : Icons.notifications_outlined,
+                          color: _notifStore.unreadCount > 0
+                              ? AppTheme.textPrimary
+                              : AppTheme.textSecondary,
+                          size: 26,
                         ),
-                        Positioned(
-                          top: 8,
-                          right: 8,
-                          child: Container(
-                            width: 7,
-                            height: 7,
-                            decoration: const BoxDecoration(
-                              color: AppTheme.secondary,
-                              shape: BoxShape.circle,
+                        if (_notifStore.unreadCount > 0)
+                          Positioned(
+                            top: -4,
+                            right: -4,
+                            child: Container(
+                              padding: const EdgeInsets.all(3),
+                              decoration: BoxDecoration(
+                                color: AppTheme.accent,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: AppTheme.primary,
+                                  width: 1.5,
+                                ),
+                              ),
+                              constraints: const BoxConstraints(
+                                  minWidth: 16, minHeight: 16),
+                              child: Text(
+                                _notifStore.unreadCount > 9
+                                    ? '9+'
+                                    : '${_notifStore.unreadCount}',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w800,
+                                  height: 1,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
                       ],
                     ),
                   ),
@@ -139,49 +411,140 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 16),
 
                   // ── Хайлт ───────────────────────────────────────────────────
-                  GestureDetector(
-                    onTap: widget.onSearchTap,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 13,
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    decoration: BoxDecoration(
+                      color: AppTheme.cardColor,
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(
+                        color: _searchQuery.isNotEmpty
+                            ? AppTheme.secondary
+                            : AppTheme.divider,
+                        width: _searchQuery.isNotEmpty ? 1.5 : 1,
                       ),
-                      decoration: BoxDecoration(
-                        color: AppTheme.cardColor,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: AppTheme.divider),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.search_rounded,
-                            color: AppTheme.textSecondary,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 10),
-                          const Expanded(
-                            child: Text(
-                              'Спорт заал хайх...',
-                              style: TextStyle(
-                                color: AppTheme.textSecondary,
-                                fontSize: 14,
+                      boxShadow: _searchQuery.isNotEmpty
+                          ? [
+                              BoxShadow(
+                                color: AppTheme.secondary.withValues(alpha: 0.18),
+                                blurRadius: 16,
+                                offset: const Offset(0, 4),
                               ),
-                            ),
+                            ]
+                          : [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.18),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                    ),
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 16),
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: Icon(
+                            Icons.search_rounded,
+                            key: ValueKey(_searchQuery.isNotEmpty),
+                            color: _searchQuery.isNotEmpty
+                                ? AppTheme.secondary
+                                : AppTheme.textSecondary,
+                            size: 22,
                           ),
-                          Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: AppTheme.secondary.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(8),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: TextField(
+                            controller: _searchController,
+                            style: const TextStyle(
+                              color: AppTheme.textPrimary,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
                             ),
-                            child: const Icon(
-                              Icons.tune_rounded,
-                              color: AppTheme.secondary,
-                              size: 16,
+                            decoration: const InputDecoration(
+                              hintText: 'Спорт заал хайх...',
+                              hintStyle: TextStyle(
+                                color: AppTheme.textSecondary,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                              ),
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              isDense: true,
+                              contentPadding: EdgeInsets.symmetric(vertical: 14),
                             ),
+                            onChanged: (val) => setState(() => _searchQuery = val),
                           ),
-                        ],
-                      ),
+                        ),
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: _searchQuery.isNotEmpty
+                              ? GestureDetector(
+                                  key: const ValueKey('clear'),
+                                  onTap: () {
+                                    _searchController.clear();
+                                    setState(() => _searchQuery = '');
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.all(10),
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      color: AppTheme.divider,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.close_rounded,
+                                      color: AppTheme.textSecondary,
+                                      size: 14,
+                                    ),
+                                  ),
+                                )
+                              : GestureDetector(
+                                  key: const ValueKey('filter'),
+                                  onTap: _showFilterSheet,
+                                  child: Stack(
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      Container(
+                                        margin: const EdgeInsets.all(8),
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: _hasActiveFilters
+                                              ? AppTheme.secondary.withValues(alpha: 0.25)
+                                              : AppTheme.secondary.withValues(alpha: 0.15),
+                                          borderRadius: BorderRadius.circular(10),
+                                          border: Border.all(
+                                            color: _hasActiveFilters
+                                                ? AppTheme.secondary
+                                                : AppTheme.secondary.withValues(alpha: 0.3),
+                                            width: _hasActiveFilters ? 1.5 : 1,
+                                          ),
+                                        ),
+                                        child: const Icon(
+                                          Icons.tune_rounded,
+                                          color: AppTheme.secondary,
+                                          size: 17,
+                                        ),
+                                      ),
+                                      if (_hasActiveFilters)
+                                        Positioned(
+                                          top: 6,
+                                          right: 6,
+                                          child: Container(
+                                            width: 8,
+                                            height: 8,
+                                            decoration: const BoxDecoration(
+                                              color: AppTheme.accent,
+                                              shape: BoxShape.circle,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                        ),
+                      ],
                     ),
                   ),
 
@@ -193,36 +556,41 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 20),
 
                   // ── Статистик ────────────────────────────────────────────────
-                  Row(
-                    children: [
-                      _StatCard(
-                        emoji: '🏟️',
-                        value: '${AppData.venues.length}',
-                        label: 'Спорт заал',
-                        color: AppTheme.secondary,
-                      ),
-                      const SizedBox(width: 10),
-                      _StatCard(
-                        emoji: '🐪',
-                        value: '24/7',
-                        label: 'Нээлттэй',
-                        color: AppTheme.success,
-                      ),
-                      const SizedBox(width: 10),
-                      _StatCard(
-                        emoji: '🦅',
-                        value: '500+',
-                        label: 'Тамирчин',
-                        color: AppTheme.accent,
-                      ),
-                    ],
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: AppTheme.cardColor,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: AppTheme.divider),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _StatItem(
+                          value: '${AppData.venues.length}',
+                          label: 'Заал',
+                          color: AppTheme.secondary,
+                        ),
+                        Container(
+                            width: 1, height: 28, color: AppTheme.divider),
+                        _StatItem(
+                          value: '24/7',
+                          label: 'Нээлттэй',
+                          color: AppTheme.success,
+                        ),
+                        Container(
+                            width: 1, height: 28, color: AppTheme.divider),
+                        _StatItem(
+                          value: '500+',
+                          label: 'Тамирчин',
+                          color: AppTheme.textSecondary,
+                        ),
+                      ],
+                    ),
                   ),
 
-                  const SizedBox(height: 24),
-
-                  // ── Ангилал гарчиг ───────────────────────────────────────────
-                  const SectionHeader(title: 'Ангилал'),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -297,12 +665,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 final venue = _filteredVenues[i];
                 return VenueCard(
                   venue: venue,
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => DetailScreen(venue: venue),
-                    ),
-                  ),
+                  onTap: () => showBookingSheet(context, venue),
                 );
               }, childCount: _filteredVenues.length),
             ),
@@ -315,23 +678,77 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// ── Говийн тэмээ баннер ──────────────────────────────────────────────────────
+// ── Sort Chip ─────────────────────────────────────────────────────────────────
+class _SortChip extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _SortChip({
+    required this.label,
+    required this.icon,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppTheme.secondary.withValues(alpha: 0.15)
+              : AppTheme.cardColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? AppTheme.secondary : AppTheme.divider,
+            width: isSelected ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 15,
+              color: isSelected ? AppTheme.secondary : AppTheme.textSecondary,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? AppTheme.secondary : AppTheme.textSecondary,
+                fontSize: 13,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Промо баннер ─────────────────────────────────────────────────────────────
 class _GobiBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF3D2008), Color(0xFF1C1006)],
+          end: Alignment.centerRight,
+          colors: [Color(0xFF2A1A04), Color(0xFF1A1004)],
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: AppTheme.secondary.withValues(alpha: 0.4),
-          width: 1,
+          color: AppTheme.secondary.withValues(alpha: 0.25),
         ),
       ),
       child: Row(
@@ -340,60 +757,65 @@ class _GobiBanner extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppTheme.secondary.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Text(
-                    '🐪 Онцгой санал',
-                    style: TextStyle(
-                      color: AppTheme.secondary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
+                Text(
+                  'Онцгой санал',
+                  style: TextStyle(
+                    color: AppTheme.secondary.withValues(alpha: 0.9),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.8,
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 6),
                 const Text(
-                  'Эхний\nзахиалга\n30% хямдрал',
+                  'Эхний захиалгад\n30% хямдрал',
                   style: TextStyle(
                     color: AppTheme.textPrimary,
-                    fontSize: 20,
+                    fontSize: 18,
                     fontWeight: FontWeight.w800,
-                    height: 1.25,
+                    height: 1.3,
+                    letterSpacing: -0.3,
                   ),
                 ),
                 const SizedBox(height: 14),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
+                GestureDetector(
+                  onTap: () {},
+                  child: Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 18,
-                      vertical: 9,
+                        horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: AppTheme.secondary,
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    textStyle: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
+                    child: const Text(
+                      'Авах',
+                      style: TextStyle(
+                        color: AppTheme.primary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
-                  child: const Text('Авах'),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 12),
-          // Говийн амьтдын чимэглэл
-          Column(
-            children: [
-              const Text('🐪', style: TextStyle(fontSize: 52)),
-              const SizedBox(height: 4),
-              const Text('🦅', style: TextStyle(fontSize: 28)),
-            ],
+          const SizedBox(width: 16),
+          Container(
+            width: 72,
+            height: 72,
+            decoration: BoxDecoration(
+              color: AppTheme.secondary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: AppTheme.secondary.withValues(alpha: 0.2),
+              ),
+            ),
+            child: const Icon(
+              Icons.local_offer_rounded,
+              color: AppTheme.secondary,
+              size: 34,
+            ),
           ),
         ],
       ),
@@ -401,15 +823,13 @@ class _GobiBanner extends StatelessWidget {
   }
 }
 
-// ── Статистик карт ───────────────────────────────────────────────────────────
-class _StatCard extends StatelessWidget {
-  final String emoji;
+// ── Статистик item ────────────────────────────────────────────────────────────
+class _StatItem extends StatelessWidget {
   final String value;
   final String label;
   final Color color;
 
-  const _StatCard({
-    required this.emoji,
+  const _StatItem({
     required this.value,
     required this.label,
     required this.color,
@@ -417,39 +837,26 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: color.withValues(alpha: 0.25)),
+    return Column(
+      children: [
+        Text(
+          value,
+          style: TextStyle(
+            color: color,
+            fontSize: 16,
+            fontWeight: FontWeight.w800,
+          ),
         ),
-        child: Column(
-          children: [
-            Text(emoji, style: const TextStyle(fontSize: 22)),
-            const SizedBox(height: 6),
-            Text(
-              value,
-              style: TextStyle(
-                color: color,
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: AppTheme.textSecondary,
-                fontSize: 10,
-              ),
-            ),
-          ],
+        const SizedBox(height: 2),
+        Text(
+          label,
+          style: const TextStyle(
+            color: AppTheme.textSecondary,
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+          ),
         ),
-      ),
+      ],
     );
   }
 }

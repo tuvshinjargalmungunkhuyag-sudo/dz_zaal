@@ -20,10 +20,7 @@ class _SearchScreenState extends State<SearchScreen> {
   final List<String> _categories = [
     'Бүгд',
     'Сагсан бөмбөг',
-    'Фитнес',
-    'Теннис',
-    'Хөл бөмбөг',
-    'Бөх',
+    'Волейбол',
   ];
 
   final List<String> _sortOptions = ['Үнэлгээ', 'Үнэ: бага', 'Үнэ: өндөр'];

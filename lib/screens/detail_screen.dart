@@ -21,7 +21,7 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   void initState() {
     super.initState();
-    _timeSlots = AppData.generateTimeSlots();
+    _timeSlots = AppData.generateTimeSlots(widget.venue.id, _selectedDate);
   }
 
   void _selectSlot(TimeSlot slot) {
@@ -67,7 +67,7 @@ class _DetailScreenState extends State<DetailScreen> {
               child: Container(
                 margin: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppTheme.primary.withOpacity(0.8),
+                  color: AppTheme.primary.withValues(alpha: 0.8),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
@@ -81,7 +81,7 @@ class _DetailScreenState extends State<DetailScreen> {
               Container(
                 margin: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppTheme.primary.withOpacity(0.8),
+                  color: AppTheme.primary.withValues(alpha: 0.8),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: IconButton(
@@ -101,7 +101,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      widget.venue.accentColor.withOpacity(0.4),
+                      widget.venue.accentColor.withValues(alpha: 0.4),
                       AppTheme.primary,
                     ],
                   ),
@@ -110,7 +110,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   child: Icon(
                     _getIcon(widget.venue.type),
                     size: 120,
-                    color: widget.venue.accentColor.withOpacity(0.5),
+                    color: widget.venue.accentColor.withValues(alpha: 0.5),
                   ),
                 ),
               ),
@@ -246,10 +246,10 @@ class _DetailScreenState extends State<DetailScreen> {
                           vertical: 8,
                         ),
                         decoration: BoxDecoration(
-                          color: widget.venue.accentColor.withOpacity(0.1),
+                          color: widget.venue.accentColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: widget.venue.accentColor.withOpacity(0.3),
+                            color: widget.venue.accentColor.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
@@ -305,7 +305,7 @@ class _DetailScreenState extends State<DetailScreen> {
                           onTap: () {
                             setState(() {
                               _selectedDate = date;
-                              _timeSlots = AppData.generateTimeSlots();
+                              _timeSlots = AppData.generateTimeSlots(widget.venue.id, date);
                             });
                           },
                           child: AnimatedContainer(
@@ -474,6 +474,8 @@ class _DetailScreenState extends State<DetailScreen> {
                                 venue: widget.venue,
                                 date: _selectedDate,
                                 timeSlot: _selectedSlot!,
+                                courtType: 'Бүтэн талбай',
+                                price: widget.venue.pricePerHour,
                               ),
                             ),
                           );
@@ -508,14 +510,8 @@ class _DetailScreenState extends State<DetailScreen> {
     switch (type) {
       case 'Сагсан бөмбөг':
         return Icons.sports_basketball_rounded;
-      case 'Фитнес':
-        return Icons.fitness_center_rounded;
-      case 'Теннис':
-        return Icons.sports_tennis_rounded;
-      case 'Хөл бөмбөг':
-        return Icons.sports_soccer_rounded;
-      case 'Бөх':
-        return Icons.sports_martial_arts_rounded;
+      case 'Волейбол':
+        return Icons.sports_volleyball_rounded;
       default:
         return Icons.sports_rounded;
     }

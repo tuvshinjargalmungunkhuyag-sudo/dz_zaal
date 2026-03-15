@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'theme/app_theme.dart';
 import 'screens/home_screen.dart';
-import 'screens/search_screen.dart';
 import 'screens/bookings_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/chat_screen.dart';
 import 'widgets/widgets.dart';
+import 'services/notification_service.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService.init();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -45,13 +46,10 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
 
-  void _goToSearch() => setState(() => _currentIndex = 1);
-
   @override
   Widget build(BuildContext context) {
     final screens = [
-      HomeScreen(onSearchTap: _goToSearch),
-      const SearchScreen(),
+      const HomeScreen(),
       const BookingsScreen(),
       const ProfileScreen(),
       const ChatScreen(),

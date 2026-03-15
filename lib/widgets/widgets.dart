@@ -13,34 +13,10 @@ class VenueCard extends StatelessWidget {
     switch (type) {
       case 'Сагсан бөмбөг':
         return Icons.sports_basketball_rounded;
-      case 'Фитнес':
-        return Icons.fitness_center_rounded;
-      case 'Теннис':
-        return Icons.sports_tennis_rounded;
-      case 'Хөл бөмбөг':
-        return Icons.sports_soccer_rounded;
-      case 'Бөх':
-        return Icons.sports_martial_arts_rounded;
+      case 'Волейбол':
+        return Icons.sports_volleyball_rounded;
       default:
         return Icons.sports_rounded;
-    }
-  }
-
-  // Говийн амьтдын чимэглэл — заал тус бүрт
-  String _getAnimalEmoji(String type) {
-    switch (type) {
-      case 'Сагсан бөмбөг':
-        return '🦅';
-      case 'Фитнес':
-        return '🐻';
-      case 'Теннис':
-        return '🦎';
-      case 'Хөл бөмбөг':
-        return '🐪';
-      case 'Бөх':
-        return '🐻';
-      default:
-        return '🦅';
     }
   }
 
@@ -67,19 +43,12 @@ class VenueCard extends StatelessWidget {
           children: [
             // ── Баннер ─────────────────────────────────────────────────────
             Container(
-              height: 140,
+              height: 120,
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(20),
                 ),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    venue.accentColor.withValues(alpha: 0.25),
-                    const Color(0xFF1C1006),
-                  ],
-                ),
+                color: venue.accentColor.withValues(alpha: 0.08),
               ),
               child: Stack(
                 children: [
@@ -87,17 +56,8 @@ class VenueCard extends StatelessWidget {
                   Center(
                     child: Icon(
                       _getIcon(venue.type),
-                      size: 70,
-                      color: venue.accentColor.withValues(alpha: 0.5),
-                    ),
-                  ),
-                  // Говийн амьтан чимэглэл
-                  Positioned(
-                    bottom: 12,
-                    right: 16,
-                    child: Text(
-                      _getAnimalEmoji(venue.type),
-                      style: const TextStyle(fontSize: 32),
+                      size: 56,
+                      color: venue.accentColor.withValues(alpha: 0.35),
                     ),
                   ),
                   // Төрлийн badge
@@ -309,31 +269,37 @@ class TimeSlotChip extends StatelessWidget {
     required this.accentColor,
   });
 
+  static const _fixedColor = Color(0xFF8B5CF6); // нил ягаан
+
   @override
   Widget build(BuildContext context) {
     Color bg;
     Color border;
     Color text;
 
-    if (slot.isBooked) {
-      bg = AppTheme.divider.withValues(alpha: 0.5);
+    if (slot.isFixed) {
+      bg     = _fixedColor.withValues(alpha: 0.12);
+      border = _fixedColor.withValues(alpha: 0.5);
+      text   = _fixedColor;
+    } else if (slot.isBooked) {
+      bg     = AppTheme.divider.withValues(alpha: 0.5);
       border = AppTheme.divider;
-      text = AppTheme.textSecondary.withValues(alpha: 0.5);
+      text   = AppTheme.textSecondary.withValues(alpha: 0.5);
     } else if (slot.isSelected) {
-      bg = accentColor.withValues(alpha: 0.2);
+      bg     = accentColor.withValues(alpha: 0.2);
       border = accentColor;
-      text = accentColor;
+      text   = accentColor;
     } else {
-      bg = AppTheme.cardColor;
+      bg     = AppTheme.cardColor;
       border = AppTheme.divider;
-      text = AppTheme.textPrimary;
+      text   = AppTheme.textPrimary;
     }
 
     return GestureDetector(
-      onTap: slot.isBooked ? null : onTap,
+      onTap: (slot.isBooked || slot.isFixed) ? null : onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
         decoration: BoxDecoration(
           color: bg,
           borderRadius: BorderRadius.circular(14),
@@ -355,15 +321,22 @@ class TimeSlotChip extends StatelessWidget {
             ),
             const SizedBox(height: 2),
             Text(
-              slot.isBooked ? 'Захиалаатай' : slot.endTime,
+              slot.isFixed
+                  ? 'Гэрээт'
+                  : slot.isBooked
+                      ? 'Захиалаатай'
+                      : slot.endTime,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: slot.isBooked
-                    ? AppTheme.textSecondary.withValues(alpha: 0.4)
-                    : text.withValues(alpha: 0.7),
+                color: slot.isFixed
+                    ? _fixedColor.withValues(alpha: 0.8)
+                    : slot.isBooked
+                        ? AppTheme.textSecondary.withValues(alpha: 0.4)
+                        : text.withValues(alpha: 0.7),
                 fontSize: 10,
+                fontWeight: slot.isFixed ? FontWeight.w600 : FontWeight.w400,
               ),
             ),
           ],
@@ -388,7 +361,6 @@ class CustomBottomNav extends StatelessWidget {
   Widget build(BuildContext context) {
     final items = [
       {'icon': Icons.home_rounded,          'label': 'Нүүр'},
-      {'icon': Icons.search_rounded,         'label': 'Хайх'},
       {'icon': Icons.calendar_month_rounded, 'label': 'Захиалга'},
       {'icon': Icons.person_rounded,         'label': 'Профайл'},
       {'icon': Icons.smart_toy_rounded,      'label': 'AI'},

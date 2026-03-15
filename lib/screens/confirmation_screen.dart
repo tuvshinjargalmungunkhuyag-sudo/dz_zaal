@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 import '../models/models.dart';
 import '../theme/app_theme.dart';
+import '../services/notification_service.dart';
+import '../services/notification_store.dart';
 
 class ConfirmationScreen extends StatefulWidget {
   final SportVenue venue;
   final DateTime date;
   final TimeSlot timeSlot;
+  final String courtType;
+  final String price;
 
   const ConfirmationScreen({
     super.key,
     required this.venue,
     required this.date,
     required this.timeSlot,
+    required this.courtType,
+    required this.price,
   });
 
   @override
@@ -102,6 +108,32 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
 
     setState(() => _isLoading = true);
     await Future.delayed(const Duration(seconds: 2));
+
+    await NotificationService.scheduleBookingReminder(
+      venue: widget.venue,
+      date: widget.date,
+      timeSlot: widget.timeSlot,
+    );
+
+    NotificationStore.instance.add(AppNotification(
+      id: 'booking_${DateTime.now().millisecondsSinceEpoch}',
+      type: AppNotificationType.booking,
+      title: 'Захиалга баталгаажлаа',
+      body:
+          '${widget.venue.name} — ${widget.courtType}, ${widget.date.month}-р сарын ${widget.date.day}, '
+          '${widget.timeSlot.time}–${widget.timeSlot.endTime}',
+      createdAt: DateTime.now(),
+    ));
+
+    NotificationStore.instance.add(AppNotification(
+      id: 'reminder_${DateTime.now().millisecondsSinceEpoch}',
+      type: AppNotificationType.reminder,
+      title: 'Сануулга тохируулагдлаа',
+      body:
+          '${widget.venue.name} заалд очихоос 1 цагийн өмнө сануулга ирнэ.',
+      createdAt: DateTime.now(),
+    ));
+
     setState(() {
       _isLoading = false;
       _isConfirmed = true;
@@ -136,13 +168,13 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    widget.venue.accentColor.withOpacity(0.2),
+                    widget.venue.accentColor.withValues(alpha: 0.2),
                     AppTheme.cardColor,
                   ],
                 ),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: widget.venue.accentColor.withOpacity(0.4),
+                  color: widget.venue.accentColor.withValues(alpha: 0.4),
                 ),
               ),
               child: Column(
@@ -153,7 +185,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
                         width: 56,
                         height: 56,
                         decoration: BoxDecoration(
-                          color: widget.venue.accentColor.withOpacity(0.2),
+                          color: widget.venue.accentColor.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Icon(
@@ -207,6 +239,13 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
                   ),
                   const SizedBox(height: 14),
                   _BookingDetailRow(
+                    icon: Icons.crop_square_rounded,
+                    label: 'Талбайн төрөл',
+                    value: widget.courtType,
+                    color: widget.venue.accentColor,
+                  ),
+                  const SizedBox(height: 14),
+                  _BookingDetailRow(
                     icon: Icons.location_on_rounded,
                     label: 'Байршил',
                     value: widget.venue.location,
@@ -227,7 +266,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
                         ),
                       ),
                       Text(
-                        widget.venue.pricePerHour,
+                        widget.price,
                         style: TextStyle(
                           color: widget.venue.accentColor,
                           fontSize: 22,
@@ -386,8 +425,8 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
                   decoration: BoxDecoration(
                     gradient: RadialGradient(
                       colors: [
-                        widget.venue.accentColor.withOpacity(0.3),
-                        widget.venue.accentColor.withOpacity(0.05),
+                        widget.venue.accentColor.withValues(alpha: 0.3),
+                        widget.venue.accentColor.withValues(alpha: 0.05),
                       ],
                     ),
                     shape: BoxShape.circle,
@@ -458,10 +497,10 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
                         vertical: 10,
                       ),
                       decoration: BoxDecoration(
-                        color: widget.venue.accentColor.withOpacity(0.1),
+                        color: widget.venue.accentColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: widget.venue.accentColor.withOpacity(0.3),
+                          color: widget.venue.accentColor.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Row(
@@ -520,14 +559,8 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
     switch (type) {
       case 'Сагсан бөмбөг':
         return Icons.sports_basketball_rounded;
-      case 'Фитнес':
-        return Icons.fitness_center_rounded;
-      case 'Теннис':
-        return Icons.sports_tennis_rounded;
-      case 'Хөл бөмбөг':
-        return Icons.sports_soccer_rounded;
-      case 'Бөх':
-        return Icons.sports_martial_arts_rounded;
+      case 'Волейбол':
+        return Icons.sports_volleyball_rounded;
       default:
         return Icons.sports_rounded;
     }
@@ -604,7 +637,7 @@ class _PaymentOption extends StatelessWidget {
         child: Container(
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.15) : AppTheme.cardColor,
+          color: isSelected ? color.withValues(alpha: 0.15) : AppTheme.cardColor,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isSelected ? color : AppTheme.divider,
