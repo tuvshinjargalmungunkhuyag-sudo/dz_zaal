@@ -68,7 +68,7 @@ app.post('/api/chat', async (req, res) => {
     }
 
     const response = await getOpenAIClient().chat.completions.create({
-      model: 'mistralai/mistral-small-3.1-24b-instruct:free',
+      model: 'qwen/qwen3-4b:free',
       messages: messagesWithSystem,
     });
 
