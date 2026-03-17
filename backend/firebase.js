@@ -6,7 +6,9 @@ if (!admin.apps.length) {
   }
   let serviceAccount;
   try {
-    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    // DigitalOcean env var-д \n бодит newline болдог тул засна
+    const raw = process.env.FIREBASE_SERVICE_ACCOUNT.replace(/\n/g, '\\n');
+    serviceAccount = JSON.parse(raw);
   } catch (e) {
     throw new Error('FIREBASE_SERVICE_ACCOUNT JSON parse failed: ' + e.message);
   }
