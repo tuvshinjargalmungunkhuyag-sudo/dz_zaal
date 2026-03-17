@@ -68,14 +68,14 @@ app.post('/api/chat', async (req, res) => {
     }
 
     const response = await getOpenAIClient().chat.completions.create({
-      model: 'google/gemma-3-27b-it:free',
+      model: 'meta-llama/llama-3.1-8b-instruct:free',
       messages: messagesWithSystem,
     });
 
     res.json({ content: response.choices[0].message.content });
   } catch (err) {
-    console.error('OpenRouter алдаа:', err.message);
-    res.status(500).json({ error: 'Серверийн алдаа гарлаа' });
+    console.error('OpenRouter алдаа:', err.message, err.status, JSON.stringify(err.error));
+    res.status(500).json({ error: err.message || 'Серверийн алдаа гарлаа' });
   }
 });
 
