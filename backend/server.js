@@ -24,6 +24,10 @@ function getOpenAIClient() {
   return _openaiClient;
 }
 
+// ── Cron: захиалгын статус автомат шинэчлэл ───────────────────────────────
+const { startCron } = require('./cron');
+startCron();
+
 // ── Business logic routes ──────────────────────────────────────────────────
 const usersRouter    = require('./routes/users');
 const bookingsRouter = require('./routes/bookings');
