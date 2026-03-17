@@ -4,12 +4,14 @@ if (!admin.apps.length) {
   let credential;
 
   if (process.env.FIREBASE_SERVICE_ACCOUNT_B64) {
-    // Base64 encoded service account JSON (newline-safe)
+    // DigitalOcean: base64 encoded JSON
     const json = Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_B64, 'base64').toString('utf8');
-    const serviceAccount = JSON.parse(json);
-    credential = admin.credential.cert(serviceAccount);
+    credential = admin.credential.cert(JSON.parse(json));
+  } else if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    // Local .env: JSON string
+    credential = admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT));
   } else {
-    // Fallback: тусдаа env var-уудаас
+    // DigitalOcean fallback: тусдаа env var-уудаас
     const privateKey = (process.env.FIREBASE_PRIVATE_KEY || '').replace(/\\n/g, '\n');
     credential = admin.credential.cert({
       projectId:   process.env.FIREBASE_PROJECT_ID,
