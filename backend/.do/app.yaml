@@ -1,0 +1,24 @@
+name: dz-zaal-backend
+services:
+  - name: api
+    source_dir: backend
+    github:
+      branch: main
+      deploy_on_push: true
+    run_command: node server.js
+    environment_slug: node-js
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-0.5gb
+    envs:
+      - key: OPENROUTER_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: FIREBASE_SERVICE_ACCOUNT
+        scope: RUN_TIME
+        type: SECRET
+      - key: PORT
+        scope: RUN_TIME
+        value: "8080"
+    http_port: 8080
+    routes:
+      - path: /

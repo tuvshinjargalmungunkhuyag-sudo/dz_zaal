@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "674996843267",
+    "project_id": "dz-zaal",
+    "storage_bucket": "dz-zaal.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:674996843267:android:b3643be93809bfe0d06f36",
+        "android_client_info": {
+          "package_name": "com.example.dz_zaal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWMVr6zncSrNulN9lXOa7dqQi8OWQoe_E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
