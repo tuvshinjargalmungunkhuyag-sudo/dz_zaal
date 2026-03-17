@@ -9,16 +9,16 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// OpenAI client — API key байхгүй бол chat route алдаа буцаана (crash болохгүй)
+// Groq client — API key байхгүй бол chat route алдаа буцаана (crash болохгүй)
 let _openaiClient = null;
 function getOpenAIClient() {
   if (!_openaiClient) {
-    if (!process.env.OPENROUTER_API_KEY) {
-      throw new Error('OPENROUTER_API_KEY тохируулаагүй байна');
+    if (!process.env.GROQ_API_KEY) {
+      throw new Error('GROQ_API_KEY тохируулаагүй байна');
     }
     _openaiClient = new OpenAI({
-      baseURL: 'https://openrouter.ai/api/v1',
-      apiKey: process.env.OPENROUTER_API_KEY,
+      baseURL: 'https://api.groq.com/openai/v1',
+      apiKey: process.env.GROQ_API_KEY,
     });
   }
   return _openaiClient;
@@ -68,7 +68,7 @@ app.post('/api/chat', async (req, res) => {
     }
 
     const response = await getOpenAIClient().chat.completions.create({
-      model: 'qwen/qwen3-4b:free',
+      model: 'llama-3.1-8b-instant',
       messages: messagesWithSystem,
     });
 
