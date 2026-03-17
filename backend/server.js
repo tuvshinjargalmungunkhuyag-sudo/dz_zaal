@@ -9,6 +9,21 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+// OpenAI client — API key байхгүй бол chat route алдаа буцаана (crash болохгүй)
+let _openaiClient = null;
+function getOpenAIClient() {
+  if (!_openaiClient) {
+    if (!process.env.OPENROUTER_API_KEY) {
+      throw new Error('OPENROUTER_API_KEY тохируулаагүй байна');
+    }
+    _openaiClient = new OpenAI({
+      baseURL: 'https://openrouter.ai/api/v1',
+      apiKey: process.env.OPENROUTER_API_KEY,
+    });
+  }
+  return _openaiClient;
+}
+
 // ── Business logic routes ──────────────────────────────────────────────────
 const usersRouter    = require('./routes/users');
 const bookingsRouter = require('./routes/bookings');
@@ -19,10 +34,6 @@ app.use('/api/bookings', bookingsRouter);
 app.use('/api/schedule', scheduleRouter);
 
 // ── AI Chat ────────────────────────────────────────────────────────────────
-const client = new OpenAI({
-  baseURL: 'https://openrouter.ai/api/v1',
-  apiKey: process.env.OPENROUTER_API_KEY,
-});
 
 const SYSTEM_PROMPT = `Та бол "Говийн Спорт" аппликейшний туслах ажилтан юм.
 Даланзадгад хотын спорт заалнуудын захиалга хийхэд тусалдаг.
@@ -56,7 +67,7 @@ app.post('/api/chat', async (req, res) => {
       };
     }
 
-    const response = await client.chat.completions.create({
+    const response = await getOpenAIClient().chat.completions.create({
       model: 'google/gemma-3-27b-it:free',
       messages: messagesWithSystem,
     });
