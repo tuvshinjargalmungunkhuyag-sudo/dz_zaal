@@ -1,23 +1,15 @@
 const admin = require('firebase-admin');
 
 if (!admin.apps.length) {
-  if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
-    throw new Error('FIREBASE_SERVICE_ACCOUNT environment variable is not set');
-  }
-  let serviceAccount;
-  try {
-    // DigitalOcean env var-д \n бодит newline болдог тул засна
-    const raw = process.env.FIREBASE_SERVICE_ACCOUNT.replace(/\n/g, '\\n');
-    serviceAccount = JSON.parse(raw);
-    // Private key дотор literal \n-г бодит newline болгоно
-    if (serviceAccount.private_key) {
-      serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
-    }
-  } catch (e) {
-    throw new Error('FIREBASE_SERVICE_ACCOUNT JSON parse failed: ' + e.message);
-  }
+  const privateKey = (process.env.FIREBASE_PRIVATE_KEY || '')
+    .replace(/\\n/g, '\n');
+
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    credential: admin.credential.cert({
+      projectId:   process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey:  privateKey,
+    }),
   });
 }
 

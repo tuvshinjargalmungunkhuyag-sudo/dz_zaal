@@ -14,7 +14,13 @@ services:
       - key: OPENROUTER_API_KEY
         scope: RUN_TIME
         type: SECRET
-      - key: FIREBASE_SERVICE_ACCOUNT
+      - key: FIREBASE_PROJECT_ID
+        scope: RUN_TIME
+        value: dz-zaal
+      - key: FIREBASE_CLIENT_EMAIL
+        scope: RUN_TIME
+        type: SECRET
+      - key: FIREBASE_PRIVATE_KEY
         scope: RUN_TIME
         type: SECRET
       - key: PORT
