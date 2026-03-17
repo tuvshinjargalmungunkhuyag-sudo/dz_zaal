@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/models.dart';
 import '../widgets/widgets.dart';
 import '../theme/app_theme.dart';
+import '../services/api_service.dart';
 import 'confirmation_screen.dart';
 
 void showBookingSheet(BuildContext context, SportVenue venue) {
@@ -23,9 +24,10 @@ class _BookingSheet extends StatefulWidget {
 
 class _BookingSheetState extends State<_BookingSheet> {
   DateTime _selectedDate = DateTime.now();
-  late List<TimeSlot> _timeSlots;
+  List<TimeSlot> _timeSlots = [];
   TimeSlot? _selectedSlot;
   bool _isFullCourt = true;
+  bool _isLoadingSlots = false;
 
   static const _weekDays = ['Да', 'Мя', 'Лх', 'Пү', 'Ба', 'Бя', 'Ня'];
 
@@ -48,7 +50,25 @@ class _BookingSheetState extends State<_BookingSheet> {
   @override
   void initState() {
     super.initState();
-    _timeSlots = AppData.generateTimeSlots(widget.venue.id, _selectedDate);
+    _loadSlots(_selectedDate);
+  }
+
+  Future<void> _loadSlots(DateTime date) async {
+    setState(() {
+      _isLoadingSlots = true;
+      _selectedSlot = null;
+    });
+    try {
+      final slots = await ApiService.getSchedule(widget.venue.id, date);
+      if (mounted) setState(() => _timeSlots = slots);
+    } catch (_) {
+      // API-д холбогдохгүй бол hardcode fallback ашиглана
+      if (mounted) {
+        setState(() => _timeSlots = AppData.generateTimeSlots(widget.venue.id, date));
+      }
+    } finally {
+      if (mounted) setState(() => _isLoadingSlots = false);
+    }
   }
 
   void _selectSlot(TimeSlot slot) {
@@ -250,11 +270,10 @@ class _BookingSheetState extends State<_BookingSheet> {
                               _selectedDate.month == date.month;
 
                           return GestureDetector(
-                            onTap: () => setState(() {
-                              _selectedDate = date;
-                              _selectedSlot = null;
-                              _timeSlots = AppData.generateTimeSlots(widget.venue.id, date);
-                            }),
+                            onTap: () {
+                              setState(() => _selectedDate = date);
+                              _loadSlots(date);
+                            },
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 180),
                               width: 50,
@@ -337,6 +356,14 @@ class _BookingSheetState extends State<_BookingSheet> {
                     const SizedBox(height: 12),
 
                     // Time slot grid
+                    if (_isLoadingSlots)
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 32),
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      )
+                    else
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),

@@ -3,6 +3,8 @@ import '../models/models.dart';
 import '../theme/app_theme.dart';
 import '../services/notification_service.dart';
 import '../services/notification_store.dart';
+import '../services/api_service.dart';
+import '../services/auth_service.dart';
 
 class ConfirmationScreen extends StatefulWidget {
   final SportVenue venue;
@@ -31,12 +33,14 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
   bool _isLoading = false;
   bool _isConfirmed = false;
   int _selectedPayment = 0;
+  String _bookingCode = '';
   late AnimationController _animController;
   late Animation<double> _scaleAnim;
 
   @override
   void initState() {
     super.initState();
+    _prefillFromAuth();
     _animController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
@@ -45,6 +49,13 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
       parent: _animController,
       curve: Curves.elasticOut,
     );
+  }
+
+  Future<void> _prefillFromAuth() async {
+    final phone = AuthService.currentPhone;
+    if (phone != null) _phoneController.text = phone;
+    final name = await AuthService.getUserName();
+    if (name != null && mounted) _nameController.text = name;
   }
 
   @override
@@ -107,7 +118,44 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
     }
 
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(seconds: 2));
+
+    try {
+      final name = _nameController.text.trim();
+      final phone = _phoneController.text.replaceAll(RegExp(r'[\s\-]'), '');
+
+      // Хэрэглэгч бүртгэх / шинэчлэх
+      await ApiService.registerUser(name: name, phone: phone);
+
+      // Захиалга үүсгэх (давхцал server-т шалгана)
+      final result = await ApiService.createBooking(
+        venueId: widget.venue.id,
+        venueName: widget.venue.name,
+        venueType: widget.venue.type,
+        venueLocation: widget.venue.location,
+        venueAccentColor: widget.venue.accentColor.toARGB32(),
+        date: widget.date,
+        timeSlot: widget.timeSlot.time,
+        timeSlotEnd: widget.timeSlot.endTime,
+        courtType: widget.courtType,
+        price: widget.price,
+        userName: name,
+        userPhone: phone,
+      );
+      _bookingCode = result.code;
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString().replaceFirst('Exception: ', '')),
+            backgroundColor: AppTheme.accent,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+      }
+      return;
+    }
 
     await NotificationService.scheduleBookingReminder(
       venue: widget.venue,
@@ -306,10 +354,11 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
             ),
             const SizedBox(height: 16),
 
-            // Phone field
+            // Phone field — auth-аас автоматаар дүүргэгддэг
             TextField(
               controller: _phoneController,
               keyboardType: TextInputType.phone,
+              readOnly: true,
               style: const TextStyle(color: AppTheme.textPrimary),
               decoration: InputDecoration(
                 labelText: 'Утасны дугаар',
@@ -318,6 +367,8 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
                   Icons.phone_rounded,
                   color: widget.venue.accentColor,
                 ),
+                suffixIcon: const Icon(Icons.lock_rounded,
+                    color: AppTheme.textSecondary, size: 16),
               ),
             ),
 
@@ -513,7 +564,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'DBK-${DateTime.now().millisecondsSinceEpoch % 10000}',
+                            _bookingCode,
                             style: TextStyle(
                               color: widget.venue.accentColor,
                               fontSize: 16,
