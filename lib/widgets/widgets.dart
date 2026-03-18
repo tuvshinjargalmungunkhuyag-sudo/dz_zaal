@@ -32,9 +32,9 @@ class VenueCard extends StatelessWidget {
           border: Border.all(color: AppTheme.divider),
           boxShadow: [
             BoxShadow(
-              color: venue.accentColor.withValues(alpha: 0.1),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
+              color: venue.accentColor.withValues(alpha: 0.12),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
@@ -42,133 +42,186 @@ class VenueCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Баннер ─────────────────────────────────────────────────────
-            Container(
-              height: 120,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20),
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              child: Container(
+                height: 140,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      venue.accentColor.withValues(alpha: 0.18),
+                      venue.accentColor.withValues(alpha: 0.06),
+                    ],
+                  ),
                 ),
-                color: venue.accentColor.withValues(alpha: 0.08),
-              ),
-              child: Stack(
-                children: [
-                  // Спорт дүрс
-                  Center(
-                    child: Icon(
-                      _getIcon(venue.type),
-                      size: 56,
-                      color: venue.accentColor.withValues(alpha: 0.35),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    // Background pattern dots
+                    Positioned(
+                      right: -20,
+                      bottom: -20,
+                      child: Icon(
+                        _getIcon(venue.type),
+                        size: 130,
+                        color: venue.accentColor.withValues(alpha: 0.1),
+                      ),
                     ),
-                  ),
-                  // Төрлийн badge
-                  Positioned(
-                    top: 12,
-                    left: 12,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppTheme.primary.withValues(alpha: 0.85),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: venue.accentColor.withValues(alpha: 0.4),
+                    // Centered sport icon
+                    Center(
+                      child: Container(
+                        width: 64,
+                        height: 64,
+                        decoration: BoxDecoration(
+                          color: venue.accentColor.withValues(alpha: 0.15),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: venue.accentColor.withValues(alpha: 0.3),
+                            width: 1.5,
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        venue.type,
-                        style: TextStyle(
-                          color: venue.accentColor,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
+                        child: Icon(
+                          _getIcon(venue.type),
+                          size: 32,
+                          color: venue.accentColor.withValues(alpha: 0.9),
                         ),
                       ),
                     ),
-                  ),
-                  // Нээлттэй/Бүрэн badge
-                  Positioned(
-                    top: 12,
-                    right: 12,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 9,
-                        vertical: 5,
-                      ),
-                      decoration: BoxDecoration(
-                        color: venue.isAvailable
-                            ? AppTheme.success.withValues(alpha: 0.2)
-                            : AppTheme.warning.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 6,
-                            height: 6,
-                            decoration: BoxDecoration(
-                              color: venue.isAvailable
-                                  ? AppTheme.success
-                                  : AppTheme.warning,
-                              shape: BoxShape.circle,
-                            ),
+                    // Bottom gradient for text readability
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: Container(
+                        height: 48,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [
+                              AppTheme.cardColor.withValues(alpha: 0.7),
+                              Colors.transparent,
+                            ],
                           ),
-                          const SizedBox(width: 5),
-                          Text(
-                            venue.isAvailable ? 'Нээлттэй' : 'Бүрэн',
-                            style: TextStyle(
-                              color: venue.isAvailable
-                                  ? AppTheme.success
-                                  : AppTheme.warning,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            // ── Мэдээлэл ───────────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
+                    // Төрлийн badge
+                    Positioned(
+                      top: 12,
+                      left: 12,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primary.withValues(alpha: 0.88),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: venue.accentColor.withValues(alpha: 0.4),
+                          ),
+                        ),
                         child: Text(
-                          venue.name,
-                          style: const TextStyle(
-                            color: AppTheme.textPrimary,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
+                          venue.type,
+                          style: TextStyle(
+                            color: venue.accentColor,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
-                      Container(
+                    ),
+                    // Нээлттэй/Бүрэн badge
+                    Positioned(
+                      top: 12,
+                      right: 12,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 9,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: venue.isAvailable
+                              ? AppTheme.success.withValues(alpha: 0.25)
+                              : AppTheme.warning.withValues(alpha: 0.25),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: venue.isAvailable
+                                ? AppTheme.success.withValues(alpha: 0.4)
+                                : AppTheme.warning.withValues(alpha: 0.4),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 6,
+                              height: 6,
+                              decoration: BoxDecoration(
+                                color: venue.isAvailable
+                                    ? AppTheme.success
+                                    : AppTheme.warning,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 5),
+                            Text(
+                              venue.isAvailable ? 'Нээлттэй' : 'Бүрэн',
+                              style: TextStyle(
+                                color: venue.isAvailable
+                                    ? AppTheme.success
+                                    : AppTheme.warning,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    // Price badge at bottom-right
+                    Positioned(
+                      bottom: 10,
+                      right: 12,
+                      child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 10,
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: venue.accentColor.withValues(alpha: 0.15),
+                          color: venue.accentColor,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
                           venue.pricePerHour,
-                          style: TextStyle(
-                            color: venue.accentColor,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
                           ),
                         ),
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // ── Мэдээлэл ───────────────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    venue.name,
+                    style: const TextStyle(
+                      color: AppTheme.textPrimary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   const SizedBox(height: 6),
                   Row(
@@ -241,6 +294,28 @@ class VenueCard extends StatelessWidget {
                               fontSize: 10,
                               fontWeight: FontWeight.w500,
                             ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: venue.accentColor.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: venue.accentColor.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: Text(
+                          'Захиалах',
+                          style: TextStyle(
+                            color: venue.accentColor,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),

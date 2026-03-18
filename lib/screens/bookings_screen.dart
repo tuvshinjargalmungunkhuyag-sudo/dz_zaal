@@ -31,17 +31,21 @@ class _BookingsScreenState extends State<BookingsScreen> {
         stream: FirebaseFirestore.instance
             .collection('bookings')
             .where('userPhone', isEqualTo: AuthService.currentPhone)
-            .orderBy('createdAt', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          final all = snapshot.data?.docs
+          final all = (snapshot.data?.docs
                   .map((d) => {'id': d.id, ...d.data() as Map<String, dynamic>})
-                  .toList() ??
-              [];
+                  .toList() ?? [])
+            ..sort((a, b) {
+              final aTs = a['createdAt'];
+              final bTs = b['createdAt'];
+              if (aTs == null || bTs == null) return 0;
+              return (bTs as Timestamp).compareTo(aTs as Timestamp);
+            });
           final filtered = _filter(all);
 
           return ListView(
@@ -54,13 +58,45 @@ class _BookingsScreenState extends State<BookingsScreen> {
               const SizedBox(height: 20),
               ...filtered.map((b) => _BookingCard(booking: b)),
               if (filtered.isEmpty)
-                const Center(
+                Center(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 60),
-                    child: Text(
-                      'Захиалга олдсонгүй',
-                      style: TextStyle(
-                          color: AppTheme.textSecondary, fontSize: 15),
+                    padding: const EdgeInsets.symmetric(vertical: 60),
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 72,
+                          height: 72,
+                          decoration: BoxDecoration(
+                            color: AppTheme.cardColor,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: AppTheme.divider),
+                          ),
+                          child: const Icon(
+                            Icons.calendar_month_outlined,
+                            color: AppTheme.textSecondary,
+                            size: 32,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Захиалга олдсонгүй',
+                          style: TextStyle(
+                            color: AppTheme.textPrimary,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        const Text(
+                          'Нүүр хуудаснаас заал сонгоод\nзахиалга хийнэ үү',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: AppTheme.textSecondary,
+                            fontSize: 13,
+                            height: 1.5,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -291,7 +327,49 @@ class _BookingCard extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () async {
-                      await ApiService.cancelBooking(booking['id']);
+                      final ok = await showDialog<bool>(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          backgroundColor: AppTheme.cardColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          title: const Text(
+                            'Захиалга цуцлах уу?',
+                            style: TextStyle(
+                              color: AppTheme.textPrimary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          content: Text(
+                            '${booking['venueName'] ?? ''} — ${booking['timeSlot']}–${booking['timeSlotEnd']}',
+                            style: const TextStyle(
+                              color: AppTheme.textSecondary,
+                              fontSize: 14,
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: const Text(
+                                'Болих',
+                                style: TextStyle(color: AppTheme.textSecondary),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              child: const Text(
+                                'Цуцлах',
+                                style: TextStyle(color: Colors.redAccent),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                      if (ok == true) {
+                        await ApiService.cancelBooking(booking['id']);
+                      }
                     },
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: AppTheme.divider),

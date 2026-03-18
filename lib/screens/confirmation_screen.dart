@@ -543,34 +543,49 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
                     ),
                     const SizedBox(height: 16),
                     Container(
+                      width: double.infinity,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 20,
-                        vertical: 10,
+                        vertical: 14,
                       ),
                       decoration: BoxDecoration(
                         color: widget.venue.accentColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: widget.venue.accentColor.withValues(alpha: 0.3),
+                          color: widget.venue.accentColor.withValues(alpha: 0.35),
                         ),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                      child: Column(
                         children: [
-                          Icon(
-                            Icons.qr_code_rounded,
-                            color: widget.venue.accentColor,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
                           Text(
-                            _bookingCode,
+                            'Захиалгын дугаар',
                             style: TextStyle(
-                              color: widget.venue.accentColor,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 2,
+                              color: AppTheme.textSecondary,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 0.5,
                             ),
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.confirmation_number_rounded,
+                                color: widget.venue.accentColor,
+                                size: 18,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                _bookingCode,
+                                style: TextStyle(
+                                  color: widget.venue.accentColor,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 3,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -596,6 +611,30 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
                   child: const Text(
                     'Нүүр хуудас руу буцах',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: () {
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    // Navigate to bookings tab (index 1)
+                  },
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(
+                      color: widget.venue.accentColor.withValues(alpha: 0.4),
+                    ),
+                    foregroundColor: widget.venue.accentColor,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: const Text(
+                    'Захиалгуудаа харах',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),

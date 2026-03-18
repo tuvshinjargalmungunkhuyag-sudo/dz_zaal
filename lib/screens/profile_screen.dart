@@ -258,7 +258,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               color: AppTheme.textSecondary, size: 13),
                           const SizedBox(width: 4),
                           Text(
-                            '+976 ${phone.substring(0, 4)}-${phone.substring(4)}',
+                            phone.length >= 8
+                                ? '+976 ${phone.substring(0, 4)}-${phone.substring(4)}'
+                                : '+976 $phone',
                             style: const TextStyle(
                                 color: AppTheme.textSecondary, fontSize: 13),
                           ),

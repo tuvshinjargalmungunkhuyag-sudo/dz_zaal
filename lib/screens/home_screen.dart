@@ -569,21 +569,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         _StatItem(
                           value: '${AppData.venues.length}',
-                          label: 'Заал',
+                          label: 'Спорт заал',
                           color: AppTheme.secondary,
                         ),
                         Container(
                             width: 1, height: 28, color: AppTheme.divider),
                         _StatItem(
-                          value: '24/7',
-                          label: 'Нээлттэй',
+                          value: '08–20',
+                          label: 'Цагийн хуваарь',
                           color: AppTheme.success,
                         ),
                         Container(
                             width: 1, height: 28, color: AppTheme.divider),
                         _StatItem(
-                          value: '500+',
-                          label: 'Тамирчин',
+                          value: '2',
+                          label: 'Спортын төрөл',
                           color: AppTheme.textSecondary,
                         ),
                       ],
@@ -651,8 +651,6 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
               child: SectionHeader(
                 title: 'Заалнууд (${_filteredVenues.length})',
-                actionText: 'Бүгдийг үзэх',
-                onAction: () {},
               ),
             ),
           ),
@@ -733,7 +731,7 @@ class _SortChip extends StatelessWidget {
   }
 }
 
-// ── Промо баннер ─────────────────────────────────────────────────────────────
+// ── Говийн Спорт баннер ───────────────────────────────────────────────────────
 class _GobiBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -743,12 +741,12 @@ class _GobiBanner extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
-          end: Alignment.centerRight,
-          colors: [Color(0xFF2A1A04), Color(0xFF1A1004)],
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF2E1B05), Color(0xFF1A1004)],
         ),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: AppTheme.secondary.withValues(alpha: 0.25),
+          color: AppTheme.secondary.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -757,18 +755,31 @@ class _GobiBanner extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Онцгой санал',
-                  style: TextStyle(
-                    color: AppTheme.secondary.withValues(alpha: 0.9),
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.8,
-                  ),
+                Row(
+                  children: [
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: const BoxDecoration(
+                        color: AppTheme.success,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    const Text(
+                      'Одоо нээлттэй',
+                      style: TextStyle(
+                        color: AppTheme.success,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 8),
                 const Text(
-                  'Эхний захиалгад\n30% хямдрал',
+                  'Даланзадгадын\nспорт заалнууд',
                   style: TextStyle(
                     color: AppTheme.textPrimary,
                     fontSize: 18,
@@ -777,47 +788,50 @@ class _GobiBanner extends StatelessWidget {
                     letterSpacing: -0.3,
                   ),
                 ),
-                const SizedBox(height: 14),
-                GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: AppTheme.secondary,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Text(
-                      'Авах',
-                      style: TextStyle(
-                        color: AppTheme.primary,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
+                const SizedBox(height: 8),
+                Text(
+                  '08:00 – 20:00 • 1 цагийн слот',
+                  style: TextStyle(
+                    color: AppTheme.textSecondary.withValues(alpha: 0.9),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
               ],
             ),
           ),
           const SizedBox(width: 16),
-          Container(
-            width: 72,
-            height: 72,
-            decoration: BoxDecoration(
-              color: AppTheme.secondary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: AppTheme.secondary.withValues(alpha: 0.2),
-              ),
-            ),
-            child: const Icon(
-              Icons.local_offer_rounded,
-              color: AppTheme.secondary,
-              size: 34,
-            ),
+          Column(
+            children: [
+              _BannerEmoji(emoji: '🐪'),
+              const SizedBox(height: 8),
+              _BannerEmoji(emoji: '🦅'),
+            ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _BannerEmoji extends StatelessWidget {
+  final String emoji;
+  const _BannerEmoji({required this.emoji});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        color: AppTheme.secondary.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppTheme.secondary.withValues(alpha: 0.15),
+        ),
+      ),
+      child: Center(
+        child: Text(emoji, style: const TextStyle(fontSize: 20)),
       ),
     );
   }
