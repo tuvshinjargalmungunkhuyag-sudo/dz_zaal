@@ -1,4 +1,4 @@
-require('dotenv').config(); // v1.0.1
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const OpenAI = require('openai');
