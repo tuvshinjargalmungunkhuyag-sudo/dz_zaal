@@ -1,0 +1,10 @@
+services:
+  backend:
+    build: .
+    image: dz-zaal-backend
+    container_name: dz-zaal-backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
