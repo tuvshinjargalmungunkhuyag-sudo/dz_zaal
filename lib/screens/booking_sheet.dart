@@ -456,6 +456,7 @@ class _BookingSheetState extends State<_BookingSheet> {
                         slot: _timeSlots[i],
                         onTap: () => _selectSlot(_timeSlots[i]),
                         accentColor: widget.venue.accentColor,
+                        isFullCourt: _isFullCourt,
                       ),
                     ),
 

@@ -188,12 +188,14 @@ class TimeSlotChip extends StatelessWidget {
   final TimeSlot slot;
   final VoidCallback onTap;
   final Color accentColor;
+  final bool isFullCourt;
 
   const TimeSlotChip({
     super.key,
     required this.slot,
     required this.onTap,
     required this.accentColor,
+    this.isFullCourt = true,
   });
 
   static const _fixedColor = Color(0xFF8B5CF6); // нил ягаан
@@ -204,7 +206,8 @@ class TimeSlotChip extends StatelessWidget {
     Color border;
     Color text;
 
-    final isHalfBooked = slot.halfCourtCount == 1 && !slot.hasFullCourt && !slot.isBooked;
+    // Шар дохио зөвхөн бүтэн талбай сонгосон үед — хагас талбай авсан хэрэглэгчид хамааргүй
+    final isHalfBooked = isFullCourt && slot.halfCourtCount == 1 && !slot.hasFullCourt && !slot.isBooked;
     const halfColor = Color(0xFFA07030); // хөнгөн алтан өнгө
 
     if (slot.isFixed) {
