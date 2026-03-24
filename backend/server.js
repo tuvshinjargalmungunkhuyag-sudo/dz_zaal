@@ -13,12 +13,12 @@ app.use(express.json());
 let _openaiClient = null;
 function getOpenAIClient() {
   if (!_openaiClient) {
-    if (!process.env.GROQ_API_KEY) {
-      throw new Error('GROQ_API_KEY тохируулаагүй байна');
+    if (!process.env.OPENROUTER_API_KEY) {
+      throw new Error('OPENROUTER_API_KEY тохируулаагүй байна');
     }
     _openaiClient = new OpenAI({
-      baseURL: 'https://api.groq.com/openai/v1',
-      apiKey: process.env.GROQ_API_KEY,
+      baseURL: 'https://openrouter.ai/api/v1',
+      apiKey: process.env.OPENROUTER_API_KEY,
     });
   }
   return _openaiClient;
