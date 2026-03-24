@@ -248,6 +248,19 @@ class TimeSlotChip extends StatelessWidget {
                 size: 14,
                 color: AppTheme.textSecondary,
               )
+            else if (isHalfBooked)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.vertical_split_rounded, size: 11, color: text),
+                  const SizedBox(width: 2),
+                  Text(
+                    slot.time,
+                    style: TextStyle(color: text, fontSize: 13, fontWeight: FontWeight.w700),
+                  ),
+                ],
+              )
             else
               Text(
                 slot.time,
@@ -267,7 +280,7 @@ class TimeSlotChip extends StatelessWidget {
                   : slot.isBooked
                       ? 'Захиалаатай'
                       : isHalfBooked
-                          ? '½ захиалаатай'
+                          ? 'Нэг хагас авсан'
                           : slot.endTime,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
