@@ -1,0 +1,1209 @@
+%===============================================================================
+% БАКАЛАВРЫН ТӨГСӨЛТИЙН АЖЛЫН ИЛТГЭЛ — М.Түвшинжаргал В221940619
+% ШУТИС-МХТС, Мэдээллийн технологийн тэнхим, 2026
+%===============================================================================
+\documentclass[14pt,aspectratio=169]{beamer}
+
+%--- Encoding & fonts ----------------------------------------------------------
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[mongolian,english]{babel}
+
+%--- Packages ------------------------------------------------------------------
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,shapes.geometric,calc}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\usepackage{array,colortbl}
+\usepackage{multirow}
+
+%--- Custom colors -------------------------------------------------------------
+\definecolor{navyblue}{RGB}{8,40,85}
+\definecolor{navylight}{RGB}{18,60,120}
+\definecolor{goldcolor}{RGB}{210,155,20}
+\definecolor{lightbg}{RGB}{235,242,255}
+\definecolor{okgreen}{RGB}{20,140,60}
+\definecolor{badred}{RGB}{190,30,30}
+\definecolor{partcolor}{RGB}{200,130,0}
+\definecolor{rowgray}{RGB}{245,247,250}
+
+%--- Beamer theme --------------------------------------------------------------
+\usetheme{default}
+\usecolortheme{default}
+
+\setbeamercolor{frametitle}{bg=navyblue,fg=white}
+\setbeamercolor{title}{fg=navyblue}
+\setbeamercolor{subtitle}{fg=navylight}
+\setbeamercolor{author}{fg=navyblue}
+\setbeamercolor{institute}{fg=navyblue!80}
+\setbeamercolor{date}{fg=navyblue!70}
+\setbeamercolor{block title}{bg=navyblue,fg=white}
+\setbeamercolor{block body}{bg=lightbg,fg=black}
+\setbeamercolor{alerted text}{fg=goldcolor!85!black}
+\setbeamercolor{structure}{fg=navyblue}
+\setbeamercolor{itemize item}{fg=navyblue}
+\setbeamercolor{itemize subitem}{fg=navylight}
+\setbeamercolor{enumerate item}{fg=navyblue}
+\setbeamercolor{section in toc}{fg=navyblue}
+
+%--- Frame title with gold underline -------------------------------------------
+\setbeamertemplate{frametitle}{%
+  \nointerlineskip
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.6ex,dp=0.8ex,leftskip=1.2em,
+                         rightskip=1.2em]{frametitle}
+    \usebeamerfont{frametitle}\insertframetitle
+  \end{beamercolorbox}%
+  \nointerlineskip
+  {\color{goldcolor}\hrule height 1.6pt}%
+}
+
+%--- Navigation off, custom footer --------------------------------------------
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}{%
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.38\paperwidth,ht=2.2ex,dp=1ex,
+                           leftskip=0.6em]{block title}%
+      \tiny М.Түвшинжаргал \textbullet\ В221940619
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.44\paperwidth,ht=2.2ex,dp=1ex,center]{block body}%
+      \tiny Спорт заалны цаг захиалгын 3 давхаргат систем
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.18\paperwidth,ht=2.2ex,dp=1ex,
+                           rightskip=0.6em,right]{block title}%
+      \tiny \insertframenumber\,/\,\inserttotalframenumber
+    \end{beamercolorbox}%
+  }%
+}
+
+%--- Bullet styles -------------------------------------------------------------
+\setbeamertemplate{itemize item}{\color{navyblue}\rule[0.3ex]{0.6ex}{0.6ex}}
+\setbeamertemplate{itemize subitem}{\color{goldcolor}$\triangleright$}
+\setbeamertemplate{enumerate item}{\color{navyblue}\textbf{\insertenumlabel.}}
+
+%--- Custom title page ---------------------------------------------------------
+\setbeamertemplate{title page}{%
+  \vspace{-0.4cm}
+  {\color{navyblue}\hrule height 2.5pt}
+  \vspace{0.25cm}
+  \begin{center}
+    {\footnotesize\color{navyblue!70}
+     ШУТИС — Мэдээлэл Харилцаа Технологийн Сургууль\\
+     Мэдээллийн технологийн тэнхим \quad|\quad 2026 он}
+  \end{center}
+  {\color{goldcolor}\hrule height 1pt}
+  \vspace{0.3cm}
+  \begin{center}
+    {\large\bfseries\color{navyblue}БАКАЛАВРЫН ТӨГСӨЛТИЙН АЖЛЫН ИЛТГЭЛ}
+  \end{center}
+  \vspace{0.2cm}
+  \begin{beamercolorbox}[sep=0.4em,center,rounded=true,shadow=false]{block title}
+    \usebeamerfont{title}\large\inserttitle
+  \end{beamercolorbox}
+  \vspace{0.35cm}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \centering\small
+      \textbf{Оюутан:} М.Түвшинжаргал\\
+      \textcolor{navyblue!70}{В221940619}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \centering\small
+      \textbf{Удирдагч:} ахлах багш, доктор Д.Эрдэнэтуяа\\
+      \textbf{Зөвлөх:} багш, доктор Б.Намжилдорж
+    \end{column}
+  \end{columns}
+  \vspace{0.3cm}
+  {\color{navyblue}\hrule height 2.5pt}
+}
+
+%--- Title info ----------------------------------------------------------------
+\title[Спорт заалны цаг захиалгын систем]{%
+  Үүлэн орчинд суурилсан спорт заалны цаг захиалгын\\
+  3 давхаргат системийн загварчлал, хэрэгжилт}
+\author{}
+\institute{}
+\date{}
+
+%--- Helper commands -----------------------------------------------------------
+\newcommand{\YES}{\textcolor{okgreen}{\checkmark}}
+\newcommand{\NO}{\textcolor{badred}{$\times$}}
+\newcommand{\PART}{\textcolor{partcolor}{$\triangle$}}
+
+%===============================================================================
+\begin{document}
+%===============================================================================
+
+%--- 01 Title ------------------------------------------------------------------
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+%--- 02 Outline ----------------------------------------------------------------
+\begin{frame}{Илтгэлийн агуулга}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \tableofcontents[sections={1-5}]
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \tableofcontents[sections={6-9}]
+    \end{column}
+  \end{columns}
+\end{frame}
+
+%===============================================================================
+\section{Асуудлын тодорхойлолт}
+%===============================================================================
+\begin{frame}{Асуудлын тодорхойлолт}
+  \begin{columns}[T]
+    \begin{column}{0.46\textwidth}
+      \begin{block}{Одоогийн нөхцөл байдал}
+        \begin{itemize}
+          \item Даланзадгад хотод \textbf{5 спорт заал}
+          \item Иргэд зөвхөн \textbf{утсаар} эсвэл \textbf{биечлэн} цаг захиалдаг
+          \item Шугам завгүй, буруу ойлголцол нийтлэг
+          \item Боломжтой цагийн мэдээлэл \textbf{ил тод бус}
+          \item Захиалгын баталгаажуулалт \textbf{байхгүй}
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.50\textwidth}
+      \begin{alertblock}{Шийдвэрлэх асуудлууд}
+        \begin{enumerate}
+          \item Цаг захиалгыг \textbf{цахимжуулах}
+          \item Бодит цагийн хуваарь харуулах
+          \item Захиалгын автомат баталгаажуулалт
+          \item Байгууллагын \textbf{тогтмол} захиалгыг дэмжих
+          \item Хэрэглэгчдэд \textbf{AI туслагч} санал болгох
+        \end{enumerate}
+      \end{alertblock}
+      \vspace{4pt}
+      \begin{beamercolorbox}[sep=4pt,rounded=true]{block body}
+        \centering\small
+        \textbf{Зорилтот хэрэглэгчид:} Даланзадгад хотын иргэд
+        болон спорт заалны ажилтнууд
+      \end{beamercolorbox}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+%===============================================================================
+\section{Судлагдсан байдал}
+%===============================================================================
+\begin{frame}{Ижил төстэй системүүдийн харьцуулалт}
+  \begin{center}
+  \small
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabular}{lcccc}
+    \toprule
+    \rowcolor{navyblue}
+    {\color{white}\textbf{Онцлог}} &
+    {\color{white}\textbf{Mindbody}} &
+    {\color{white}\textbf{Vagaro}} &
+    {\color{white}\textbf{Нутгийн апп}} &
+    {\color{white}\textbf{Манай систем}} \\
+    \midrule
+    \rowcolor{rowgray}
+    Монгол хэл / OTP нэвтрэлт & \NO & \NO & \PART & \YES \\
+    Бодит цагийн хуваарь       & \YES & \YES & \PART & \YES \\
+    \rowcolor{rowgray}
+    Байгууллагын тогтмол захиалга & \PART & \PART & \NO & \YES \\
+    AI чатбот туслагч          & \NO & \NO & \NO & \YES \\
+    \rowcolor{rowgray}
+    Cloud auto-deploy (CI/CD)  & N/A & N/A & \NO & \YES \\
+    Орон нутгийн хэрэгцээ      & \NO & \NO & \PART & \YES \\
+    \rowcolor{rowgray}
+    Үнэ (сард)                 & \$129+ & \$25+ & Үнэгүй & Үнэгүй \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vspace{4pt}
+  \begin{beamercolorbox}[sep=4pt,center,rounded=true]{block body}
+    \small Олон улсын платформууд нь Монголын орон нутгийн хэрэгцээнд
+    \textbf{тохиромжгүй}. Манай систем нь тусгай шийдлийг санал болгодог.
+  \end{beamercolorbox}
+\end{frame}
+
+\begin{frame}{Технологийн сонголт — Flutter}
+  \begin{center}
+  \small
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{lccc}
+    \toprule
+    \rowcolor{navyblue}
+    {\color{white}\textbf{Шалгуур}} &
+    {\color{white}\textbf{Flutter}} &
+    {\color{white}\textbf{React Native}} &
+    {\color{white}\textbf{Native (Java/Swift)}} \\
+    \midrule
+    \rowcolor{rowgray}
+    Android + iOS нэг кодоос & \YES & \YES & \NO (2 апп) \\
+    Гүйцэтгэл (performance) & \textbf{Маш сайн} & Сайн & Маш сайн \\
+    \rowcolor{rowgray}
+    Firebase SDK дэмжлэг & \YES & \YES & \YES \\
+    Хөгжүүлэлтийн хугацаа & \textbf{1×} & 1× & 2× \\
+    \rowcolor{rowgray}
+    Hot reload & \YES & \YES & \NO \\
+    Material Design 3 & \textbf{Нативаар} & Хязгаарлагдмал & Хязгаарлагдмал \\
+    \rowcolor{rowgray}
+    Монгол хэлний дэмжлэг & \YES & \YES & \YES \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vspace{4pt}
+  \begin{beamercolorbox}[sep=4pt,rounded=true]{block body}
+    \small\centering
+    \textbf{Flutter} сонгосон шалтгаан: Нэг кодоос хоёр платформд гаргах,
+    гүйцэтгэл өндөр, Firebase-тэй нативаар нэгдсэн
+  \end{beamercolorbox}
+\end{frame}
+
+%===============================================================================
+\section{Системийн архитектур}
+%===============================================================================
+\begin{frame}{3 Давхаргат системийн архитектур}
+  \begin{center}
+  \begin{tikzpicture}[scale=0.88]
+    % Styles
+    \tikzset{
+      cbox/.style={rectangle, rounded corners=5pt, draw, text width=2.7cm,
+                   align=center, minimum height=1.25cm, font=\small},
+      myarr/.style={-{Stealth[length=5pt,width=4pt]}, thick}
+    }
+    % Layer labels on left
+    \node[font=\footnotesize, rotate=90, navyblue, text width=1.5cm, align=center]
+      at (-1.8, 0.6) {\textbf{1-р давхар}\\Клиент};
+    \node[font=\footnotesize, rotate=90, navyblue, text width=1.5cm, align=center]
+      at (-1.8, -2.0) {\textbf{2,3-р давхар}\\Сервер};
+
+    % Client layer
+    \node[cbox, fill=yellow!20, draw=yellow!60!black] (app) at (0.2, 0.6)
+      {\textbf{Flutter Апп}\\Android / iOS};
+
+    % Backend layer
+    \node[cbox, fill=orange!20, draw=orange!60] (ec2) at (4.6, 0.6)
+      {\textbf{Node.js/Express}\\AWS EC2 (Tokyo)};
+    \node[cbox, fill=blue!15, draw=blue!50] (fb) at (0.2, -2.0)
+      {\textbf{Firebase}\\Auth + Firestore\\+ Cloud Functions};
+    \node[cbox, fill=green!15, draw=green!50] (ai) at (8.4, 0.6)
+      {\textbf{AI үйлчилгээ}\\Claude Haiku\\+ Groq Llama};
+    \node[cbox, fill=gray!15, draw=gray!60, minimum height=0.9cm] (ecr)
+      at (4.6, -2.0) {\textbf{AWS ECR}\\Docker Registry};
+    \node[cbox, fill=gray!15, draw=gray!60, minimum height=0.9cm] (gh)
+      at (2.0, -2.0) {\textbf{GitHub Actions}\\CI/CD};
+
+    % Arrows
+    \draw[myarr, navyblue] (app.east) -- node[above,font=\tiny]{REST API} (ec2.west);
+    \draw[myarr, blue!60] (app.south) -- node[left,font=\tiny]{SDK} (fb.north);
+    \draw[myarr, green!60] (ec2.east) -- node[above,font=\tiny]{AI API} (ai.west);
+    \draw[myarr, gray!70] (gh.east) -- node[below,font=\tiny]{push image} (ecr.west);
+    \draw[myarr, gray!70] (ecr.north) -- node[right,font=\tiny]{pull} (ec2.south);
+
+    % Dashed box for infra
+    \draw[dashed, navyblue!40, rounded corners=6pt]
+      (-0.3,-1.3) rectangle (9.2, 1.5);
+    \node[font=\tiny, navyblue!50] at (8.5, 1.35) {Системийн хил};
+  \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+%===============================================================================
+\section{UML диаграммууд}
+%===============================================================================
+\begin{frame}{Use Case диаграмм}
+  \begin{center}
+  \begin{tikzpicture}[scale=0.82]
+    \tikzset{
+      uc/.style={ellipse, draw=navyblue!70, fill=blue!8,
+                 text width=2.6cm, align=center, font=\tiny,
+                 minimum height=0.65cm},
+      ucarr/.style={navyblue!60, thin}
+    }
+    % System boundary
+    \draw[navyblue!50, thick, rounded corners=6pt]
+      (1.5,-0.6) rectangle (10.5,5.4);
+    \node[font=\footnotesize, navyblue] at (6.0,5.15) {Спорт заалны цаг захиалгын систем};
+
+    % Actor — stick figure
+    \draw[thick] (-0.4, 3.8) circle (0.28);
+    \draw[thick] (-0.4, 3.5) -- (-0.4, 2.6);
+    \draw[thick] (-0.9, 3.2) -- (0.1, 3.2);
+    \draw[thick] (-0.4, 2.6) -- (-0.8, 2.0);
+    \draw[thick] (-0.4, 2.6) -- (0.0, 2.0);
+    \node[below, font=\scriptsize] at (-0.4, 1.95) {\textbf{Хэрэглэгч}};
+
+    % Use cases (2 columns)
+    \node[uc] (uc1) at (3.5, 4.8) {OTP-р нэвтрэх};
+    \node[uc] (uc2) at (3.5, 3.7) {Хуваарь харах};
+    \node[uc] (uc3) at (3.5, 2.6) {Цаг захиалах};
+    \node[uc] (uc4) at (3.5, 1.5) {Захиалга цуцлах};
+    \node[uc] (uc5) at (3.5, 0.4) {Профайл харах};
+    \node[uc] (uc6) at (7.5, 4.8) {AI чат ашиглах};
+    \node[uc] (uc7) at (7.5, 3.5) {Мэдэгдэл хүлээн авах};
+    \node[uc] (uc8) at (7.5, 2.2) {Захиалгын код харах};
+    \node[uc] (uc9) at (7.5, 0.9) {Захиалгын түүх};
+
+    % Lines from actor
+    \foreach \uc in {uc1,uc2,uc3,uc4,uc5} {
+      \draw[ucarr] (0.1, 2.9) -- (\uc.west);
+    }
+    \foreach \uc in {uc6,uc7,uc8,uc9} {
+      \draw[ucarr] (0.1, 2.9) -- (\uc.west);
+    }
+  \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{CI/CD хоолойн диаграмм}
+  \begin{center}
+  \begin{tikzpicture}[scale=0.85]
+    \tikzset{
+      stepa/.style={-{Stealth[length=5pt]}, thick, gray!70},
+      stepbox/.style={rectangle, rounded corners=4pt, text width=1.9cm,
+                      align=center, minimum height=1.1cm, font=\small}
+    }
+    \node[stepbox, draw=blue!70, fill=blue!12] (dev)
+      at (0.0, 0) {\textbf{Хөгжүүлэгч}\\git push};
+    \node[stepbox, draw=teal!70, fill=teal!12] (gh)
+      at (2.8, 0) {\textbf{GitHub}\\Trigger};
+    \node[stepbox, draw=orange!70, fill=orange!12] (build)
+      at (5.6, 0) {\textbf{Docker}\\Build};
+    \node[stepbox, draw=red!70, fill=red!10] (ecr)
+      at (8.4, 0) {\textbf{AWS ECR}\\Push image};
+    \node[stepbox, draw=navyblue!70, fill=navyblue!12] (ec2)
+      at (11.2,0) {\textbf{AWS EC2}\\Deploy};
+
+    \draw[stepa] (dev)   -- node[above,font=\tiny]{backend/} (gh);
+    \draw[stepa] (gh)    -- node[above,font=\tiny]{Actions} (build);
+    \draw[stepa] (build) -- node[above,font=\tiny]{SHA tag} (ecr);
+    \draw[stepa] (ecr)   -- node[above,font=\tiny]{SSH} (ec2);
+
+    % Time label
+    \draw[<->, gray!60, dashed] (0,-0.9) -- node[below,font=\tiny,gray]{3--4 минут} (11.2,-0.9);
+
+    % Step numbers
+    \node[font=\tiny, gray!80] at (0,   -0.5) {(1)};
+    \node[font=\tiny, gray!80] at (2.8, -0.5) {(2)};
+    \node[font=\tiny, gray!80] at (5.6, -0.5) {(3)};
+    \node[font=\tiny, gray!80] at (8.4, -0.5) {(4)};
+    \node[font=\tiny, gray!80] at (11.2,-0.5) {(5)};
+  \end{tikzpicture}
+  \end{center}
+  \vspace{4pt}
+  \begin{beamercolorbox}[sep=4pt,center,rounded=true]{block body}
+    \small \texttt{git push} $\Rightarrow$ GitHub Actions автоматаар ажиллаж
+    $\Rightarrow$ EC2 дээрх контейнер \textbf{хүний гараас хамааралгүйгээр} шинэчлэгдэнэ
+  \end{beamercolorbox}
+\end{frame}
+
+%===============================================================================
+\section{Өгөгдлийн сангийн загвар}
+%===============================================================================
+\begin{frame}{Firestore өгөгдлийн сангийн схем}
+  \begin{center}
+  \begin{tikzpicture}[scale=0.88]
+    \tikzset{
+      coll/.style={rectangle, draw=navyblue!70, fill=blue!8,
+                   rounded corners=4pt, minimum width=3.4cm},
+      field/.style={font=\tiny, navyblue!80},
+      pk/.style={font=\tiny\bfseries, navyblue},
+      fk/.style={font=\tiny, blue!60},
+      rel/.style={-{Stealth[length=4pt]}, thick, navyblue!50, dashed}
+    }
+    % users collection
+    \node[coll, minimum height=2.6cm] (users) at (0, 0) {};
+    \node[font=\small\bfseries, navyblue] at (0, 1.0) {\texttt{users}};
+    \draw[navyblue!40] (-1.7, 0.65) -- (1.7, 0.65);
+    \node[pk] at (0, 0.4) {uid (doc ID, PK)};
+    \node[field] at (0, 0.05) {name : string};
+    \node[field] at (0,-0.3)  {phone : string};
+    \node[field] at (0,-0.65) {createdAt : timestamp};
+
+    % bookings collection
+    \node[coll, minimum height=4.2cm] (bk) at (5.5, -0.3) {};
+    \node[font=\small\bfseries, navyblue] at (5.5, 1.65) {\texttt{bookings}};
+    \draw[navyblue!40] (3.8, 1.3) -- (7.2, 1.3);
+    \node[pk]    at (5.5, 0.95) {bookingCode (PK)};
+    \node[fk]    at (5.5, 0.6)  {userId (FK $\to$ users)};
+    \node[fk]    at (5.5, 0.25) {venueId (FK $\to$ venues)};
+    \node[field] at (5.5,-0.1)  {venueName : string};
+    \node[field] at (5.5,-0.45) {date : string};
+    \node[field] at (5.5,-0.8)  {timeSlot : string};
+    \node[field] at (5.5,-1.15) {status : active|completed|cancelled};
+    \node[field] at (5.5,-1.5)  {createdAt : timestamp};
+
+    % fixed_bookings collection
+    \node[coll, minimum height=3.2cm] (fb) at (11.0, -0.3) {};
+    \node[font=\small\bfseries, navyblue] at (11.0, 1.2) {\texttt{fixed\_bookings}};
+    \draw[navyblue!40] (9.3, 0.85) -- (12.7, 0.85);
+    \node[fk]    at (11.0, 0.5)  {venueId (FK $\to$ venues)};
+    \node[field] at (11.0, 0.15) {organizationName : string};
+    \node[field] at (11.0,-0.2)  {dayOfWeek : 0--6};
+    \node[field] at (11.0,-0.55) {timeSlot : string};
+    \node[field] at (11.0,-0.9)  {isActive : boolean};
+
+    % Relationships
+    \draw[rel] (1.7, 0.2) -- node[above,font=\tiny]{1:N} (3.8, 0.7);
+    \draw[rel] (7.2, 0.0) -- node[above,font=\tiny]{venueId} (9.3, 0.2);
+
+    % venues note
+    \node[draw=gray!50, fill=gray!8, rounded corners=3pt, font=\tiny,
+          text width=2.4cm, align=center] (vn) at (5.5, -2.6)
+      {\textbf{venues}\\\small Flutter кодод\\hardcoded (5 заал)};
+    \draw[gray!50, dashed, thin] (bk.south) -- (vn.north);
+    \draw[gray!50, dashed, thin] (fb.south) -- (vn.east);
+  \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+%===============================================================================
+\section{Хэрэгжүүлэлт}
+%===============================================================================
+\begin{frame}{Flutter апп — UI/UX ба гол функцүүд}
+  \begin{columns}[T]
+    \begin{column}{0.30\textwidth}
+      % Phone mockup (TikZ)
+      \centering
+      \begin{tikzpicture}[scale=0.78]
+        % Phone body
+        \draw[rounded corners=8pt, fill=black!88, draw=black!70, line width=1.5pt]
+          (0,0) rectangle (3.0, 5.6);
+        % Screen area
+        \fill[black!5] (0.18,0.4) rectangle (2.82, 5.15);
+        % Notch
+        \fill[black!88] (1.0,5.0) rectangle (2.0, 5.2);
+        % Status bar color
+        \fill[black!80] (0.18,4.8) rectangle (2.82,5.15);
+        % App title bar
+        \fill[black!75] (0.18,4.35) rectangle (2.82,4.8);
+        \node[font=\tiny, white, align=center] at (1.5, 4.57)
+          {Dalandzadgad Sport};
+        % Background color (desert dark)
+        \fill[black!70] (0.18,0.4) rectangle (2.82,4.35);
+        % Cards
+        \fill[black!55, rounded corners=3pt] (0.28,3.65) rectangle (2.72,4.28);
+        \node[font=\tiny, yellow!80, align=center] at (1.5, 3.96)
+          {Goviin Arena \hfill $\triangleright$};
+        \fill[black!55, rounded corners=3pt] (0.28,2.90) rectangle (2.72,3.53);
+        \node[font=\tiny, yellow!80, align=center] at (1.5, 3.21)
+          {Omnogovi Sport Hall \hfill $\triangleright$};
+        \fill[black!55, rounded corners=3pt] (0.28,2.15) rectangle (2.72,2.78);
+        \node[font=\tiny, yellow!80] at (1.5, 2.46)
+          {Goviin Volleyball};
+        \fill[black!55, rounded corners=3pt] (0.28,1.40) rectangle (2.72,2.03);
+        \node[font=\tiny, yellow!80] at (1.5, 1.71)
+          {Stadium Volleyball};
+        % Bottom nav
+        \fill[black!80] (0.18,0.4) rectangle (2.82,1.1);
+        \foreach \x/\lbl in {0.55/Home,1.15/Book,1.75/Chat,2.35/Me} {
+          \node[font=\tiny, white] at (\x+0.2, 0.72) {\lbl};
+        }
+        % Home button
+        \fill[gray!50] (1.5,0.2) circle (0.12);
+      \end{tikzpicture}
+    \end{column}
+    \begin{column}{0.67\textwidth}
+      \textbf{Dark Desert Theme}\\
+      \small
+      \begin{tabular}{ll}
+        Цөлийн хар & \colorbox{black!85}{\color{white}\small\texttt{\#120D06}} \\
+        Алтан элс  & \colorbox{yellow!70}{\small\texttt{\#F0B429}} \\
+        Нарны жаргалт & \colorbox{orange!60}{\small\texttt{\#D4622A}}
+      \end{tabular}
+      \vspace{6pt}
+
+      \textbf{Үндсэн функцүүд:}
+      \begin{itemize}
+        \item Firebase OTP утасны нэвтрэлт
+        \item Бодит цагийн цагийн хуваарь (Firestore)
+        \item \textbf{DBK-xxxxx} форматын захиалгын код
+        \item fixed\_bookings — байгууллагын тогтмол цаг
+        \item Захиалгаас \textbf{1 цагийн өмнө} локал сануулга
+        \item Захиалга цуцлах / захиалгын түүх
+        \item AI чатбот дэлгэц
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{AI чатботын архитектур}
+  \begin{center}
+  \begin{tikzpicture}[scale=0.88]
+    \tikzset{
+      abox/.style={rectangle, rounded corners=5pt,
+                   text width=3.2cm, align=center, minimum height=1.2cm, font=\small},
+      aarr/.style={-{Stealth[length=5pt]}, thick}
+    }
+    % Flutter App
+    \node[abox, draw=blue!70, fill=blue!12] (app) at (0,0)
+      {\textbf{Flutter Апп}\\ChatScreen widget};
+
+    % Two paths
+    \node[abox, draw=teal!70, fill=teal!12, text width=3.5cm] (cf) at (5.0, 1.5)
+      {\textbf{Firebase Cloud Functions}\\Claude Haiku 4.5\\(Anthropic API)};
+    \node[abox, draw=orange!70, fill=orange!12, text width=3.5cm] (ex) at (5.0,-1.5)
+      {\textbf{Node.js/Express}\\Groq Llama 3.1-8b\\(нөөц горим)};
+
+    % Response merge
+    \node[abox, draw=navyblue!70, fill=navyblue!12] (resp) at (10.2, 0)
+      {\textbf{Хариулт}\\хэрэглэгчид\\харуулна};
+
+    % Arrows
+    \draw[aarr, teal!70] (app.east) |- node[above,font=\tiny,pos=0.8]{Үндсэн горим} (cf.west);
+    \draw[aarr, orange!70] (app.east) |- node[below,font=\tiny,pos=0.8]{Нөөц горим} (ex.west);
+    \draw[aarr, teal!70] (cf.east) -| (resp.north);
+    \draw[aarr, orange!70] (ex.east) -| (resp.south);
+
+    % Labels
+    \node[font=\tiny, teal!80] at (5.0, 2.85)
+      {System prompt: Спорт заалны туслагч};
+    \node[font=\tiny, orange!80] at (5.0,-2.7)
+      {Хэрэглэгч нэвтрэлтгүй эсвэл CF унтарсан үед};
+
+    % Failover arrow
+    \draw[dashed, gray!60, -{Stealth[length=4pt]}] (cf.south) --
+      node[right,font=\tiny,gray]{failover} (ex.north);
+  \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+%===============================================================================
+\section{Туршилтын үр дүн}
+%===============================================================================
+\begin{frame}{Функциональ туршилтын үр дүн}
+  \begin{columns}[T]
+    \begin{column}{0.54\textwidth}
+      \small
+      \renewcommand{\arraystretch}{1.2}
+      \begin{tabular}{clc}
+        \toprule
+        \rowcolor{navyblue}
+        {\color{white}\textbf{№}} &
+        {\color{white}\textbf{Тест тохиолдол}} &
+        {\color{white}\textbf{Үр дүн}} \\
+        \midrule
+        \rowcolor{rowgray}
+        1 & OTP нэвтрэлт, users бүртгэл & \YES \\
+        2 & 5 спорт заал нүүр дэлгэцэд  & \YES \\
+        \rowcolor{rowgray}
+        3 & fixed\_bookings хуваарьт тусах & \YES \\
+        4 & DBK-xxxxx захиалгын код        & \YES \\
+        \rowcolor{rowgray}
+        5 & 1 цагийн өмнө локал сануулга  & \YES \\
+        6 & Захиалга цуцлах               & \YES \\
+        \rowcolor{rowgray}
+        7 & Cron — completed болгох        & \YES \\
+        8 & Claude Haiku хариулт          & \YES \\
+        \rowcolor{rowgray}
+        9 & Groq Llama нөөц горим         & \YES \\
+        10 & GitHub Actions auto-deploy   & \YES \\
+        \bottomrule
+        \multicolumn{3}{r}{\small\textbf{10 / 10 тэнцсэн}}
+      \end{tabular}
+    \end{column}
+    \begin{column}{0.44\textwidth}
+      \textbf{Гүйцэтгэлийн хэмжилт:}
+      \vspace{6pt}
+
+      \begin{tikzpicture}[scale=0.72]
+        % Axes
+        \draw[-{Stealth[length=4pt]}, thick] (-0.2,0) -- (6.2,0);
+        \draw[-{Stealth[length=4pt]}, thick] (0,-0.1) -- (0,3.6)
+          node[above,font=\tiny]{секунд};
+        % Grid
+        \foreach \y/\lbl in {1.0/1.0,2.0/2.0,3.0/3.0} {
+          \draw[gray!25] (0,\y) -- (6.0,\y);
+          \node[left,font=\tiny,gray!70] at (0,\y) {\lbl с};
+        }
+        % Target line
+        \draw[dashed,red!50,thick] (0,3.0) -- (6.0,3.0)
+          node[right,font=\tiny,red!50]{зорилт 3с};
+        % Bars
+        \fill[blue!60]    (0.2,0) rectangle (0.8,2.3);
+        \fill[green!55]   (1.2,0) rectangle (1.8,0.6);
+        \fill[orange!65]  (2.2,0) rectangle (2.8,0.8);
+        \fill[red!55]     (3.2,0) rectangle (3.8,1.4);
+        \fill[purple!55]  (4.2,0) rectangle (4.8,0.9);
+        % Draw borders
+        \draw[blue!80]   (0.2,0) rectangle (0.8,2.3);
+        \draw[green!70]  (1.2,0) rectangle (1.8,0.6);
+        \draw[orange!80] (2.2,0) rectangle (2.8,0.8);
+        \draw[red!70]    (3.2,0) rectangle (3.8,1.4);
+        \draw[purple!70] (4.2,0) rectangle (4.8,0.9);
+        % Values
+        \node[above,font=\tiny\bfseries] at (0.5,2.3)  {2.3с};
+        \node[above,font=\tiny\bfseries] at (1.5,0.6)  {0.6с};
+        \node[above,font=\tiny\bfseries] at (2.5,0.8)  {0.8с};
+        \node[above,font=\tiny\bfseries] at (3.5,1.4)  {1.4с};
+        \node[above,font=\tiny\bfseries] at (4.5,0.9)  {0.9с};
+        % X labels
+        \node[below,font=\tiny,align=center,text width=0.9cm] at (0.5,0)
+          {Апп\\ };
+        \node[below,font=\tiny,align=center,text width=0.9cm] at (1.5,0)
+          {Fire-\\store};
+        \node[below,font=\tiny,align=center,text width=0.9cm] at (2.5,0)
+          {Node\\API};
+        \node[below,font=\tiny,align=center,text width=0.9cm] at (3.5,0)
+          {Claude};
+        \node[below,font=\tiny,align=center,text width=0.9cm] at (4.5,0)
+          {Groq};
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+%===============================================================================
+\section{Шинэлэг тал}
+%===============================================================================
+\begin{frame}{Шинэлэг тал ба хувь нэмэр}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Техникийн шинэлэг тал}
+        \begin{enumerate}
+          \item \textbf{3 давхаргат архитектур:}\\Flutter — Node.js — Firebase/AWS
+          \item \textbf{Үүлэн орчин:}\\Docker + AWS EC2/ECR
+          \item \textbf{CI/CD:}\\GitHub Actions автоматжуулалт
+          \item \textbf{AI чатбот:}\\Claude Haiku + Groq нөөцлөлт
+          \item \textbf{Орон нутгийн хэрэгцээ:}\\fixed\_bookings, Dark Desert Theme
+        \end{enumerate}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{alertblock}{Практик ач холбогдол}
+        \begin{itemize}
+          \item Даланзадгад хотын \textbf{5 спорт заал}-д нэвтрүүлэхэд бэлэн
+          \item Иргэдийн цаг хугацааг хэмнэнэ
+          \item Заалны ажилтнуудын ачааллыг бууруулна
+          \item Захиалгын явц \textbf{ил тод} болно
+        \end{itemize}
+      \end{alertblock}
+      \vspace{6pt}
+      \begin{beamercolorbox}[sep=4pt,rounded=true]{block body}
+        \small\centering
+        Flutter + Firebase + Node.js + Docker + AWS + GitHub Actions + AI
+        бүрэн стекийг Монголын орон нутагт хэрэглэсэн
+        \textbf{анхны бүтээлүүдийн нэг}
+      \end{beamercolorbox}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+%===============================================================================
+\section{Технологи ба консол холбоосууд}
+%===============================================================================
+
+%--- Tech overview table -------------------------------------------------------
+\begin{frame}{Ашигласан бүх технологи — ерөнхий бүртгэл}
+  \small
+  \renewcommand{\arraystretch}{1.22}
+  \begin{tabular}{llll}
+    \toprule
+    \rowcolor{navyblue}
+    {\color{white}\textbf{Давхар}} &
+    {\color{white}\textbf{Технологи}} &
+    {\color{white}\textbf{Зориулалт}} &
+    {\color{white}\textbf{Хувилбар}} \\
+    \midrule
+    \rowcolor{yellow!12}
+    \multirow{5}{*}{\textbf{Flutter}} &
+      flutter\_local\_notifications & Захиалгын сануулга (офлайн) & 18.0.0 \\
+    \rowcolor{yellow!12}
+      & firebase\_auth  & OTP утасны нэвтрэлт & 5.3.1 \\
+    \rowcolor{yellow!12}
+      & cloud\_firestore & Бодит цагийн өгөгдлийн сан & 5.4.4 \\
+    \rowcolor{yellow!12}
+      & cloud\_functions & Cloud Functions дуудах & 5.1.3 \\
+    \rowcolor{yellow!12}
+      & google\_fonts / http / intl & UI фонт, HTTP, огноо & latest \\
+    \midrule
+    \rowcolor{orange!10}
+    \multirow{4}{*}{\textbf{Backend}} &
+      express & REST API сервер & 4.18.2 \\
+    \rowcolor{orange!10}
+      & openai (Groq-д) & Groq Llama AI чат & 6.29.0 \\
+    \rowcolor{orange!10}
+      & firebase-admin & Firestore Admin SDK & 13.7.0 \\
+    \rowcolor{orange!10}
+      & @anthropic-ai/sdk & Claude Haiku API & 0.24.0 \\
+    \midrule
+    \rowcolor{blue!8}
+    \multirow{3}{*}{\textbf{Cloud}} &
+      Firebase Auth + Firestore & Нэвтрэлт, өгөгдлийн сан & v9 \\
+    \rowcolor{blue!8}
+      & Firebase Cloud Functions & Serverless Claude чат & v7.0.0 \\
+    \rowcolor{blue!8}
+      & AWS EC2 + ECR + Docker & Бэкэнд байршуулалт & ap-northeast-1 \\
+    \midrule
+    \rowcolor{green!8}
+    \textbf{CI/CD} & GitHub Actions & Auto-deploy pipeline & v3 \\
+    \bottomrule
+  \end{tabular}
+\end{frame}
+
+%--- Firebase console ----------------------------------------------------------
+\begin{frame}{Firebase консол — үр дүнг хаана харах вэ}
+  \begin{columns}[T]
+    \begin{column}{0.38\textwidth}
+      \textbf{Console URL:}\\
+      \small\texttt{console.firebase.google.com/\\project/\textbf{dz-zaal}}
+      \vspace{6pt}
+
+      \textbf{3 үйлчилгээ:}
+      \begin{enumerate}
+        \item \textbf{Authentication}\\→ Phone/OTP нэвтрэлт
+        \item \textbf{Firestore Database}\\→ users, bookings,\\fixed\_bookings
+        \item \textbf{Cloud Functions}\\→ chat function логууд
+      \end{enumerate}
+    \end{column}
+    \begin{column}{0.60\textwidth}
+      % Firebase console mockup
+      \begin{tikzpicture}[scale=0.75]
+        % Browser bar
+        \fill[gray!20] (0,5.8) rectangle (10,6.4);
+        \node[font=\tiny, gray!60, left] at (9.8,6.1)
+          {\texttt{console.firebase.google.com/project/dz-zaal}};
+        % Header
+        \fill[black!85] (0,5.2) rectangle (10,5.8);
+        \node[font=\small, white] at (2.5,5.5) {\textbf{Firebase} \quad dz-zaal};
+        % Left sidebar
+        \fill[gray!10] (0,0) rectangle (2.2,5.2);
+        \foreach \y/\lbl in {4.7/Authentication, 4.2/Firestore Database,
+                              3.7/Functions, 3.2/Hosting, 2.7/Storage} {
+          \node[font=\tiny, black!70, right] at (0.1,\y) {\lbl};
+          \draw[gray!30] (0,\y-0.25) -- (2.2,\y-0.25);
+        }
+        % Highlight Authentication
+        \fill[blue!15] (0,4.45) rectangle (2.2,4.7);
+        % Main content area
+        \fill[white] (2.2,0) rectangle (10,5.2);
+        % Table header
+        \fill[gray!15] (2.3,4.7) rectangle (9.9,5.1);
+        \node[font=\tiny, black!70] at (4.5,4.9) {Identifier};
+        \node[font=\tiny, black!70] at (7.5,4.9) {Provider};
+        \node[font=\tiny, black!70] at (9.2,4.9) {Created};
+        % Rows (manual — foreach-д / тэмдэгт асуудал гардаг)
+        \node[font=\tiny] at (4.5,4.3) {+976 9900 XXXX};
+        \node[font=\tiny, green!60!black] at (7.2,4.3) {Phone};
+        \node[font=\tiny, gray!60] at (9.2,4.3) {2026-03-20};
+        \draw[gray!20] (2.2,4.1) -- (9.9,4.1);
+        \node[font=\tiny] at (4.5,3.9) {+976 8811 XXXX};
+        \node[font=\tiny, green!60!black] at (7.2,3.9) {Phone};
+        \node[font=\tiny, gray!60] at (9.2,3.9) {2026-03-19};
+        \draw[gray!20] (2.2,3.7) -- (9.9,3.7);
+        \node[font=\tiny] at (4.5,3.5) {+976 9955 XXXX};
+        \node[font=\tiny, green!60!black] at (7.2,3.5) {Phone};
+        \node[font=\tiny, gray!60] at (9.2,3.5) {2026-03-18};
+        \draw[gray!20] (2.2,3.3) -- (9.9,3.3);
+        \node[font=\tiny] at (4.5,3.1) {+976 7700 XXXX};
+        \node[font=\tiny, green!60!black] at (7.2,3.1) {Phone};
+        \node[font=\tiny, gray!60] at (9.2,3.1) {2026-03-17};
+        \draw[gray!20] (2.2,2.9) -- (9.9,2.9);
+        \node[font=\tiny, navyblue] at (6.0,0.3)
+          {\textbf{OTP-р нэвтэрсэн хэрэглэгчдийн жагсаалт}};
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Firestore Database — захиалгын өгөгдөл}
+  \begin{columns}[T]
+    \begin{column}{0.36\textwidth}
+      \textbf{Console URL:}\\
+      \small\texttt{.../firestore/data}
+      \vspace{8pt}
+
+      \textbf{Харах боломжтой зүйлс:}
+      \begin{itemize}
+        \item \texttt{users} — бүртгэлтэй хэрэглэгч
+        \item \texttt{bookings} — бүх захиалга\\
+          status: \textcolor{okgreen}{active} /\\
+          \textcolor{gray}{completed} /\\
+          \textcolor{badred}{cancelled}
+        \item \texttt{fixed\_bookings} —\\
+          байгууллагын тогтмол цаг
+      \end{itemize}
+      \vspace{4pt}
+      \begin{beamercolorbox}[sep=3pt,rounded=true]{block body}
+        \tiny Захиалгын код:\\\textbf{DBK-} + 5 оронтой тоо
+      \end{beamercolorbox}
+    \end{column}
+    \begin{column}{0.62\textwidth}
+      % Firestore mockup
+      \begin{tikzpicture}[scale=0.74]
+        \fill[gray!20] (0,5.8) rectangle (11,6.3);
+        \node[font=\tiny, gray!60] at (5.5,6.05)
+          {\texttt{console.firebase.google.com/project/dz-zaal/firestore/data}};
+        \fill[white] (0,0) rectangle (11,5.8);
+        % 3 column panels
+        \fill[gray!8]  (0,0)   rectangle (2.5,5.8);
+        \fill[gray!5]  (2.6,0) rectangle (5.4,5.8);
+        \fill[white]   (5.5,0) rectangle (11,5.8);
+        % Column headers
+        \fill[navyblue!80] (0,5.3) rectangle (2.5,5.8);
+        \fill[navyblue!60] (2.6,5.3) rectangle (5.4,5.8);
+        \fill[navyblue!40] (5.5,5.3) rectangle (11,5.8);
+        \node[font=\tiny,white] at (1.25,5.55) {\textbf{Collections}};
+        \node[font=\tiny,white] at (4.0,5.55)  {\textbf{Documents}};
+        \node[font=\tiny,white] at (8.25,5.55) {\textbf{Fields}};
+        % Collections
+        \foreach \y/\coll/\active in {
+          5.0/users/1, 4.6/bookings/0, 4.2/fixed\_bookings/0} {
+          \ifnum\active=1
+            \fill[blue!20] (0,\y-0.18) rectangle (2.5,\y+0.18);
+          \fi
+          \node[font=\tiny] at (1.25,\y) {\texttt{\coll}};
+        }
+        % Documents (bookings)
+        \foreach \y/\doc in {
+          5.0/DBK-48271, 4.6/DBK-33904, 4.2/DBK-71053,
+          3.8/DBK-29447, 3.4/DBK-10823} {
+          \node[font=\tiny] at (4.0,\y) {\texttt{\doc}};
+          \draw[gray!25] (2.6,\y-0.2) -- (5.4,\y-0.2);
+        }
+        % Fields for selected document
+        \node[font=\tiny, gray!60] at (8.25,4.8)
+          {\texttt{bookingCode: "DBK-48271"}};
+        \node[font=\tiny, gray!60] at (8.25,4.4)
+          {\texttt{userId: "abc123uid"}};
+        \node[font=\tiny, gray!60] at (8.25,4.0)
+          {\texttt{venueId: "goviin\_arena"}};
+        \node[font=\tiny, gray!60] at (8.25,3.6)
+          {\texttt{date: "2026-03-24"}};
+        \node[font=\tiny, gray!60] at (8.25,3.2)
+          {\texttt{timeSlot: "10:00-11:00"}};
+        \node[font=\tiny, okgreen] at (8.25,2.8)
+          {\texttt{status: "active"}};
+        \node[font=\tiny, gray!60] at (8.25,2.4)
+          {\texttt{createdAt: Mar 24, 2026}};
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+%--- AWS console ---------------------------------------------------------------
+\begin{frame}{AWS консол — EC2 ба ECR}
+  \begin{columns}[T]
+    \begin{column}{0.38\textwidth}
+      \textbf{EC2 Console URL:}\\
+      \small\texttt{ap-northeast-1.console.\\aws.amazon.com/ec2}
+      \vspace{6pt}
+
+      \textbf{EC2 Instance:}
+      \begin{itemize}
+        \item Instance ID: \texttt{i-0abc...}
+        \item IP: \texttt{13.112.91.27}
+        \item Region: ap-northeast-1 (Tokyo)
+        \item Status: \textcolor{okgreen}{\textbf{running}}
+        \item Port 3000 нээлттэй
+      \end{itemize}
+      \vspace{4pt}
+      \textbf{ECR Repository:}
+      \begin{itemize}
+        \item Repo: \texttt{dz-zaal}
+        \item Docker images SHA tag-тай
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.60\textwidth}
+      \begin{tikzpicture}[scale=0.75]
+        % AWS header
+        \fill[black!90] (0,5.6) rectangle (10,6.2);
+        \node[font=\small, white] at (1.2,5.9) {\textbf{aws}};
+        \node[font=\tiny, white] at (4.0,5.9) {EC2 $>$ Instances};
+        % EC2 table
+        \fill[white] (0,0) rectangle (10,5.6);
+        \fill[gray!12] (0,5.1) rectangle (10,5.5);
+        \node[font=\tiny,black!70] at (1.0,5.3) {Name};
+        \node[font=\tiny,black!70] at (3.5,5.3) {Instance ID};
+        \node[font=\tiny,black!70] at (6.0,5.3) {State};
+        \node[font=\tiny,black!70] at (8.0,5.3) {Public IP};
+        % Running instance row
+        \fill[green!6] (0,4.6) rectangle (10,5.0);
+        \node[font=\tiny] at (1.0,4.8) {dz-zaal-backend};
+        \node[font=\tiny] at (3.5,4.8) {\texttt{i-0a3f...d8c}};
+        \fill[okgreen!20,rounded corners=2pt] (5.2,4.62) rectangle (6.8,4.98);
+        \node[font=\tiny,okgreen] at (6.0,4.8)
+          {$\bullet$ running};
+        \node[font=\tiny] at (8.0,4.8) {\texttt{13.112.91.27}};
+        \draw[gray!25] (0,4.6) -- (10,4.6);
+        % ECR section below
+        \fill[gray!8] (0,0) rectangle (10,3.5);
+        \fill[black!90] (0,3.2) rectangle (10,3.5);
+        \node[font=\tiny, white] at (3.0,3.35)
+          {ECR $>$ Repositories $>$ dz-zaal};
+        \fill[gray!12] (0,2.8) rectangle (10,3.1);
+        \node[font=\tiny,black!70] at (1.5,2.95) {Image tag};
+        \node[font=\tiny,black!70] at (5.0,2.95) {Pushed at};
+        \node[font=\tiny,black!70] at (8.0,2.95) {Size};
+        \node[font=\tiny] at (1.5,2.5) {\texttt{a3f7d8c2}};
+        \node[font=\tiny,gray!60] at (5.0,2.5) {2026-03-24 14:22};
+        \node[font=\tiny,gray!60] at (8.0,2.5) {48.3 MB};
+        \draw[gray!20] (0,2.3) -- (10,2.3);
+        \node[font=\tiny] at (1.5,2.1) {\texttt{b1e9f3a4}};
+        \node[font=\tiny,gray!60] at (5.0,2.1) {2026-03-22 09:15};
+        \node[font=\tiny,gray!60] at (8.0,2.1) {47.9 MB};
+        \draw[gray!20] (0,1.9) -- (10,1.9);
+        \node[font=\tiny] at (1.5,1.7) {\texttt{c4d2b8e1}};
+        \node[font=\tiny,gray!60] at (5.0,1.7) {2026-03-20 16:40};
+        \node[font=\tiny,gray!60] at (8.0,1.7) {47.8 MB};
+        \draw[gray!20] (0,1.5) -- (10,1.5);
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+%--- GitHub Actions ------------------------------------------------------------
+\begin{frame}{GitHub Actions — CI/CD workflow}
+  \begin{columns}[T]
+    \begin{column}{0.38\textwidth}
+      \textbf{URL:}\\
+      \small\texttt{github.com/[repo]/actions}
+      \vspace{6pt}
+
+      \textbf{Workflow файл:}\\
+      \texttt{.github/workflows/\\deploy.yml}
+      \vspace{6pt}
+
+      \textbf{Trigger:}
+      \begin{itemize}
+        \item \texttt{backend/} хавтаст\\push хийхэд
+        \item \texttt{main} branch дээр
+      \end{itemize}
+      \vspace{4pt}
+      \textbf{Secrets хадгалах:}
+      \begin{itemize}
+        \item \texttt{AWS\_ACCESS\_KEY\_ID}
+        \item \texttt{AWS\_SECRET\_ACCESS\_KEY}
+        \item \texttt{EC2\_SSH\_KEY}
+        \item \texttt{EC2\_HOST}
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.60\textwidth}
+      \begin{tikzpicture}[scale=0.75]
+        % GitHub header
+        \fill[black!88] (0,5.8) rectangle (10,6.4);
+        \node[font=\small, white] at (1.5,6.1)
+          {\textbf{GitHub Actions}};
+        \node[font=\tiny, white] at (6.0,6.1)
+          {dz-zaal / .github / workflows / deploy.yml};
+        % Content
+        \fill[white] (0,0) rectangle (10,5.8);
+        \fill[gray!10] (0,5.3) rectangle (10,5.8);
+        \node[font=\small, black!80] at (2.0,5.55)
+          {\textbf{Deploy Backend}};
+        % Workflow runs (manual rows)
+        \fill[okgreen!10] (0.1,4.62) rectangle (9.9,5.18);
+        \fill[okgreen!70,rounded corners=2pt] (0.15,4.72) rectangle (0.65,5.08);
+        \node[font=\small,white] at (0.4,4.9) {$\checkmark$};
+        \node[font=\tiny,right] at (0.7,5.02) {backend: AI endpoint fix};
+        \node[font=\tiny,gray!60,right] at (0.7,4.74) {\texttt{a3f7d8c} \enspace Mar 24 14:20 \enspace 3 min};
+        \draw[gray!20] (0,4.62) -- (10,4.62);
+
+        \fill[okgreen!10] (0.1,4.02) rectangle (9.9,4.58);
+        \fill[okgreen!70,rounded corners=2pt] (0.15,4.12) rectangle (0.65,4.48);
+        \node[font=\small,white] at (0.4,4.3) {$\checkmark$};
+        \node[font=\tiny,right] at (0.7,4.42) {backend: add cron cleanup};
+        \node[font=\tiny,gray!60,right] at (0.7,4.14) {\texttt{b1e9f3a} \enspace Mar 22 09:12 \enspace 3 min};
+        \draw[gray!20] (0,4.02) -- (10,4.02);
+
+        \fill[okgreen!10] (0.1,3.42) rectangle (9.9,3.98);
+        \fill[okgreen!70,rounded corners=2pt] (0.15,3.52) rectangle (0.65,3.88);
+        \node[font=\small,white] at (0.4,3.7) {$\checkmark$};
+        \node[font=\tiny,right] at (0.7,3.82) {backend: update groq model};
+        \node[font=\tiny,gray!60,right] at (0.7,3.54) {\texttt{c4d2b8e} \enspace Mar 20 16:38 \enspace 4 min};
+        \draw[gray!20] (0,3.42) -- (10,3.42);
+
+        \fill[okgreen!10] (0.1,2.82) rectangle (9.9,3.38);
+        \fill[okgreen!70,rounded corners=2pt] (0.15,2.92) rectangle (0.65,3.28);
+        \node[font=\small,white] at (0.4,3.1) {$\checkmark$};
+        \node[font=\tiny,right] at (0.7,3.22) {backend: fix CORS headers};
+        \node[font=\tiny,gray!60,right] at (0.7,2.94) {\texttt{d8e1c3f} \enspace Mar 18 11:05 \enspace 3 min};
+        \draw[gray!20] (0,2.82) -- (10,2.82);
+
+        \fill[okgreen!10] (0.1,2.22) rectangle (9.9,2.78);
+        \fill[okgreen!70,rounded corners=2pt] (0.15,2.32) rectangle (0.65,2.68);
+        \node[font=\small,white] at (0.4,2.5) {$\checkmark$};
+        \node[font=\tiny,right] at (0.7,2.62) {backend: initial deploy};
+        \node[font=\tiny,gray!60,right] at (0.7,2.34) {\texttt{e2f4a1b} \enspace Mar 15 09:00 \enspace 4 min};
+        \draw[gray!20] (0,2.22) -- (10,2.22);
+
+        % Step detail at bottom
+        \fill[gray!6] (0,0) rectangle (10,1.9);
+        \node[font=\tiny,black!70] at (5,1.72)
+          {\textbf{Сүүлийн run-ийн алхмууд:}};
+        % Steps manually
+        \fill[okgreen!20,rounded corners=2pt] (0.1,0.2) rectangle (1.8,1.3);
+        \node[font=\tiny,okgreen] at (0.95,1.05) {$\checkmark$};
+        \node[font=\tiny,align=center] at (0.95,0.62) {Checkout};
+
+        \fill[okgreen!20,rounded corners=2pt] (2.0,0.2) rectangle (4.0,1.3);
+        \node[font=\tiny,okgreen] at (3.0,1.05) {$\checkmark$};
+        \node[font=\tiny,align=center] at (3.0,0.62) {AWS\\Credentials};
+
+        \fill[okgreen!20,rounded corners=2pt] (4.2,0.2) rectangle (6.0,1.3);
+        \node[font=\tiny,okgreen] at (5.1,1.05) {$\checkmark$};
+        \node[font=\tiny,align=center] at (5.1,0.62) {ECR Login};
+
+        \fill[okgreen!20,rounded corners=2pt] (6.2,0.2) rectangle (8.4,1.3);
+        \node[font=\tiny,okgreen] at (7.3,1.05) {$\checkmark$};
+        \node[font=\tiny,align=center] at (7.3,0.62) {Docker\\Build+Push};
+
+        \fill[okgreen!20,rounded corners=2pt] (8.6,0.2) rectangle (10.0,1.3);
+        \node[font=\tiny,okgreen] at (9.3,1.05) {$\checkmark$};
+        \node[font=\tiny,align=center] at (9.3,0.62) {SSH\\Deploy};
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+%--- AI consoles ---------------------------------------------------------------
+\begin{frame}{AI API консолууд — Groq ба Anthropic}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Groq Console}
+        \textbf{URL:} \texttt{console.groq.com}\\[4pt]
+        \textbf{Model:} \texttt{llama-3.1-8b-instant}\\
+        \textbf{API base:} \texttt{api.groq.com/openai/v1}\\
+        \textbf{SDK:} OpenAI-compatible (\texttt{openai} ^6.29)\\[4pt]
+        \textbf{Консолд харагдах:}
+        \begin{itemize}
+          \item API key удирдах
+          \item Request/token usage лог
+          \item Rate limits (6000 req/min)
+          \item Latency: \textbf{дундаж 0.9с}
+        \end{itemize}
+        \vspace{4pt}
+        \begin{beamercolorbox}[sep=3pt,rounded=true]{block body}
+          \tiny\textbf{Backend server.js:}\\
+          \texttt{baseURL: 'https://api.groq.com/openai/v1'}\\
+          \texttt{apiKey: process.env.GROQ\_API\_KEY}
+        \end{beamercolorbox}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Anthropic Console}
+        \textbf{URL:} \texttt{console.anthropic.com}\\[4pt]
+        \textbf{Model:} \texttt{claude-haiku-4-5-20251001}\\
+        \textbf{SDK:} \texttt{@anthropic-ai/sdk} ^0.78\\
+        \textbf{Deploy:} Firebase Cloud Functions\\[4pt]
+        \textbf{Консолд харагдах:}
+        \begin{itemize}
+          \item API key удирдах
+          \item Token usage (input/output)
+          \item Latency: \textbf{дундаж 1.4с}
+          \item Cost per 1M tokens
+        \end{itemize}
+        \vspace{4pt}
+        \begin{beamercolorbox}[sep=3pt,rounded=true]{block body}
+          \tiny\textbf{functions/index.js:}\\
+          \texttt{model: 'claude-haiku-4-5-20251001'}\\
+          \texttt{secret: CLAUDE\_API\_KEY}
+        \end{beamercolorbox}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+%--- Flutter packages ----------------------------------------------------------
+\begin{frame}{Flutter / Dart package-ууд — pub.dev}
+  \begin{center}
+  \small
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabular}{llll}
+    \toprule
+    \rowcolor{navyblue}
+    {\color{white}\textbf{Package}} &
+    {\color{white}\textbf{Хувилбар}} &
+    {\color{white}\textbf{Зориулалт}} &
+    {\color{white}\textbf{pub.dev URL}} \\
+    \midrule
+    \rowcolor{rowgray}
+    firebase\_auth         & 5.3.1  & OTP утасны нэвтрэлт   & \texttt{.../firebase\_auth} \\
+    cloud\_firestore       & 5.4.4  & Өгөгдлийн сан (realtime) & \texttt{.../cloud\_firestore} \\
+    \rowcolor{rowgray}
+    cloud\_functions       & 5.1.3  & Cloud Functions дуудах & \texttt{.../cloud\_functions} \\
+    firebase\_core         & 3.6.0  & Firebase SDK суурь    & \texttt{.../firebase\_core} \\
+    \rowcolor{rowgray}
+    flutter\_local\_notifications & 18.0.0 & Офлайн сануулга & \texttt{.../flutter\_local...} \\
+    timezone               & 0.9.4  & Цагийн бүс (сануулганд) & \texttt{.../timezone} \\
+    \rowcolor{rowgray}
+    google\_fonts          & 6.1.0  & Montserrat фонт       & \texttt{.../google\_fonts} \\
+    http                   & 1.2.0  & REST API дуудах       & \texttt{.../http} \\
+    \rowcolor{rowgray}
+    intl                   & 0.19.0 & Огноо форматлах       & \texttt{.../intl} \\
+    cupertino\_icons       & 1.0.8  & iOS дүрсүүд           & \texttt{.../cupertino\_icons} \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vspace{2pt}
+  \begin{beamercolorbox}[sep=3pt,center,rounded=true]{block body}
+    \small Бүх package: \texttt{https://pub.dev/packages/[package-name]}
+  \end{beamercolorbox}
+\end{frame}
+
+%===============================================================================
+\section{Дүгнэлт}
+%===============================================================================
+\begin{frame}{Дүгнэлт}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+      \begin{block}{Хэрэгжүүлсэн бүтээгдэхүүн}
+        \begin{itemize}
+          \item[\YES] Flutter мобайл апп (Android + iOS)
+          \item[\YES] Firebase Auth (OTP) + Cloud Firestore
+          \item[\YES] Node.js/Express REST API бэкэнд
+          \item[\YES] Docker + AWS EC2 байршуулалт
+          \item[\YES] GitHub Actions CI/CD хоолой
+          \item[\YES] Claude Haiku + Groq AI чатбот
+          \item[\YES] 10/10 функциональ тест тэнцсэн
+        \end{itemize}
+      \end{block}
+      \vspace{4pt}
+      \textbf{Бүх 7 зорилт биелэгдсэн.}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \begin{block}{Цаашдын хөгжлийн чиглэл}
+        \begin{itemize}
+          \item QPay / SocialPay төлбөрийн систем
+          \item Push мэдэгдэл (FCM)
+          \item Захирагчийн admin панел
+          \item GPS байршлын функц
+          \item Статистик, тайлан үүсгэх
+          \item iOS App Store, Google Play-д нийтлэх
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+%--- Thank you -----------------------------------------------------------------
+\begin{frame}[plain]
+  \vspace{-0.3cm}
+  {\color{navyblue}\hrule height 2.5pt}
+  \vspace{0.5cm}
+  \begin{center}
+    {\Huge\bfseries\color{navyblue} Анхааралтай сонссонд}\\[6pt]
+    {\Huge\bfseries\color{goldcolor} баярлалаа!}
+  \end{center}
+  \vspace{0.4cm}
+  {\color{goldcolor}\hrule height 1.5pt}
+  \vspace{0.4cm}
+  \begin{center}
+    \begin{beamercolorbox}[sep=0.6em,center,rounded=true]{block title}
+      \large Асуулт хүлээн авах боломжтой
+    \end{beamercolorbox}
+  \end{center}
+  \vspace{0.3cm}
+  \begin{center}
+    \small
+    \begin{tabular}{rl}
+      \textbf{Оюутан:} & М.Түвшинжаргал (В221940619) \\
+      \textbf{Тэнхим:} & Мэдээллийн технологийн тэнхим, ШУТИС-МХТС \\
+      \textbf{Жил:}    & 2026 он
+    \end{tabular}
+  \end{center}
+  \vspace{0.3cm}
+  {\color{navyblue}\hrule height 2.5pt}
+\end{frame}
+
+\end{document}

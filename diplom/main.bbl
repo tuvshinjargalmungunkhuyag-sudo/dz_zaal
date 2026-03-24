@@ -1,0 +1,528 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{thesis_mobile}{thesis}{}{}
+      \name{author}{1}{}{%
+        {{hash=70609d42f22dacc9cef054d436dfbd79}{%
+           family={Билгүүн},
+           familyi={Б\bibinitperiod},
+           given={Амарсайханы},
+           giveni={А\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {ШУТИС-МХТС}%
+      }
+      \strng{namehash}{70609d42f22dacc9cef054d436dfbd79}
+      \strng{fullhash}{70609d42f22dacc9cef054d436dfbd79}
+      \strng{fullhashraw}{70609d42f22dacc9cef054d436dfbd79}
+      \strng{bibnamehash}{70609d42f22dacc9cef054d436dfbd79}
+      \strng{authorbibnamehash}{70609d42f22dacc9cef054d436dfbd79}
+      \strng{authornamehash}{70609d42f22dacc9cef054d436dfbd79}
+      \strng{authorfullhash}{70609d42f22dacc9cef054d436dfbd79}
+      \strng{authorfullhashraw}{70609d42f22dacc9cef054d436dfbd79}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Ухаалаг гар утасны аппликейшн хөгжүүлэлт}
+      \field{type}{Бакалаврын төгсөлтийн ажил}
+      \field{year}{2022}
+      \field{dateera}{ce}
+    \endentry
+    \entry{mobile_mongol}{book}{}{}
+      \name{author}{2}{}{%
+        {{hash=bb2f5404294f9409a46117d0199431b3}{%
+           family={Т.Амартүвшин},
+           familyi={Т\bibinitperiod}}}%
+        {{hash=b4099d81bfd8c8c8ce06e6c8b9228fd4}{%
+           family={Б.Зоригтбаатар},
+           familyi={Б\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Улаанбаатар}%
+      }
+      \list{publisher}{1}{%
+        {ШУТИС, Хэвлэлийн газар}%
+      }
+      \strng{namehash}{325f0e9671f42d15a559c9befbe8d716}
+      \strng{fullhash}{325f0e9671f42d15a559c9befbe8d716}
+      \strng{fullhashraw}{325f0e9671f42d15a559c9befbe8d716}
+      \strng{bibnamehash}{325f0e9671f42d15a559c9befbe8d716}
+      \strng{authorbibnamehash}{325f0e9671f42d15a559c9befbe8d716}
+      \strng{authornamehash}{325f0e9671f42d15a559c9befbe8d716}
+      \strng{authorfullhash}{325f0e9671f42d15a559c9befbe8d716}
+      \strng{authorfullhashraw}{325f0e9671f42d15a559c9befbe8d716}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Мобайл аппликейшн хөгжүүлэлт}
+      \field{year}{2020}
+      \field{dateera}{ce}
+    \endentry
+    \entry{flutter_doc}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=11bb1d2fc83a61c4b40b81c2f83149db}{%
+           family={LLC},
+           familyi={L\bibinitperiod},
+           given={Google},
+           giveni={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{fullhash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{fullhashraw}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{bibnamehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authorbibnamehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authornamehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authorfullhash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authorfullhashraw}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \field{extraname}{1}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Flutter — Build apps for any screen}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://flutter.dev/docs
+      \endverb
+      \verb{url}
+      \verb https://flutter.dev/docs
+      \endverb
+    \endentry
+    \entry{material3}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=11bb1d2fc83a61c4b40b81c2f83149db}{%
+           family={LLC},
+           familyi={L\bibinitperiod},
+           given={Google},
+           giveni={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{fullhash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{fullhashraw}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{bibnamehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authorbibnamehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authornamehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authorfullhash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authorfullhashraw}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \field{extraname}{2}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Material Design 3}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://m3.material.io
+      \endverb
+      \verb{url}
+      \verb https://m3.material.io
+      \endverb
+    \endentry
+    \entry{dart_doc}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=11bb1d2fc83a61c4b40b81c2f83149db}{%
+           family={LLC},
+           familyi={L\bibinitperiod},
+           given={Google},
+           giveni={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{fullhash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{fullhashraw}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{bibnamehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authorbibnamehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authornamehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authorfullhash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authorfullhashraw}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \field{extraname}{3}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Dart Programming Language}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://dart.dev/guides
+      \endverb
+      \verb{url}
+      \verb https://dart.dev/guides
+      \endverb
+    \endentry
+    \entry{firebase_doc}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=11bb1d2fc83a61c4b40b81c2f83149db}{%
+           family={LLC},
+           familyi={L\bibinitperiod},
+           given={Google},
+           giveni={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{fullhash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{fullhashraw}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{bibnamehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authorbibnamehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authornamehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authorfullhash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authorfullhashraw}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \field{extraname}{4}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Firebase — App Development Platform}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://firebase.google.com/docs
+      \endverb
+      \verb{url}
+      \verb https://firebase.google.com/docs
+      \endverb
+    \endentry
+    \entry{firestore_doc}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=11bb1d2fc83a61c4b40b81c2f83149db}{%
+           family={LLC},
+           familyi={L\bibinitperiod},
+           given={Google},
+           giveni={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{fullhash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{fullhashraw}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{bibnamehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authorbibnamehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authornamehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authorfullhash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authorfullhashraw}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \field{extraname}{5}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Cloud Firestore — Firebase}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://firebase.google.com/docs/firestore
+      \endverb
+      \verb{url}
+      \verb https://firebase.google.com/docs/firestore
+      \endverb
+    \endentry
+    \entry{firebase_auth}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=11bb1d2fc83a61c4b40b81c2f83149db}{%
+           family={LLC},
+           familyi={L\bibinitperiod},
+           given={Google},
+           giveni={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{fullhash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{fullhashraw}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{bibnamehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authorbibnamehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authornamehash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authorfullhash}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \strng{authorfullhashraw}{11bb1d2fc83a61c4b40b81c2f83149db}
+      \field{extraname}{6}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Authenticate Users — Firebase Authentication}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://firebase.google.com/docs/auth
+      \endverb
+      \verb{url}
+      \verb https://firebase.google.com/docs/auth
+      \endverb
+    \endentry
+    \entry{nodejs_doc}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=263642944f6c498301458458c276f5f3}{%
+           family={{OpenJS Foundation}},
+           familyi={O\bibinitperiod}}}%
+      }
+      \strng{namehash}{263642944f6c498301458458c276f5f3}
+      \strng{fullhash}{263642944f6c498301458458c276f5f3}
+      \strng{fullhashraw}{263642944f6c498301458458c276f5f3}
+      \strng{bibnamehash}{263642944f6c498301458458c276f5f3}
+      \strng{authorbibnamehash}{263642944f6c498301458458c276f5f3}
+      \strng{authornamehash}{263642944f6c498301458458c276f5f3}
+      \strng{authorfullhash}{263642944f6c498301458458c276f5f3}
+      \strng{authorfullhashraw}{263642944f6c498301458458c276f5f3}
+      \field{extraname}{1}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Node.js — JavaScript runtime built on Chrome's V8 engine}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://nodejs.org/en/docs
+      \endverb
+      \verb{url}
+      \verb https://nodejs.org/en/docs
+      \endverb
+    \endentry
+    \entry{expressjs_doc}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=263642944f6c498301458458c276f5f3}{%
+           family={{OpenJS Foundation}},
+           familyi={O\bibinitperiod}}}%
+      }
+      \strng{namehash}{263642944f6c498301458458c276f5f3}
+      \strng{fullhash}{263642944f6c498301458458c276f5f3}
+      \strng{fullhashraw}{263642944f6c498301458458c276f5f3}
+      \strng{bibnamehash}{263642944f6c498301458458c276f5f3}
+      \strng{authorbibnamehash}{263642944f6c498301458458c276f5f3}
+      \strng{authornamehash}{263642944f6c498301458458c276f5f3}
+      \strng{authorfullhash}{263642944f6c498301458458c276f5f3}
+      \strng{authorfullhashraw}{263642944f6c498301458458c276f5f3}
+      \field{extraname}{2}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Express — Fast, unopinionated, minimalist web framework for Node.js}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://expressjs.com
+      \endverb
+      \verb{url}
+      \verb https://expressjs.com
+      \endverb
+    \endentry
+    \entry{docker_doc}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=4bd3b392874c74fba4ed57a24eae0ac1}{%
+           family={{Docker Inc.}},
+           familyi={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{4bd3b392874c74fba4ed57a24eae0ac1}
+      \strng{fullhash}{4bd3b392874c74fba4ed57a24eae0ac1}
+      \strng{fullhashraw}{4bd3b392874c74fba4ed57a24eae0ac1}
+      \strng{bibnamehash}{4bd3b392874c74fba4ed57a24eae0ac1}
+      \strng{authorbibnamehash}{4bd3b392874c74fba4ed57a24eae0ac1}
+      \strng{authornamehash}{4bd3b392874c74fba4ed57a24eae0ac1}
+      \strng{authorfullhash}{4bd3b392874c74fba4ed57a24eae0ac1}
+      \strng{authorfullhashraw}{4bd3b392874c74fba4ed57a24eae0ac1}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Docker Documentation — Develop faster. Run anywhere.}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://docs.docker.com
+      \endverb
+      \verb{url}
+      \verb https://docs.docker.com
+      \endverb
+    \endentry
+    \entry{aws_ec2_doc}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=3eb2c1a57a8160029f036e3dcbf84bf1}{%
+           family={{Amazon Web Services}},
+           familyi={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{fullhash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{fullhashraw}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{bibnamehash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{authorbibnamehash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{authornamehash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{authorfullhash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{authorfullhashraw}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \field{extraname}{1}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Amazon EC2 — Secure and resizable compute capacity in the cloud}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://aws.amazon.com/ec2
+      \endverb
+      \verb{url}
+      \verb https://aws.amazon.com/ec2
+      \endverb
+    \endentry
+    \entry{aws_ecr_doc}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=3eb2c1a57a8160029f036e3dcbf84bf1}{%
+           family={{Amazon Web Services}},
+           familyi={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{fullhash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{fullhashraw}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{bibnamehash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{authorbibnamehash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{authornamehash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{authorfullhash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{authorfullhashraw}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \field{extraname}{2}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Amazon Elastic Container Registry — Share and deploy container software}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://aws.amazon.com/ecr
+      \endverb
+      \verb{url}
+      \verb https://aws.amazon.com/ecr
+      \endverb
+    \endentry
+    \entry{github_actions_doc}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=b79b798b2812cfe1c1431894a617897d}{%
+           family={{GitHub Inc.}},
+           familyi={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{b79b798b2812cfe1c1431894a617897d}
+      \strng{fullhash}{b79b798b2812cfe1c1431894a617897d}
+      \strng{fullhashraw}{b79b798b2812cfe1c1431894a617897d}
+      \strng{bibnamehash}{b79b798b2812cfe1c1431894a617897d}
+      \strng{authorbibnamehash}{b79b798b2812cfe1c1431894a617897d}
+      \strng{authornamehash}{b79b798b2812cfe1c1431894a617897d}
+      \strng{authorfullhash}{b79b798b2812cfe1c1431894a617897d}
+      \strng{authorfullhashraw}{b79b798b2812cfe1c1431894a617897d}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{GitHub Actions — Automate your workflow from idea to production}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://docs.github.com/en/actions
+      \endverb
+      \verb{url}
+      \verb https://docs.github.com/en/actions
+      \endverb
+    \endentry
+    \entry{anthropic_doc}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=f431db65cea024a5f19eab835afefee2}{%
+           family={{Anthropic}},
+           familyi={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{f431db65cea024a5f19eab835afefee2}
+      \strng{fullhash}{f431db65cea024a5f19eab835afefee2}
+      \strng{fullhashraw}{f431db65cea024a5f19eab835afefee2}
+      \strng{bibnamehash}{f431db65cea024a5f19eab835afefee2}
+      \strng{authorbibnamehash}{f431db65cea024a5f19eab835afefee2}
+      \strng{authornamehash}{f431db65cea024a5f19eab835afefee2}
+      \strng{authorfullhash}{f431db65cea024a5f19eab835afefee2}
+      \strng{authorfullhashraw}{f431db65cea024a5f19eab835afefee2}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Claude API Documentation — Anthropic}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://docs.anthropic.com
+      \endverb
+      \verb{url}
+      \verb https://docs.anthropic.com
+      \endverb
+    \endentry
+    \entry{groq_doc}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=e5435a111a13df2de27a12f988b73383}{%
+           family={{Groq Inc.}},
+           familyi={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{e5435a111a13df2de27a12f988b73383}
+      \strng{fullhash}{e5435a111a13df2de27a12f988b73383}
+      \strng{fullhashraw}{e5435a111a13df2de27a12f988b73383}
+      \strng{bibnamehash}{e5435a111a13df2de27a12f988b73383}
+      \strng{authorbibnamehash}{e5435a111a13df2de27a12f988b73383}
+      \strng{authornamehash}{e5435a111a13df2de27a12f988b73383}
+      \strng{authorfullhash}{e5435a111a13df2de27a12f988b73383}
+      \strng{authorfullhashraw}{e5435a111a13df2de27a12f988b73383}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Groq API Documentation — Fast AI Inference}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://console.groq.com/docs
+      \endverb
+      \verb{url}
+      \verb https://console.groq.com/docs
+      \endverb
+    \endentry
+    \entry{local_notifications_doc}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=61fc51379d66a124cdc99815f1cd6bcc}{%
+           family={Bui},
+           familyi={B\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{61fc51379d66a124cdc99815f1cd6bcc}
+      \strng{fullhash}{61fc51379d66a124cdc99815f1cd6bcc}
+      \strng{fullhashraw}{61fc51379d66a124cdc99815f1cd6bcc}
+      \strng{bibnamehash}{61fc51379d66a124cdc99815f1cd6bcc}
+      \strng{authorbibnamehash}{61fc51379d66a124cdc99815f1cd6bcc}
+      \strng{authornamehash}{61fc51379d66a124cdc99815f1cd6bcc}
+      \strng{authorfullhash}{61fc51379d66a124cdc99815f1cd6bcc}
+      \strng{authorfullhashraw}{61fc51379d66a124cdc99815f1cd6bcc}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{flutter\_local\_notifications — A cross platform plugin for displaying local notifications}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://pub.dev/packages/flutter_local_notifications
+      \endverb
+      \verb{url}
+      \verb https://pub.dev/packages/flutter_local_notifications
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

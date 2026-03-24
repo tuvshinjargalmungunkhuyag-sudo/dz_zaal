@@ -1,0 +1,254 @@
+% Бүлэг 2
+
+\chapter{ОНОЛЫН ҮНДЭС БА ТЕХНОЛОГИЙН СУДАЛГАА}
+
+\label{Chapter2}
+\pagecolor{white}
+
+%-------------------------------------------------------------------------------
+
+\section{2.1 Мобайл апп хөгжүүлэлтийн орчин үеийн арга хандлага}
+
+Мобайл аппликейшн хөгжүүлэлтэд өнөөдөр гурван үндсэн арга хандлага байдаг: \keyword{Native}, \keyword{Hybrid}, \keyword{Cross-platform}. Эдгээрийг харьцуулбал:
+
+\begin{itemize}
+    \item \textbf{Native апп} — iOS-д Swift/Objective-C, Android-д Kotlin/Java ашигладаг. Гүйцэтгэл хамгийн өндөр боловч платформ бүрт тусдаа код бичих шаардлагатай.
+    \item \textbf{Hybrid апп} — HTML, CSS, JavaScript ашиглан WebView дотор ажиллана. Хөгжүүлэлт хялбар боловч гүйцэтгэл доогуур.
+    \item \textbf{Cross-platform апп} — Нэг кодоос олон платформд гаргана. Flutter, React Native зэрэг хэрэгсэл ашигладаг.
+\end{itemize}
+
+Энэхүү ажилд cross-platform хандлагыг сонгосон бөгөөд үүний тулд \keyword{Flutter} фреймворкийг ашигласан. Flutter нь Google-ийн боловсруулсан, Dart хэл дээр суурилсан, Android болон iOS платформд нэгэн зэрэг ажиллах чадвартай, гүйцэтгэлийн хувьд native-д ойр шийдэл юм \cite{flutter_doc}. Cross-platform хандлагыг сонгосноор нэг кодын баазаас хоёр платформ дэмжих боломжтой бөгөөд хөгжүүлэлтийн нийт хугацаа, зардлыг мэдэгдэхүйц бууруулдаг.
+
+%-------------------------------------------------------------------------------
+
+\section{2.2 Flutter фреймворк ба Dart хэл}
+
+\subsection{2.2.1 Flutter-ийн тухай}
+
+\keyword{Flutter} нь Google компанийн 2018 онд гаргасан нээлттэй эхийн UI фреймворк юм. Flutter-ийн гол давуу талд дараахи зүйлс орно:
+
+\begin{itemize}
+    \item \textbf{Hot Reload} — Кодын өөрчлөлтийг апп-г дахин эхлүүлэхгүйгээр шууд харах боломж;
+    \item \textbf{Widget-д суурилсан архитектур} — UI бүрэлдэхүүн хэсэг болгоныг widget хэлбэрээр тодорхойлно;
+    \item \textbf{Skia/Impeller render engine} — Бүх UI-г платформаас үл хамааран өөрөө зурдаг тул платформ бүрт ижил харагдах баталгаа олгодог;
+    \item \textbf{Нэг кодын бааз} — Android, iOS, Web, Desktop платформд нэгэн зэрэг гаргах боломж.
+\end{itemize}
+
+Flutter нь version 3.x хүрэхдээ Material Design 3 (Material You) стандартыг бүрэн дэмждэг болж, \code{ThemeData} классаар дамжуулан дүрс, өнгө, хэлбэр бүх зүйлийг системтэй тохируулах боломж нээгдсэн \cite{material3}. Энэхүү ажилд Flutter 3.x хувилбарыг ашигласан.
+
+\subsection{2.2.2 Dart програмчлалын хэл}
+
+\keyword{Dart} нь Google-ийн боловсруулсан, object-oriented, strongly typed хэл юм. Flutter хөгжүүлэлтэд Dart ашигладаг бөгөөд дараахи онцлогтой \cite{dart_doc}:
+
+\begin{itemize}
+    \item \textbf{Async/Await} — Асинхрон үйлдлийг хялбараар бичих, Future болон Stream дэмждэг;
+    \item \textbf{Null Safety} — Null pointer алдааг compile time-д илрүүлэх;
+    \item \textbf{AOT ба JIT compile} — Хурдан хөгжүүлэлт (JIT) болон хурдан гүйцэтгэл (AOT) нэгэн зэрэг хангах;
+    \item \textbf{Stream} — Бодит цагийн өгөгдөл боловсруулах, Firebase Firestore-ийн real-time listener-тэй холбоход тохиромжтой.
+\end{itemize}
+
+Dart хэлний \code{class} бүтэц нь Flutter-ийн widget системтэй нягт уялддаг. \code{StatelessWidget} нь өөрчлөлтгүй UI-г илэрхийлж, \code{StatefulWidget} нь дотоод \code{State} объектоор дамжуулан өөрчлөгддөг UI-г удирддаг.
+
+\subsection{2.2.3 StatefulWidget ба setState-д суурилсан төлвийн удирдлага}
+
+Flutter апп-д төлвийн удирдлагыг (state management) зөв хийх нь апп-ын найдвартай байдал, гүйцэтгэлд шууд нөлөөлнө. Энэ ажилд \keyword{StatefulWidget} болон \keyword{setState} хослолыг ашигласан. Энэ нь Flutter-ийн бүтэц дэх хамгийн анхдагч, ойлгомжтой механизм бөгөөд нэмэлт багц шаарддаггүй.
+
+Provider, Riverpod зэрэг өндөр түвшний төлвийн удирдлагын хэрэгслүүдтэй харьцуулахад \code{setState} нь дараахи тохиолдолд тохиромжтой:
+
+\begin{itemize}
+    \item Апп-ын нарийн төвөгтэй байдал тодорхой хэмжээнд байх;
+    \item Шинэ хөгжүүлэгчдэд ойлгомжтой, уншиж болохуйц байх шаардлагатай;
+    \item Нэмэлт dependency нэмэхгүйгээр апп-ын хэмжээг жижиг байлгах.
+\end{itemize}
+
+\begin{lstlisting}[language={}, caption={StatefulWidget ба setState жишээ}]
+class BookingScreen extends StatefulWidget {
+  const BookingScreen({super.key});
+  @override
+  State<BookingScreen> createState() => _BookingScreenState();
+}
+
+class _BookingScreenState extends State<BookingScreen> {
+  String? selectedTimeSlot;
+  bool isLoading = false;
+
+  void _selectSlot(String slot) {
+    setState(() {
+      selectedTimeSlot = slot;
+    });
+  }
+  // ...
+}
+\end{lstlisting}
+
+Апп-ын ерөнхий навигацийг \code{BottomNavigationBar} widget дамжуулан 4 tab-тай хэрэгжүүлсэн: Нүүр (Home), Захиалгууд (Bookings), Чат (Chat), Профайл (Profile). Идэвхтэй tab-ийн индексийг root StatefulWidget-ийн \code{setState}-д хадгалдаг.
+
+%-------------------------------------------------------------------------------
+
+\section{2.3 Firebase бэкэнд үйлчилгээ}
+
+\keyword{Firebase} нь Google-ийн санал болгодог BaaS (Backend as a Service) платформ юм. Уг платформ нь мобайл апп хөгжүүлэгчдэд бэкэнд дэд бүтэц тохируулах шаардлагагүйгээр өгөгдлийн сан, нэвтрэлт зэрэг үйлчилгээг ашиглах боломж олгодог \cite{firebase_doc}.
+
+\subsection{2.3.1 Cloud Firestore}
+
+\keyword{Cloud Firestore} нь NoSQL, баримт жишгийн (document-oriented) өгөгдлийн сан юм \cite{firestore_doc}. Бодит цагийн шинэчлэлт (real-time listeners), өгөгдлийг offline хадгалах, автомат масштабчлал зэрэг онцлогтой. Firestore нь \textbf{Collection} болон \textbf{Document} бүтэцтэй:
+
+\begin{itemize}
+    \item \textbf{Collection} — Баримтуудын цуглуулга (энэ ажилд: \code{users}, \code{bookings}, \code{fixed\_bookings});
+    \item \textbf{Document} — Талбаруудын цуглуулга, JSON форматтай төстэй.
+\end{itemize}
+
+Firestore-ийн security rules нь collection бүрт хэрэглэгч хандах эрхийг нарийн тохируулах боломж олгодог. Энэ ажилд нэвтрэлт хийсэн хэрэглэгч зөвхөн өөрийн захиалгыг унших, шинэ захиалга бичих эрхтэй.
+
+\subsection{2.3.2 Firebase Authentication}
+
+\keyword{Firebase Authentication} нь хэрэглэгчийн нэвтрэлтийг аюулгүй удирдах үйлчилгээ юм \cite{firebase_auth}. Энэ ажилд зөвхөн \textbf{утасны дугаар OTP} нэвтрэлтийг ашигласан. Хэрэглэгч утасны дугаараа оруулснаар Firebase нь SMS OTP илгээж, хэрэглэгч кодоо оруулсны дараа \code{PhoneAuthCredential} үүсгэн нэвтрүүлдэг.
+
+Утасны дугааргүй, имэйл/нууц үгийн нэвтрэлт болон нийгмийн сүлжээний нэвтрэлтийг энэ ажилд ашиглаагүй. Энэ нь Монгол хэрэглэгчийн хувьд утасны дугаар бол хамгийн тохиромжтой, хурдан нэвтрэлтийн арга болохтой холбоотой.
+
+\subsection{2.3.3 Firebase Cloud Functions}
+
+\keyword{Firebase Cloud Functions} нь серверлэс (serverless) тооцооллын үйлчилгээ юм. Энэ ажилд Cloud Functions-ийг AI чатботын үндсэн endpoint болгон ашигласан: Flutter апп Cloud Function руу хүсэлт илгээхэд уг функц Anthropic-ийн API руу дамжуулан Claude Haiku хариулт авч буцаана. Cloud Functions нь серверийн дэд бүтцийг өөрөө удирддаг тул хөгжүүлэгч апп-ын логикт төвлөрөх боломжтой болдог.
+
+%-------------------------------------------------------------------------------
+
+\section{2.4 Node.js болон Express.js бэкэнд}
+
+\subsection{2.4.1 Node.js}
+
+\keyword{Node.js} нь Chrome V8 JavaScript engine дээр суурилсан серверийн талын JavaScript ажиллуулах орчин юм \cite{nodejs_doc}. Node.js-ийн гол давуу талууд:
+
+\begin{itemize}
+    \item \textbf{Event-driven, non-blocking I/O} — Олон нэгэн зэрэг холболтыг цөөн нөөцөөр боловсруулах чадвартай;
+    \item \textbf{npm экосистем} — Дэлхийн хамгийн том нээлттэй эхийн багцын сан;
+    \item \textbf{JavaScript нэгдсэн байдал} — Клиент болон серверийн талд нэг хэл ашиглах боломж;
+    \item \textbf{Хурдан хөгжүүлэлт} — JSON боловсруулалт, REST API бүтээхэд маш тохиромжтой.
+\end{itemize}
+
+\subsection{2.4.2 Express.js фреймворк}
+
+\keyword{Express.js} нь Node.js дээр суурилсан хөнгөн, уян хатан веб фреймворк юм \cite{expressjs_doc}. RESTful API барихад хамгийн өргөн хэрэглэгддэг Node.js фреймворк бөгөөд дараахи онцлогтой:
+
+\begin{itemize}
+    \item \textbf{Middleware систем} — Хүсэлт боловсруулах дамжлагуудыг зохион байгуулах;
+    \item \textbf{Router} — URL хаягийн чиглүүлэлтийг модуль болгон хуваах;
+    \item \textbf{Хөнгөн бүтэц} — Шаардлагатай зүйлийг л ачаалдаг.
+\end{itemize}
+
+Энэ ажлын бэкэнд нь Express.js ашиглан дараахи API endpoint-уудыг хангадаг: \code{/api/chat} (Groq AI чат), \code{/api/users} (хэрэглэгчийн мэдээлэл), \code{/api/bookings} (захиалгын менежмент), \code{/api/schedule} (цагийн хуваарь).
+
+\subsection{2.4.3 REST API архитектур}
+
+\keyword{REST} (Representational State Transfer) нь веб үйлчилгээний архитектурын хэв маяг юм. REST API нь HTTP протоколын GET, POST, PUT, DELETE арга ашиглан нөөцийг удирддаг. Энэ ажилд Flutter апп болон Node.js бэкэнд хоорондын харилцааг RESTful API-аар гүйцэтгэдэг бөгөөд өгөгдлийн солилцоог JSON форматаар хийдэг.
+
+%-------------------------------------------------------------------------------
+
+\section{2.5 Docker контейнержуулалт}
+
+\keyword{Docker} нь аппликейшн болон түүний бүх хамаарлыг тусгаарлагдсан контейнерт багцалдаг платформ юм \cite{docker_doc}. Docker ашиглахын давуу тал:
+
+\begin{itemize}
+    \item \textbf{Тогтвортой орчин} — Хөгжүүлэлтийн болон продакшн орчин яг ижил байх баталгаа;
+    \item \textbf{Хурдан байршуулалт} — Контейнер хэдхэн секундэд эхлэнэ;
+    \item \textbf{Тусгаарлалт} — Системийн бусад хэсгийг нөлөөлөхгүй;
+    \item \textbf{Хэмжээс (Scale)} — Хэрэгцээ нэмэгдэхэд хялбар масштабчлал.
+\end{itemize}
+
+\textbf{Dockerfile} нь апп-ын дүрсийг (image) тодорхойлдог тохиргооны файл юм. Express бэкэндийн Dockerfile нь Node.js суурь дүрс дээр \code{package.json}-г суулгаж, эх кодыг хуулан, 3000 портоор сервер эхлүүлдэг.
+
+\begin{lstlisting}[language={}, caption={Node.js бэкэндийн Dockerfile}]
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+EXPOSE 3000
+CMD ["node", "server.js"]
+\end{lstlisting}
+
+%-------------------------------------------------------------------------------
+
+\section{2.6 AWS дэд бүтэц}
+
+\subsection{2.6.1 Amazon EC2}
+
+\keyword{Amazon EC2} (Elastic Compute Cloud) нь AWS-ийн виртуал сервер (instance) үйлчилгээ юм \cite{aws_ec2_doc}. Энэ ажилд Node.js/Express бэкэнд сервер нь \textbf{ap-northeast-1} (Токио) бүсийн EC2 instance дээр ажилладаг. EC2 нь дараахи давуу талтай:
+
+\begin{itemize}
+    \item Серверийн тохиргоог бүрэн хянах боломж;
+    \item Docker контейнер ажиллуулах дэмжлэг;
+    \item Security Group-ийн тусламжтай сүлжээний хандалтыг нарийн удирдах.
+\end{itemize}
+
+\subsection{2.6.2 Amazon ECR}
+
+\keyword{Amazon ECR} (Elastic Container Registry) нь AWS-ийн Docker дүрсний бүртгэлийн үйлчилгээ юм \cite{aws_ecr_doc}. GitHub Actions-аар build хийсэн Docker дүрсийг ECR-д push хийж, EC2 instance тэр дүрсийг татан ажиллуулдаг. Энэ нь дүрсний нийцтэй удирдлага, нууцлалыг хангадаг.
+
+%-------------------------------------------------------------------------------
+
+\section{2.7 GitHub Actions CI/CD}
+
+\keyword{GitHub Actions} нь GitHub платформ дахь CI/CD (Continuous Integration / Continuous Deployment) автоматжуулалтын хэрэгсэл юм \cite{github_actions_doc}. Workflow нь YAML файлаар тодорхойлогддог бөгөөд тодорхой нөхцөл (жишээ: \code{backend/} хавтасны файл өөрчлөгдөх) биелэхэд автоматаар ажилладаг.
+
+Энэ ажлын CI/CD хоолой нь дараахи алхмуудтай:
+
+\begin{enumerate}
+    \item Хөгжүүлэгч \code{backend/} хавтаст өөрчлөлт хийж GitHub-д push хийнэ;
+    \item GitHub Actions trigger ажиллана;
+    \item Node.js бэкэнд кодоос Docker дүрс build хийнэ;
+    \item Build хийсэн дүрсийг AWS ECR-д push хийнэ;
+    \item SSH-аар AWS EC2 instance-д холбогдож ECR-аас шинэ дүрсийг pull хийнэ;
+    \item Хуучин контейнерийг зогсоож, шинэ контейнерийг ажиллуулна.
+\end{enumerate}
+
+GitHub Actions нь AWS-ийн нэвтрэлтийн нууцлал (access key, secret), EC2-ийн SSH түлхүүр зэргийг GitHub Secrets-д хадгалан аюулгүй ашигладаг.
+
+%-------------------------------------------------------------------------------
+
+\section{2.8 AI үйлчилгээнүүд}
+
+\subsection{2.8.1 Anthropic Claude Haiku}
+
+\keyword{Anthropic Claude Haiku 4.5} нь Anthropic компанийн хурдан, хэмнэлттэй LLM загвар юм \cite{anthropic_doc}. Claude Haiku нь богино хариулт өгдөг асуудлуудад маш хурдан ажиллах бөгөөд API дамжуулан ашиглах боломжтой. Энэ ажилд Firebase Cloud Functions дотор Anthropic-ийн SDK-г ашиглан спорт заалтай холбоотой асуултуудад хариулдаг AI чатбот хэрэгжүүлсэн. Cloud Functions нь API түлхүүрийг Flutter кодод задруулахгүйгээр аюулгүй хадгалах боломж олгодог.
+
+\subsection{2.8.2 Groq Llama 3.1-8b}
+
+\keyword{Groq} нь LPU (Language Processing Unit) процессор ашиглан LLM загваруудыг асаар хурдан ажиллуулдаг платформ юм \cite{groq_doc}. Groq дээрх \textbf{Llama 3.1-8b} загварыг Node.js/Express бэкэнд дамжуулан нөөц горим болгон ашигласан. Хэрэв Firebase Cloud Functions-ийн Claude хариулт удаан болох буюу алдаа гарвал Flutter апп \code{lib/config.dart}-д тодорхойлсон бэкэнд URL-аар Groq API-руу хандана.
+
+%-------------------------------------------------------------------------------
+
+\section{2.9 flutter\_local\_notifications}
+
+\keyword{flutter\_local\_notifications} нь Firebase Cloud Messaging (FCM) ашиглахгүйгээр төхөөрөмж дотор мэдэгдэл (local notification) харуулах Flutter багц юм \cite{local_notifications_doc}. Энэ нь серверийн тал байхгүйгээр мэдэгдэл үүсгэх боломжтой бөгөөд захиалгын 1 цагийн өмнө сануулга илгээхэд тохиромжтой:
+
+\begin{itemize}
+    \item Хэрэглэгч цаг захиалах үед Flutter апп тухайн цагаас 1 цаг хасаж сануулгын мэдэгдлийг schedule хийнэ;
+    \item FCM сервер байхгүй тул өгөгдлийн дамжуулалт хялбар, найдвартай;
+    \item Android болон iOS аль алинд дэмжлэгтэй.
+\end{itemize}
+
+%-------------------------------------------------------------------------------
+
+\section{2.10 Ижил төстэй системүүдийн дүн шинжилгээ}
+
+Дэлхийн болон Монгол дахь цаг захиалгын системүүдийг судалж дараахи дүгнэлтэд хүрсэн:
+
+\begin{itemize}
+    \item \textbf{Mindbody, Booksy} (дэлхийн платформ) — Олон функцтэй боловч орон нутгийн нөхцөлд тохируулах боломжгүй, Монгол хэлгүй;
+    \item \textbf{Монгол дахь ижил апп-ууд} — Хязгаарлагдмал функц, нэг заалд зориулагдсан, ерөнхий шийдэл дутмаг;
+    \item \textbf{Энэ ажлын давуу тал} — Даланзадгад хотын таван заалыг нэг платформд нэгтгэсэн, говийн дүр төрхтэй дизайн, AI чатбот, Node.js+Firebase хосолсон архитектур, Docker/AWS автоматжуулсан байршуулалт бүхий орчин үеийн шийдэл.
+\end{itemize}
+
+\begin{table}[h]
+\centering
+\caption{Цаг захиалгын системүүдийн харьцуулалт}
+\begin{tabular}{|p{3cm}|c|c|c|c|}
+\hline
+\textbf{Систем} & \textbf{Cross-platform} & \textbf{AI чат} & \textbf{CI/CD} & \textbf{Монгол хэл} \\ \hline
+Mindbody & Тийм & Үгүй & -- & Үгүй \\ \hline
+Booksy & Тийм & Үгүй & -- & Үгүй \\ \hline
+Орон нутгийн апп & Заримдаа & Үгүй & Үгүй & Тийм \\ \hline
+Энэ ажил & Тийм & Тийм & Тийм & Тийм \\ \hline
+\end{tabular}
+\label{tab:compare}
+\end{table}

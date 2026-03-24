@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Говийн Спорт — Backend Архитектур</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      padding: 40px 32px;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+    .header p {
+      margin-top: 8px;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+    .badge {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 4px 14px;
+      background: rgba(255,107,53,0.15);
+      border: 1px solid rgba(255,107,53,0.4);
+      border-radius: 20px;
+      color: #ff6b35;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* ── Section title ── */
+    .section-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 16px;
+      margin-top: 40px;
+    }
+
+    /* ── Layers diagram ── */
+    .layer-diagram {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-bottom: 48px;
+    }
+
+    .layer {
+      border-radius: 16px;
+      padding: 20px 24px;
+      position: relative;
+    }
+
+    .layer-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      opacity: 0.7;
+    }
+
+    .arrow-down {
+      text-align: center;
+      font-size: 22px;
+      color: #334155;
+      line-height: 1;
+      padding: 4px 0;
+    }
+
+    /* Client */
+    .layer-client {
+      background: rgba(99,102,241,0.08);
+      border: 1.5px solid rgba(99,102,241,0.35);
+    }
+    .layer-client .layer-label { color: #818cf8; }
+
+    /* Auth */
+    .layer-auth {
+      background: rgba(34,197,94,0.07);
+      border: 1.5px solid rgba(34,197,94,0.3);
+    }
+    .layer-auth .layer-label { color: #4ade80; }
+
+    /* Backend */
+    .layer-backend {
+      background: rgba(255,107,53,0.07);
+      border: 1.5px solid rgba(255,107,53,0.3);
+    }
+    .layer-backend .layer-label { color: #ff6b35; }
+
+    /* Database */
+    .layer-db {
+      background: rgba(56,189,248,0.07);
+      border: 1.5px solid rgba(56,189,248,0.3);
+    }
+    .layer-db .layer-label { color: #38bdf8; }
+
+    /* External */
+    .layer-ext {
+      background: rgba(251,191,36,0.07);
+      border: 1.5px solid rgba(251,191,36,0.3);
+    }
+    .layer-ext .layer-label { color: #fbbf24; }
+
+    /* ── Chips row ── */
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .chip {
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* ── Endpoint table ── */
+    .endpoint-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .endpoint-table th {
+      text-align: left;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.04);
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      border-bottom: 1px solid #1e293b;
+    }
+    .endpoint-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid #1e293b;
+      vertical-align: top;
+    }
+    .endpoint-table tr:last-child td { border-bottom: none; }
+    .endpoint-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .method {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      min-width: 52px;
+      text-align: center;
+    }
+    .GET    { background: rgba(34,197,94,0.15);  color: #4ade80; }
+    .POST   { background: rgba(99,102,241,0.15); color: #818cf8; }
+    .DELETE { background: rgba(239,68,68,0.15);  color: #f87171; }
+
+    .url { color: #e2e8f0; font-family: 'Consolas', monospace; font-size: 12.5px; }
+    .desc { color: #94a3b8; }
+
+    /* ── Flow diagram ── */
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .flow-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid #1e293b;
+    }
+    .flow-step:last-child { border-bottom: none; }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .step-content { flex: 1; }
+    .step-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin-bottom: 4px;
+    }
+    .step-detail {
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+    .step-detail code {
+      background: rgba(255,255,255,0.07);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 11.5px;
+      color: #94a3b8;
+    }
+
+    /* ── DB collections ── */
+    .collections {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .collection {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 18px;
+    }
+    .collection-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #38bdf8;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .collection-name span { font-size: 16px; }
+    .field {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px solid #1e293b;
+      font-size: 12px;
+    }
+    .field:last-child { border-bottom: none; }
+    .field-name { color: #e2e8f0; font-family: monospace; }
+    .field-type { color: #475569; font-size: 11px; }
+
+    /* ── Cron ── */
+    .cron-box {
+      background: rgba(251,191,36,0.06);
+      border: 1px solid rgba(251,191,36,0.25);
+      border-radius: 12px;
+      padding: 20px 24px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .cron-icon {
+      font-size: 32px;
+      flex-shrink: 0;
+    }
+    .cron-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fbbf24;
+      margin-bottom: 6px;
+    }
+    .cron-detail {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+    .cron-detail strong { color: #e2e8f0; }
+
+    /* ── Tech stack ── */
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .tech-item {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .tech-icon { font-size: 28px; margin-bottom: 8px; }
+    .tech-name { font-size: 13px; font-weight: 700; color: #e2e8f0; margin-bottom: 4px; }
+    .tech-desc { font-size: 11px; color: #64748b; }
+
+    /* ── Card wrapper ── */
+    .card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid #1e293b;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 12px;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid #1e293b;
+      color: #334155;
+      font-size: 12px;
+    }
+
+    @media print {
+      body { background: #fff; color: #1e293b; padding: 20px; }
+      .layer-client  { background: #eef2ff; border-color: #6366f1; }
+      .layer-auth    { background: #f0fdf4; border-color: #22c55e; }
+      .layer-backend { background: #fff7ed; border-color: #f97316; }
+      .layer-db      { background: #f0f9ff; border-color: #0ea5e9; }
+      .layer-ext     { background: #fefce8; border-color: #eab308; }
+      .layer-label, .section-title { opacity: 1; }
+      .chip { background: #f1f5f9; border-color: #cbd5e1; color: #475569; }
+      .url { color: #1e293b; }
+      .desc { color: #475569; }
+      .step-title { color: #1e293b; }
+      .field-name { color: #1e293b; }
+      .collection-name { color: #0284c7; }
+      .tech-name { color: #1e293b; }
+      .card { background: #f8fafc; border-color: #e2e8f0; }
+      .collection { background: #f8fafc; border-color: #e2e8f0; }
+      .cron-box { background: #fefce8; border-color: #eab308; }
+      .cron-detail { color: #475569; }
+      .footer { color: #94a3b8; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <h1>Говийн Спорт — Системийн Архитектур</h1>
+    <p>Спорт заал захиалгын мобайл аппликейшний backend бүтэц</p>
+    <div class="badge">Даланзадгад, Өмнөговь аймаг</div>
+  </div>
+
+  <!-- 1. Layers -->
+  <div class="section-title">1. Системийн давхаргууд</div>
+  <div class="layer-diagram">
+
+    <div class="layer layer-client">
+      <div class="layer-label">📱 Client Layer — Flutter Mobile App</div>
+      <div class="chips">
+        <div class="chip">Нүүр хуудас (Заалнууд)</div>
+        <div class="chip">Захиалга хийх</div>
+        <div class="chip">Миний захиалгууд</div>
+        <div class="chip">Профайл</div>
+        <div class="chip">AI Чат</div>
+      </div>
+    </div>
+
+    <div class="arrow-down">⬇</div>
+
+    <div class="layer layer-auth">
+      <div class="layer-label">🔐 Authentication Layer — Firebase Auth</div>
+      <div class="chips">
+        <div class="chip">+976 утасны дугаар</div>
+        <div class="chip">SMS OTP код</div>
+        <div class="chip">Firebase UID токен</div>
+      </div>
+    </div>
+
+    <div class="arrow-down">⬇</div>
+
+    <div class="layer layer-backend">
+      <div class="layer-label">⚙️ Backend Layer — Node.js / Express.js</div>
+      <div class="chips">
+        <div class="chip">REST API (port 3000)</div>
+        <div class="chip">AWS EC2 — Tokyo</div>
+        <div class="chip">13.112.91.27</div>
+        <div class="chip">Cron Job (15 мин)</div>
+        <div class="chip">Davхцал шалгах</div>
+      </div>
+    </div>
+
+    <div class="arrow-down">⬇</div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div class="layer layer-db">
+        <div class="layer-label">🗄️ Database — Cloud Firestore</div>
+        <div class="chips">
+          <div class="chip">users</div>
+          <div class="chip">bookings</div>
+          <div class="chip">fixed_bookings</div>
+        </div>
+      </div>
+      <div class="layer layer-ext">
+        <div class="layer-label">🤖 External — Groq AI</div>
+        <div class="chips">
+          <div class="chip">llama-3.1-8b-instant</div>
+          <div class="chip">POST /api/chat</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. API Endpoints -->
+  <div class="section-title">2. API Endpoints</div>
+  <div class="card" style="padding:0; overflow:hidden;">
+    <table class="endpoint-table">
+      <thead>
+        <tr>
+          <th style="width:80px">Арга</th>
+          <th style="width:280px">URL</th>
+          <th>Зориулалт</th>
+          <th style="width:120px">Хариу</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="method GET">GET</span></td>
+          <td class="url">/api/schedule</td>
+          <td class="desc">Заалны өдрийн цагийн хуваарь авах</td>
+          <td class="desc">12 цагийн slot</td>
+        </tr>
+        <tr>
+          <td><span class="method POST">POST</span></td>
+          <td class="url">/api/bookings</td>
+          <td class="desc">Шинэ захиалга үүсгэх (давхцал шалгана)</td>
+          <td class="desc">DBK-XXXXX код</td>
+        </tr>
+        <tr>
+          <td><span class="method GET">GET</span></td>
+          <td class="url">/api/bookings?phone=</td>
+          <td class="desc">Хэрэглэгчийн бүх захиалга харах</td>
+          <td class="desc">Жагсаалт</td>
+        </tr>
+        <tr>
+          <td><span class="method DELETE">DELETE</span></td>
+          <td class="url">/api/bookings/:id</td>
+          <td class="desc">Захиалга цуцлах</td>
+          <td class="desc">{ success: true }</td>
+        </tr>
+        <tr>
+          <td><span class="method POST">POST</span></td>
+          <td class="url">/api/users</td>
+          <td class="desc">Хэрэглэгч бүртгэх / шинэчлэх</td>
+          <td class="desc">User объект</td>
+        </tr>
+        <tr>
+          <td><span class="method GET">GET</span></td>
+          <td class="url">/api/users/:phone</td>
+          <td class="desc">Хэрэглэгчийн мэдээлэл авах</td>
+          <td class="desc">User объект</td>
+        </tr>
+        <tr>
+          <td><span class="method POST">POST</span></td>
+          <td class="url">/api/schedule/fixed</td>
+          <td class="desc">Гэрээт (байнгын) цаг нэмэх</td>
+          <td class="desc">Fixed ID</td>
+        </tr>
+        <tr>
+          <td><span class="method DELETE">DELETE</span></td>
+          <td class="url">/api/schedule/fixed/:id</td>
+          <td class="desc">Гэрээт цаг устгах</td>
+          <td class="desc">{ success: true }</td>
+        </tr>
+        <tr>
+          <td><span class="method POST">POST</span></td>
+          <td class="url">/api/chat</td>
+          <td class="desc">AI туслахтай харилцах (Groq)</td>
+          <td class="desc">AI хариу текст</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 3. Booking flow -->
+  <div class="section-title">3. Захиалга хийх дараалал</div>
+  <div class="card">
+    <div class="flow">
+      <div class="flow-step">
+        <div class="step-num" style="background:rgba(99,102,241,0.2);color:#818cf8;">1</div>
+        <div class="step-content">
+          <div class="step-title">Нэвтрэх — Firebase Auth</div>
+          <div class="step-detail">
+            Хэрэглэгч утасны дугаараа оруулна (+976XXXXXXXX) →
+            Firebase SMS OTP илгээнэ → код баталгаажуулна → UID токен авна
+          </div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num" style="background:rgba(56,189,248,0.2);color:#38bdf8;">2</div>
+        <div class="step-content">
+          <div class="step-title">Цагийн хуваарь харах</div>
+          <div class="step-detail">
+            <code>GET /api/schedule?venueId=v1&amp;date=2026-03-24</code> →
+            Backend Firestore-оос тухайн өдрийн захиалгуудыг шалгана →
+            08:00–20:00 хүртэл 12 slot буцаана (нээлттэй / захиалагдсан / гэрээт)
+          </div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num" style="background:rgba(255,107,53,0.2);color:#ff6b35;">3</div>
+        <div class="step-content">
+          <div class="step-title">Захиалга үүсгэх</div>
+          <div class="step-detail">
+            <code>POST /api/bookings</code> → Backend давхцал шалгана →
+            Давхцал байвал <strong>409 Conflict</strong> буцаана →
+            Байхгүй бол Firestore-д хадгална → <strong>DBK-XXXXX</strong> захиалгын код үүснэ
+          </div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num" style="background:rgba(34,197,94,0.2);color:#4ade80;">4</div>
+        <div class="step-content">
+          <div class="step-title">Статус автоматаар шинэчлэгдэх — Cron Job</div>
+          <div class="step-detail">
+            Сервер дээр <strong>15 минут тутам</strong> cron ажиллана →
+            Цаг нь дууссан захиалгуудыг <code>upcoming</code> →
+            <code>completed</code> болгон шинэчилнэ
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Auth flow -->
+  <div class="section-title">4. Нэвтрэх дараалал (Firebase Phone Auth)</div>
+  <div class="card">
+    <div class="flow">
+      <div class="flow-step">
+        <div class="step-num" style="background:rgba(34,197,94,0.2);color:#4ade80;">①</div>
+        <div class="step-content">
+          <div class="step-title">Утасны дугаар оруулах</div>
+          <div class="step-detail">App <code>+976XXXXXXXX</code> форматаар Firebase-д илгээнэ</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num" style="background:rgba(34,197,94,0.2);color:#4ade80;">②</div>
+        <div class="step-content">
+          <div class="step-title">SMS OTP илгээх</div>
+          <div class="step-detail">Firebase 6 оронтой кодыг утасны дугаарт илгээнэ (60 секунд хүчинтэй)</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num" style="background:rgba(34,197,94,0.2);color:#4ade80;">③</div>
+        <div class="step-content">
+          <div class="step-title">Код баталгаажуулах</div>
+          <div class="step-detail">Хэрэглэгч кодоо оруулна → Firebase баталгаажуулна → <strong>UID токен</strong> олгоно</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num" style="background:rgba(34,197,94,0.2);color:#4ade80;">④</div>
+        <div class="step-content">
+          <div class="step-title">Хэрэглэгч бүртгэх</div>
+          <div class="step-detail"><code>POST /api/users</code> → Firestore-д хадгалах (утасны дугаар = document ID)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Firestore -->
+  <div class="section-title">5. Firestore — өгөгдлийн бүтэц</div>
+  <div class="collections">
+    <div class="collection">
+      <div class="collection-name"><span>👤</span> users</div>
+      <div class="field"><span class="field-name">phone</span><span class="field-type">string (ID)</span></div>
+      <div class="field"><span class="field-name">name</span><span class="field-type">string</span></div>
+      <div class="field"><span class="field-name">uid</span><span class="field-type">string (Firebase)</span></div>
+      <div class="field"><span class="field-name">createdAt</span><span class="field-type">timestamp</span></div>
+      <div class="field"><span class="field-name">updatedAt</span><span class="field-type">timestamp</span></div>
+    </div>
+    <div class="collection">
+      <div class="collection-name"><span>📅</span> bookings</div>
+      <div class="field"><span class="field-name">venueId</span><span class="field-type">string</span></div>
+      <div class="field"><span class="field-name">venueName</span><span class="field-type">string</span></div>
+      <div class="field"><span class="field-name">date / dateKey</span><span class="field-type">timestamp / YYYY-MM-DD</span></div>
+      <div class="field"><span class="field-name">timeSlot / timeSlotEnd</span><span class="field-type">HH:MM</span></div>
+      <div class="field"><span class="field-name">courtType</span><span class="field-type">string</span></div>
+      <div class="field"><span class="field-name">price</span><span class="field-type">string</span></div>
+      <div class="field"><span class="field-name">userName / userPhone</span><span class="field-type">string</span></div>
+      <div class="field"><span class="field-name">status</span><span class="field-type">upcoming / active / completed / cancelled</span></div>
+      <div class="field"><span class="field-name">code</span><span class="field-type">DBK-XXXXX</span></div>
+      <div class="field"><span class="field-name">createdAt / completedAt</span><span class="field-type">timestamp</span></div>
+    </div>
+    <div class="collection">
+      <div class="collection-name"><span>🔒</span> fixed_bookings</div>
+      <div class="field"><span class="field-name">venueId</span><span class="field-type">string</span></div>
+      <div class="field"><span class="field-name">organizationName</span><span class="field-type">string</span></div>
+      <div class="field"><span class="field-name">weekDays</span><span class="field-type">array [1–7]</span></div>
+      <div class="field"><span class="field-name">startHour / endHour</span><span class="field-type">number (8–20)</span></div>
+      <div class="field"><span class="field-name">createdAt</span><span class="field-type">timestamp</span></div>
+    </div>
+  </div>
+
+  <!-- 6. Cron -->
+  <div class="section-title">6. Автомат ажиллагаа — Cron Job</div>
+  <div class="cron-box">
+    <div class="cron-icon">⏱️</div>
+    <div>
+      <div class="cron-title">15 минут тутам автоматаар ажиллана</div>
+      <div class="cron-detail">
+        Сервер дээр тогтмол ажиллах процесс байна. Цагийн бүс: <strong>Улаанбаатар (UTC+8)</strong><br><br>
+        <strong>Дараалал:</strong><br>
+        1. Firestore-оос <code>status = "upcoming"</code> эсвэл <code>"active"</code> бүх захиалгыг татна<br>
+        2. Захиалгын дуусах цагийг (<code>dateKey + timeSlotEnd</code>) одоогийн цагтай харьцуулна<br>
+        3. Хугацаа нь өнгөрсөн захиалгуудыг <strong>batch write</strong>-аар <code>completed</code> болгон шинэчилнэ<br>
+        4. <code>completedAt</code> timestamp тэмдэглэнэ
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. Tech stack -->
+  <div class="section-title">7. Технологийн стек</div>
+  <div class="tech-grid">
+    <div class="tech-item">
+      <div class="tech-icon">📱</div>
+      <div class="tech-name">Flutter / Dart</div>
+      <div class="tech-desc">Мобайл аппликейшн (iOS & Android)</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-icon">🟢</div>
+      <div class="tech-name">Node.js + Express</div>
+      <div class="tech-desc">REST API сервер</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-icon">🔥</div>
+      <div class="tech-name">Firebase Auth</div>
+      <div class="tech-desc">Утасны OTP нэвтрэлт</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-icon">🗄️</div>
+      <div class="tech-name">Cloud Firestore</div>
+      <div class="tech-desc">NoSQL өгөгдлийн сан</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-icon">☁️</div>
+      <div class="tech-name">AWS EC2 (Tokyo)</div>
+      <div class="tech-desc">Серверийн хостинг</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-icon">🤖</div>
+      <div class="tech-name">Groq API</div>
+      <div class="tech-desc">AI чат (llama-3.1-8b)</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Говийн Спорт — Спорт заал захиалгын систем &nbsp;|&nbsp; Даланзадгад, Өмнөговь аймаг &nbsp;|&nbsp; 2026
+  </div>
+
+</body>
+</html>

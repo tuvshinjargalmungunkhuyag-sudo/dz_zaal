@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8"/>
+<title>Говийн Спорт — Architecture Diagram</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#0d1117; display:flex; flex-direction:column; align-items:center; padding:40px 20px; font-family:'Segoe UI',Arial,sans-serif; }
+  h1 { color:#f1f5f9; font-size:22px; font-weight:800; margin-bottom:6px; letter-spacing:-0.5px; }
+  p  { color:#64748b; font-size:13px; margin-bottom:32px; }
+  svg { max-width:100%; }
+  @media print {
+    body { background:#fff; }
+    h1 { color:#0f172a; }
+    p  { color:#64748b; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Говийн Спорт — Системийн Архитектур</h1>
+<p>Спорт заал захиалгын мобайл аппликейшний backend бүтэц</p>
+
+<svg width="1100" height="720" viewBox="0 0 1100 720" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Shadows -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="rgba(0,0,0,0.5)"/>
+    </filter>
+    <filter id="shadow-sm" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="rgba(0,0,0,0.4)"/>
+    </filter>
+
+    <!-- Gradients -->
+    <linearGradient id="grad-flutter" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4f46e5;stop-opacity:0.25"/>
+      <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:0.12"/>
+    </linearGradient>
+    <linearGradient id="grad-auth" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#16a34a;stop-opacity:0.25"/>
+      <stop offset="100%" style="stop-color:#15803d;stop-opacity:0.1"/>
+    </linearGradient>
+    <linearGradient id="grad-backend" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ea580c;stop-opacity:0.28"/>
+      <stop offset="100%" style="stop-color:#c2410c;stop-opacity:0.12"/>
+    </linearGradient>
+    <linearGradient id="grad-groq" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d97706;stop-opacity:0.25"/>
+      <stop offset="100%" style="stop-color:#b45309;stop-opacity:0.1"/>
+    </linearGradient>
+    <linearGradient id="grad-firestore" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0369a1;stop-opacity:0.28"/>
+      <stop offset="100%" style="stop-color:#0284c7;stop-opacity:0.12"/>
+    </linearGradient>
+    <linearGradient id="grad-cron" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#475569;stop-opacity:0.3"/>
+      <stop offset="100%" style="stop-color:#334155;stop-opacity:0.1"/>
+    </linearGradient>
+    <linearGradient id="grad-collection" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0ea5e9;stop-opacity:0.15"/>
+      <stop offset="100%" style="stop-color:#0284c7;stop-opacity:0.05"/>
+    </linearGradient>
+
+    <!-- Arrow markers -->
+    <marker id="arrow-white" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="rgba(148,163,184,0.8)"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#4ade80"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#fb923c"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrow-yellow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#fbbf24"/>
+    </marker>
+    <marker id="arrow-gray" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- Background                                              -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <rect width="1100" height="720" rx="20" fill="#0d1117"/>
+  <rect width="1100" height="720" rx="20" fill="none" stroke="#1e293b" stroke-width="1.5"/>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- LAYER LABELS                                            -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- Client layer band -->
+  <rect x="20" y="56" width="1060" height="116" rx="12" fill="rgba(99,102,241,0.04)" stroke="rgba(99,102,241,0.15)" stroke-width="1"/>
+  <text x="36" y="77" font-family="Segoe UI" font-size="10" font-weight="700" fill="rgba(129,140,248,0.6)" letter-spacing="1.5">CLIENT LAYER</text>
+
+  <!-- Backend layer band -->
+  <rect x="20" y="238" width="1060" height="116" rx="12" fill="rgba(249,115,22,0.04)" stroke="rgba(249,115,22,0.12)" stroke-width="1"/>
+  <text x="36" y="259" font-family="Segoe UI" font-size="10" font-weight="700" fill="rgba(251,146,60,0.6)" letter-spacing="1.5">BACKEND LAYER — AWS EC2 Tokyo  (13.112.91.27:3000)</text>
+
+  <!-- Data layer band -->
+  <rect x="20" y="430" width="1060" height="230" rx="12" fill="rgba(56,189,248,0.04)" stroke="rgba(56,189,248,0.12)" stroke-width="1"/>
+  <text x="36" y="451" font-family="Segoe UI" font-size="10" font-weight="700" fill="rgba(56,189,248,0.6)" letter-spacing="1.5">DATA LAYER</text>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- COMPONENT: Flutter App                                  -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <g filter="url(#shadow)">
+    <rect x="340" y="82" width="280" height="76" rx="16" fill="url(#grad-flutter)" stroke="#6366f1" stroke-width="1.8"/>
+  </g>
+  <!-- Icon bg -->
+  <rect x="358" y="99" width="42" height="42" rx="10" fill="rgba(99,102,241,0.25)"/>
+  <text x="375" y="126" font-size="20" text-anchor="middle">📱</text>
+  <!-- Text -->
+  <text x="420" y="113" font-family="Segoe UI" font-size="15" font-weight="800" fill="#e2e8f0">Flutter App</text>
+  <text x="420" y="130" font-family="Segoe UI" font-size="11" fill="#94a3b8">iOS &amp; Android</text>
+  <text x="420" y="147" font-family="Segoe UI" font-size="10" fill="rgba(129,140,248,0.8)">Dart / Material Design 3</text>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- COMPONENT: Firebase Auth                                -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <g filter="url(#shadow)">
+    <rect x="60" y="264" width="220" height="76" rx="16" fill="url(#grad-auth)" stroke="#22c55e" stroke-width="1.8"/>
+  </g>
+  <rect x="78" y="281" width="42" height="42" rx="10" fill="rgba(34,197,94,0.2)"/>
+  <text x="95" y="308" font-size="20" text-anchor="middle">🔐</text>
+  <text x="132" y="295" font-family="Segoe UI" font-size="14" font-weight="800" fill="#e2e8f0">Firebase Auth</text>
+  <text x="132" y="312" font-family="Segoe UI" font-size="11" fill="#94a3b8">Phone OTP (+976)</text>
+  <text x="132" y="328" font-family="Segoe UI" font-size="10" fill="rgba(74,222,128,0.8)">SMS → UID Token</text>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- COMPONENT: Express Backend                              -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <g filter="url(#shadow)">
+    <rect x="380" y="264" width="260" height="76" rx="16" fill="url(#grad-backend)" stroke="#f97316" stroke-width="1.8"/>
+  </g>
+  <rect x="398" y="281" width="42" height="42" rx="10" fill="rgba(249,115,22,0.22)"/>
+  <text x="415" y="308" font-size="20" text-anchor="middle">⚙️</text>
+  <text x="452" y="295" font-family="Segoe UI" font-size="14" font-weight="800" fill="#e2e8f0">Express.js Backend</text>
+  <text x="452" y="312" font-family="Segoe UI" font-size="11" fill="#94a3b8">REST API · Node.js</text>
+  <text x="452" y="328" font-family="Segoe UI" font-size="10" fill="rgba(251,146,60,0.8)">9 endpoints · port 3000</text>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- COMPONENT: Groq AI                                      -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <g filter="url(#shadow)">
+    <rect x="760" y="264" width="220" height="76" rx="16" fill="url(#grad-groq)" stroke="#f59e0b" stroke-width="1.8"/>
+  </g>
+  <rect x="778" y="281" width="42" height="42" rx="10" fill="rgba(245,158,11,0.2)"/>
+  <text x="795" y="308" font-size="20" text-anchor="middle">🤖</text>
+  <text x="833" y="295" font-family="Segoe UI" font-size="14" font-weight="800" fill="#e2e8f0">Groq AI</text>
+  <text x="833" y="312" font-family="Segoe UI" font-size="11" fill="#94a3b8">llama-3.1-8b-instant</text>
+  <text x="833" y="328" font-family="Segoe UI" font-size="10" fill="rgba(251,191,36,0.8)">POST /api/chat</text>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- COMPONENT: Firestore                                    -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <g filter="url(#shadow)">
+    <rect x="330" y="468" width="440" height="158" rx="16" fill="url(#grad-firestore)" stroke="#0ea5e9" stroke-width="1.8"/>
+  </g>
+  <!-- Header -->
+  <rect x="348" y="485" width="42" height="42" rx="10" fill="rgba(14,165,233,0.2)"/>
+  <text x="365" y="512" font-size="20" text-anchor="middle">🗄️</text>
+  <text x="403" y="499" font-family="Segoe UI" font-size="14" font-weight="800" fill="#e2e8f0">Cloud Firestore</text>
+  <text x="403" y="516" font-family="Segoe UI" font-size="11" fill="#94a3b8">Google Firebase · NoSQL</text>
+  <text x="403" y="533" font-family="Segoe UI" font-size="10" fill="rgba(56,189,248,0.8)">Project: dz-zaal</text>
+
+  <!-- Divider -->
+  <line x1="348" y1="543" x2="752" y2="543" stroke="#1e3a4a" stroke-width="1"/>
+
+  <!-- Collection: users -->
+  <rect x="344" y="552" width="126" height="58" rx="10" fill="url(#grad-collection)" stroke="rgba(56,189,248,0.3)" stroke-width="1"/>
+  <text x="407" y="570" font-family="Segoe UI" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">👤 users</text>
+  <text x="407" y="585" font-family="Consolas,monospace" font-size="9.5" fill="#64748b" text-anchor="middle">phone · name · uid</text>
+  <text x="407" y="600" font-family="Consolas,monospace" font-size="9.5" fill="#64748b" text-anchor="middle">createdAt · updatedAt</text>
+
+  <!-- Collection: bookings -->
+  <rect x="482" y="552" width="126" height="58" rx="10" fill="url(#grad-collection)" stroke="rgba(56,189,248,0.3)" stroke-width="1"/>
+  <text x="545" y="570" font-family="Segoe UI" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">📅 bookings</text>
+  <text x="545" y="585" font-family="Consolas,monospace" font-size="9.5" fill="#64748b" text-anchor="middle">venueId · date · timeSlot</text>
+  <text x="545" y="600" font-family="Consolas,monospace" font-size="9.5" fill="#64748b" text-anchor="middle">status · code · price</text>
+
+  <!-- Collection: fixed_bookings -->
+  <rect x="620" y="552" width="136" height="58" rx="10" fill="url(#grad-collection)" stroke="rgba(56,189,248,0.3)" stroke-width="1"/>
+  <text x="688" y="570" font-family="Segoe UI" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">🔒 fixed_bookings</text>
+  <text x="688" y="585" font-family="Consolas,monospace" font-size="9.5" fill="#64748b" text-anchor="middle">venueId · weekDays</text>
+  <text x="688" y="600" font-family="Consolas,monospace" font-size="9.5" fill="#64748b" text-anchor="middle">startHour · endHour</text>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- COMPONENT: Cron Job                                     -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <g filter="url(#shadow-sm)">
+    <rect x="60" y="488" width="220" height="100" rx="16" fill="url(#grad-cron)" stroke="#475569" stroke-width="1.5" stroke-dasharray="6 3"/>
+  </g>
+  <rect x="78" y="505" width="42" height="42" rx="10" fill="rgba(71,85,105,0.4)"/>
+  <text x="95" y="532" font-size="20" text-anchor="middle">⏱️</text>
+  <text x="132" y="519" font-family="Segoe UI" font-size="14" font-weight="800" fill="#e2e8f0">Cron Job</text>
+  <text x="132" y="535" font-family="Segoe UI" font-size="11" fill="#94a3b8">15 минут тутам</text>
+  <text x="132" y="551" font-family="Segoe UI" font-size="10" fill="rgba(148,163,184,0.7)">upcoming → completed</text>
+  <text x="132" y="566" font-family="Segoe UI" font-size="10" fill="rgba(148,163,184,0.7)">UB цагийн бүс (UTC+8)</text>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- ARROWS                                                  -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <!-- 1. Flutter → Firebase Auth (OTP нэвтрэлт) -->
+  <path d="M 400 158 Q 300 200 280 264" fill="none" stroke="#4ade80" stroke-width="1.8"
+        stroke-dasharray="6 3" marker-end="url(#arrow-green)"/>
+  <!-- Label -->
+  <rect x="268" y="198" width="92" height="22" rx="6" fill="#0d1117"/>
+  <text x="314" y="213" font-family="Segoe UI" font-size="10" fill="#4ade80" text-anchor="middle" font-weight="600">OTP нэвтрэлт</text>
+
+  <!-- 2. Flutter → Express Backend (API дуудлага) -->
+  <path d="M 510 158 L 510 264" fill="none" stroke="#fb923c" stroke-width="1.8"
+        marker-end="url(#arrow-orange)"/>
+  <!-- Label -->
+  <rect x="438" y="198" width="90" height="22" rx="6" fill="#0d1117"/>
+  <text x="483" y="213" font-family="Segoe UI" font-size="10" fill="#fb923c" text-anchor="middle" font-weight="600">API дуудлага</text>
+
+  <!-- 3. Express Backend → Groq AI (чат) -->
+  <path d="M 640 302 L 760 302" fill="none" stroke="#fbbf24" stroke-width="1.8"
+        marker-end="url(#arrow-yellow)"/>
+  <rect x="672" y="289" width="60" height="20" rx="6" fill="#0d1117"/>
+  <text x="702" y="303" font-family="Segoe UI" font-size="10" fill="#fbbf24" text-anchor="middle" font-weight="600">AI чат</text>
+
+  <!-- 4. Express Backend → Firestore (өгөгдөл) -->
+  <path d="M 510 340 L 510 468" fill="none" stroke="#38bdf8" stroke-width="1.8"
+        marker-end="url(#arrow-blue)"/>
+  <!-- Label -->
+  <rect x="432" y="390" width="110" height="22" rx="6" fill="#0d1117"/>
+  <text x="487" y="405" font-family="Segoe UI" font-size="10" fill="#38bdf8" text-anchor="middle" font-weight="600">Firebase Admin SDK</text>
+
+  <!-- 5. Cron Job → Firestore -->
+  <path d="M 280 538 L 330 538" fill="none" stroke="#94a3b8" stroke-width="1.5"
+        marker-end="url(#arrow-gray)"/>
+  <rect x="280" y="524" width="50" height="18" rx="5" fill="#0d1117"/>
+  <text x="305" y="536" font-family="Segoe UI" font-size="9" fill="#94a3b8" text-anchor="middle">update</text>
+
+  <!-- 6. Firebase Auth → Express (optional, token verify) -->
+  <path d="M 280 302 L 380 302" fill="none" stroke="rgba(148,163,184,0.4)" stroke-width="1.2"
+        stroke-dasharray="4 3" marker-end="url(#arrow-white)"/>
+  <rect x="298" y="289" width="64" height="20" rx="6" fill="#0d1117"/>
+  <text x="330" y="303" font-family="Segoe UI" font-size="9.5" fill="#64748b" text-anchor="middle">UID verify</text>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- API ENDPOINT MINI-LIST                                  -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <g>
+    <rect x="820" y="390" width="250" height="246" rx="14" fill="rgba(255,255,255,0.02)" stroke="#1e293b" stroke-width="1"/>
+    <text x="945" y="412" font-family="Segoe UI" font-size="11" font-weight="700" fill="#64748b" text-anchor="middle" letter-spacing="1">API ENDPOINTS</text>
+
+    <!-- GET /schedule -->
+    <rect x="834" y="420" width="42" height="18" rx="5" fill="rgba(34,197,94,0.15)"/>
+    <text x="855" y="432" font-family="Segoe UI" font-size="9" font-weight="800" fill="#4ade80" text-anchor="middle">GET</text>
+    <text x="884" y="432" font-family="Consolas" font-size="9.5" fill="#94a3b8">/api/schedule</text>
+
+    <!-- POST /bookings -->
+    <rect x="834" y="444" width="42" height="18" rx="5" fill="rgba(99,102,241,0.18)"/>
+    <text x="855" y="456" font-family="Segoe UI" font-size="9" font-weight="800" fill="#818cf8" text-anchor="middle">POST</text>
+    <text x="884" y="456" font-family="Consolas" font-size="9.5" fill="#94a3b8">/api/bookings</text>
+
+    <!-- GET /bookings -->
+    <rect x="834" y="468" width="42" height="18" rx="5" fill="rgba(34,197,94,0.15)"/>
+    <text x="855" y="480" font-family="Segoe UI" font-size="9" font-weight="800" fill="#4ade80" text-anchor="middle">GET</text>
+    <text x="884" y="480" font-family="Consolas" font-size="9.5" fill="#94a3b8">/api/bookings?phone=</text>
+
+    <!-- DELETE /bookings -->
+    <rect x="834" y="492" width="42" height="18" rx="5" fill="rgba(239,68,68,0.15)"/>
+    <text x="855" y="504" font-family="Segoe UI" font-size="9" font-weight="800" fill="#f87171" text-anchor="middle">DEL</text>
+    <text x="884" y="504" font-family="Consolas" font-size="9.5" fill="#94a3b8">/api/bookings/:id</text>
+
+    <!-- POST /users -->
+    <rect x="834" y="516" width="42" height="18" rx="5" fill="rgba(99,102,241,0.18)"/>
+    <text x="855" y="528" font-family="Segoe UI" font-size="9" font-weight="800" fill="#818cf8" text-anchor="middle">POST</text>
+    <text x="884" y="528" font-family="Consolas" font-size="9.5" fill="#94a3b8">/api/users</text>
+
+    <!-- GET /users -->
+    <rect x="834" y="540" width="42" height="18" rx="5" fill="rgba(34,197,94,0.15)"/>
+    <text x="855" y="552" font-family="Segoe UI" font-size="9" font-weight="800" fill="#4ade80" text-anchor="middle">GET</text>
+    <text x="884" y="552" font-family="Consolas" font-size="9.5" fill="#94a3b8">/api/users/:phone</text>
+
+    <!-- POST /schedule/fixed -->
+    <rect x="834" y="564" width="42" height="18" rx="5" fill="rgba(99,102,241,0.18)"/>
+    <text x="855" y="576" font-family="Segoe UI" font-size="9" font-weight="800" fill="#818cf8" text-anchor="middle">POST</text>
+    <text x="884" y="576" font-family="Consolas" font-size="9.5" fill="#94a3b8">/api/schedule/fixed</text>
+
+    <!-- POST /chat -->
+    <rect x="834" y="588" width="42" height="18" rx="5" fill="rgba(99,102,241,0.18)"/>
+    <text x="855" y="600" font-family="Segoe UI" font-size="9" font-weight="800" fill="#818cf8" text-anchor="middle">POST</text>
+    <text x="884" y="600" font-family="Consolas" font-size="9.5" fill="#94a3b8">/api/chat</text>
+
+    <!-- legend -->
+    <line x1="834" y1="614" x2="1056" y2="614" stroke="#1e293b" stroke-width="1"/>
+    <rect x="834" y="621" width="22" height="10" rx="3" fill="rgba(34,197,94,0.15)"/>
+    <text x="860" y="630" font-family="Segoe UI" font-size="9" fill="#64748b">Унших</text>
+    <rect x="896" y="621" width="22" height="10" rx="3" fill="rgba(99,102,241,0.18)"/>
+    <text x="922" y="630" font-family="Segoe UI" font-size="9" fill="#64748b">Бичих</text>
+    <rect x="958" y="621" width="22" height="10" rx="3" fill="rgba(239,68,68,0.15)"/>
+    <text x="984" y="630" font-family="Segoe UI" font-size="9" fill="#64748b">Устгах</text>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- FOOTER                                                  -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <text x="550" y="706" font-family="Segoe UI" font-size="11" fill="#334155" text-anchor="middle">
+    Говийн Спорт  ·  Даланзадгад, Өмнөговь  ·  2026
+  </text>
+</svg>
+
+</body>
+</html>

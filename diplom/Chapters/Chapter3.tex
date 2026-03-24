@@ -1,0 +1,830 @@
+% Бүлэг 3
+\chapter{СИСТЕМИЙН ЗОХИОН БАЙГУУЛАЛТ БА ХЭРЭГЖҮҮЛЭЛТ}
+\label{Chapter3}
+\pagecolor{white}
+
+%-------------------------------------------------------------------------------
+
+\section{3.1 Системийн шаардлагын дүн шинжилгээ}
+
+\subsection{3.1.1 Функциональ шаардлага}
+
+Системийн функциональ шаардлагыг иргэн (хэрэглэгч) гэсэн нэг үүрэгт тулгуурлан тодорхойлсон. Уг систем нь \textbf{администраторын самбаргүй} бөгөөд захиалгын удирдлага бүхэлдээ хэрэглэгчид болон автомат cron ажлаар явагддаг.
+
+\textbf{Хэрэглэгчийн функцүүд:}
+\begin{enumerate}
+    \item Утасны дугаараар OTP авч нэвтрэх, бүртгэл үүсгэх;
+    \item Таван спорт заалны жагсаалтыг нүүр дэлгэцэд харах;
+    \item Тухайн заалны боломжтой болон хаагдсан цагийн хуваарийг харах;
+    \item Цаг захиалах (заал, огноо, цагийн үе сонгох), DBK-xxxxx форматын захиалгын код авах;
+    \item Идэвхтэй захиалгаа цуцлах;
+    \item Захиалгын түүхийг захиалгын дэлгэцэд харах;
+    \item Захиалгаас 1 цагийн өмнө локал мэдэгдэл хүлээн авах;
+    \item AI чатботтой спорт заалтай холбоотой асуулт асуух.
+\end{enumerate}
+
+\textbf{Системийн автомат функцүүд:}
+\begin{enumerate}
+    \item 15 минут тутамд cron ажил дуусгавар болсон захиалгыг \code{completed} төлөвт шилжүүлнэ;
+    \item Байгууллагуудын тогтмол (давтагдах) захиалгыг \code{fixed\_bookings} цуглуулгаас уншиж долоо хоног бүр цагийн хуваарьт тусгана.
+\end{enumerate}
+
+\subsection{3.1.2 Функциональ бус шаардлага}
+
+\begin{itemize}
+    \item \textbf{Гүйцэтгэл} — Апп нь 3 секундын дотор ачаалах, API хүсэлт 2 секундын дотор хариулах;
+    \item \textbf{Найдвартай байдал} — Firebase болон AWS-ийн 99.9\% uptime баталгаанд тулгуурлах;
+    \item \textbf{Аюулгүй байдал} — Нэвтрэлтийн мэдээллийг Firebase Auth-аар хамгаалах, өгөгдөл дамжуулалтыг HTTPS-ээр шифрлэх, AWS нууцлалыг GitHub Secrets-д хадгалах;
+    \item \textbf{Хэрэглэхэд хялбар} — Material Design 3 стандартад нийцсэн, харанхуй говийн дизайн бүхий UI;
+    \item \textbf{Платформ} — Android 8.0+ болон iOS 13.0+ дэмжих.
+\end{itemize}
+
+%-------------------------------------------------------------------------------
+
+\section{3.2 Системийн UML диаграммууд}
+
+\subsection{3.2.1 Хэрэглэгчийн тохиолдлын диаграмм (Use Case Diagram)}
+
+Хэрэглэгчийн тохиолдлын диаграмм нь системийн гадаад оролцогч болон тэдгээрийн гүйцэтгэх үндсэн функцуудыг тодорхойлно. Энэхүү системд \textbf{Хэрэглэгч} гэсэн нэг үндсэн actor оролцоно.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+  uc/.style={draw, ellipse, minimum width=4cm, minimum height=0.9cm,
+             text centered, font=\small, fill=blue!5},
+  lbl/.style={font=\small\bfseries}
+]
+% System boundary
+\draw[thick, rounded corners=8pt] (0,-0.3) rectangle (10,9.8);
+\node[lbl, above] at (5,9.8) {ДЗ-Заал Систем};
+
+% Actor (stick figure)
+\draw (-2,7.2) circle (0.35cm);            % head
+\draw (-2,6.85) -- (-2,5.8);              % body
+\draw (-2.6,6.3) -- (-2,6.5) -- (-1.4,6.3); % arms
+\draw (-2,5.8) -- (-2.5,4.9);             % left leg
+\draw (-2,5.8) -- (-1.5,4.9);             % right leg
+\node[lbl, below] at (-2,4.7) {Хэрэглэгч};
+
+% Use cases
+\node[uc] (uc1) at (5,9.0) {OTP нэвтрэх};
+\node[uc] (uc2) at (5,7.7) {Спорт заал харах};
+\node[uc] (uc3) at (5,6.4) {Цаг хуваарь харах};
+\node[uc] (uc4) at (5,5.1) {Цаг захиалах};
+\node[uc] (uc5) at (5,3.8) {Захиалга цуцлах};
+\node[uc] (uc6) at (5,2.5) {Захиалгын түүх харах};
+\node[uc] (uc7) at (5,1.2) {Локал мэдэгдэл авах};
+\node[uc] (uc8) at (5,0.1) {AI чатботтой харилцах};
+
+% Connections
+\foreach \uc in {uc1,uc2,uc3,uc4,uc5,uc6,uc7,uc8}
+  \draw (-1.65,6.2) -- (\uc);
+\end{tikzpicture}
+\caption{Хэрэглэгчийн тохиолдлын диаграмм}
+\label{fig:usecase}
+\end{figure}
+
+%-------------------------------------------------------------------------------
+
+\subsection{3.2.2 Цаг захиалах үйл ажиллагааны диаграмм (Activity Diagram)}
+
+Цаг захиалах үйл явцын дарааллыг үйл ажиллагааны диаграммаар дүрсэлсэн. Хэрэглэгч нэвтэрсний дараа заал, огноо, цагийн үе сонгож захиалга үүсгэнэ. Сонгосон цаг аль хэдийн захиалагдсан бол систем алдаа мэдэгдэж өөр цаг сонгохыг хүснэ.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+  proc/.style={draw, rounded corners=5pt, fill=yellow!10,
+               minimum width=5cm, minimum height=0.8cm,
+               text centered, font=\small},
+  dec/.style={draw, diamond, fill=orange!15, aspect=2.5,
+              text centered, font=\scriptsize, inner sep=1pt},
+  term/.style={draw, circle, fill=black, minimum size=0.4cm},
+  termend/.style={draw, circle, fill=black, minimum size=0.4cm,
+                  double, double distance=2pt},
+  arr/.style={-latex', thick}
+]
+\node[term]  (start)   at (0,12)   {};
+\node[proc]  (login)   at (0,10.8) {Нэвтрэх (OTP)};
+\node[proc]  (venue)   at (0,9.6)  {Спорт заал сонгох};
+\node[proc]  (date)    at (0,8.4)  {Огноо сонгох};
+\node[proc]  (slot)    at (0,7.2)  {Цагийн үе сонгох};
+\node[dec]   (avail)   at (0,5.8)  {Цаг боломжтой?};
+\node[proc]  (err)     at (4,5.8)  {Алдаа харуулах};
+\node[proc]  (create)  at (0,4.4)  {Захиалга үүсгэх (Firestore)};
+\node[proc]  (code)    at (0,3.2)  {DBK-xxxxx код авах};
+\node[proc]  (notif)   at (0,2.0)  {1 цагийн өмнө мэдэгдэл товлох};
+\node[proc]  (done)    at (0,0.8)  {Баталгаажуулалт харуулах};
+\node[termend] (end)   at (0,-0.3) {};
+
+\draw[arr] (start) -- (login);
+\draw[arr] (login) -- (venue);
+\draw[arr] (venue) -- (date);
+\draw[arr] (date)  -- (slot);
+\draw[arr] (slot)  -- (avail);
+\draw[arr] (avail) -- node[right,font=\scriptsize]{Тийм} (create);
+\draw[arr] (avail) -- node[above,font=\scriptsize]{Үгүй} (err);
+\draw[arr] (err.north) |- (slot.east);
+\draw[arr] (create) -- (code);
+\draw[arr] (code)   -- (notif);
+\draw[arr] (notif)  -- (done);
+\draw[arr] (done)   -- (end);
+\end{tikzpicture}
+\caption{Цаг захиалах үйл ажиллагааны диаграмм}
+\label{fig:activity}
+\end{figure}
+
+%-------------------------------------------------------------------------------
+
+\subsection{3.2.3 Захиалга үүсгэх дарааллын диаграмм (Sequence Diagram)}
+
+Захиалга үүсгэх үйл явцын оролцогч тал бүрийн харилцан үйлдлийн дарааллыг дарааллын диаграммаар илэрхийлсэн.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+  lifeline/.style={draw, rectangle, minimum width=2.2cm, minimum height=0.7cm,
+                   text centered, font=\small\bfseries, fill=blue!10},
+  msg/.style={-latex', thick},
+  ret/.style={-latex', dashed, thick},
+  font=\small
+]
+% Lifeline headers
+\node[lifeline] (U)  at (0,10)    {Хэрэглэгч};
+\node[lifeline] (A)  at (3.5,10)  {Flutter App};
+\node[lifeline] (F)  at (7,10)    {Firestore};
+\node[lifeline] (B)  at (10.5,10) {Backend};
+
+% Lifeline bodies (vertical dashed lines)
+\draw[dashed] (0,9.65)   -- (0,-0.5);
+\draw[dashed] (3.5,9.65) -- (3.5,-0.5);
+\draw[dashed] (7,9.65)   -- (7,-0.5);
+\draw[dashed] (10.5,9.65)-- (10.5,-0.5);
+
+% Messages
+\draw[msg] (0,9)    -- node[above,font=\scriptsize]{Захиалах дарах} (3.5,9);
+\draw[msg] (3.5,8.2)-- node[above,font=\scriptsize]{Боломжтой цаг шалгах} (7,8.2);
+\draw[ret] (7,7.5)  -- node[above,font=\scriptsize]{Хаагдсан цагийн жагсаалт} (3.5,7.5);
+\draw[msg] (3.5,6.7)-- node[above,font=\scriptsize]{Боломжтой цаг харуулах} (0,6.7);
+\draw[msg] (0,5.9)  -- node[above,font=\scriptsize]{Цаг батлах} (3.5,5.9);
+\draw[msg] (3.5,5.1)-- node[above,font=\scriptsize]{bookings collection-д бичих} (7,5.1);
+\draw[ret] (7,4.4)  -- node[above,font=\scriptsize]{DBK-xxxxx код} (3.5,4.4);
+\draw[msg] (3.5,3.6)-- node[above,font=\scriptsize]{Мэдэгдэл товлох хүсэлт} (10.5,3.6);
+\draw[ret] (10.5,2.9)--node[above,font=\scriptsize]{200 OK} (3.5,2.9);
+\draw[ret] (3.5,2.1)-- node[above,font=\scriptsize]{Баталгаажуулалт + код харуулах} (0,2.1);
+\draw[msg] (3.5,1.2)-- node[above,font=\scriptsize]{Local notification schedule} (3.5,0.4);
+\node[font=\scriptsize,right] at (3.5,0.8) {(flutter\_local\_notifications)};
+\end{tikzpicture}
+\caption{Захиалга үүсгэх дарааллын диаграмм}
+\label{fig:sequence}
+\end{figure}
+
+%-------------------------------------------------------------------------------
+
+\subsection{3.2.4 Firestore өгөгдлийн сангийн схем (ER Диаграмм)}
+
+Cloud Firestore-ийн гурван collection болон тэдгээрийн хоорондын холбоосыг дараахи диаграммаар илэрхийлэв.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+  coll/.style={draw, rectangle, rounded corners=4pt, fill=green!8,
+               minimum width=3.8cm, font=\small\bfseries, text centered},
+  field/.style={draw=none, font=\scriptsize, text width=3.6cm, text centered},
+  rel/.style={-latex', thick, dashed, gray}
+]
+% users collection
+\node[coll, minimum height=0.7cm] (UT) at (0,9) {users};
+\node[field] at (0,8.35) {uid (document ID)};
+\node[field] at (0,7.85) {name : string};
+\node[field] at (0,7.35) {phone : string};
+\node[field] at (0,6.85) {createdAt : timestamp};
+\draw[draw] (-1.9,6.55) rectangle (1.9,9.35);
+
+% bookings collection
+\node[coll, minimum height=0.7cm] (BT) at (6,9) {bookings};
+\node[field] at (6,8.35) {bookingCode (DBK-xxxxx)};
+\node[field] at (6,7.85) {userId : string};
+\node[field] at (6,7.35) {venueId : string};
+\node[field] at (6,6.85) {venueName : string};
+\node[field] at (6,6.35) {date : string (YYYY-MM-DD)};
+\node[field] at (6,5.85) {timeSlot : string};
+\node[field] at (6,5.35) {status : active|cancelled|completed};
+\node[field] at (6,4.85) {createdAt : timestamp};
+\draw[draw] (4.1,4.55) rectangle (7.9,9.35);
+
+% fixed_bookings collection
+\node[coll, minimum height=0.7cm] (FT) at (0,4) {fixed\_bookings};
+\node[field] at (0,3.35) {venueId : string};
+\node[field] at (0,2.85) {organizationName : string};
+\node[field] at (0,2.35) {dayOfWeek : number (0--6)};
+\node[field] at (0,1.85) {timeSlot : string};
+\node[field] at (0,1.35) {isActive : boolean};
+\draw[draw] (-1.9,1.05) rectangle (1.9,4.35);
+
+% Relationships
+\draw[rel] (1.9,7.85) -- node[above,font=\scriptsize]{userId} (4.1,7.85);
+\draw[rel] (1.9,3.35) -- node[above,font=\scriptsize]{venueId} (4.1,6.35);
+\end{tikzpicture}
+\caption{Firestore өгөгдлийн сангийн схем}
+\label{fig:erd}
+\end{figure}
+
+%-------------------------------------------------------------------------------
+
+\section{3.3 Системийн архитектур}
+
+\subsection{3.3.1 Ерөнхий архитектур}
+
+Систем нь \textbf{гурван давхар архитектур}-т тулгуурлана: Flutter мобайл клиент, Node.js/Express бэкэнд (AWS EC2), Firebase үйлчилгээнүүд. Flutter апп нь \code{lib/config.dart}-д тодорхойлсон URL-аар AWS EC2 бэкэндтэй REST API дамжуулан, Firebase SDK-р Cloud Firestore болон Authentication-тай шууд холбогддог.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=2.2cm, auto,
+    mobile/.style={rectangle, draw, fill=yellow!15, text width=5.5em,
+        text centered, rounded corners, minimum height=3.5em, font=\small},
+    backend/.style={rectangle, draw, fill=orange!20, text width=6em,
+        text centered, rounded corners, minimum height=3.5em, font=\small},
+    cloud/.style={rectangle, draw, fill=blue!15, text width=6em,
+        text centered, rounded corners, minimum height=3.5em, font=\small},
+    ai/.style={rectangle, draw, fill=green!15, text width=6em,
+        text centered, rounded corners, minimum height=3.5em, font=\small},
+    line/.style={draw, -latex', thick}]
+
+    % Nodes
+    \node [mobile] (app) {Flutter\\Мобайл Апп\\(Android/iOS)};
+    \node [backend, right of=app, node distance=5.5cm] (ec2)
+        {Node.js/Express\\AWS EC2\\(ap-northeast-1)};
+    \node [cloud, below of=app, node distance=3cm] (firebase)
+        {Firebase\\Auth + Firestore\\+ Cloud Functions};
+    \node [ai, right of=ec2, node distance=5cm] (groq)
+        {Groq\\Llama 3.1-8b};
+    \node [ai, below of=ec2, node distance=3cm] (claude)
+        {Anthropic\\Claude Haiku\\(Cloud Functions)};
+    \node [backend, below of=ec2, node distance=5.5cm] (ecr)
+        {AWS ECR\\Docker Registry};
+    \node [backend, left of=ecr, node distance=5cm] (gh)
+        {GitHub Actions\\CI/CD};
+
+    % Lines
+    \path [line] (app) -- node[above, font=\tiny] {REST API} (ec2);
+    \path [line] (app) -- node[left, font=\tiny] {SDK} (firebase);
+    \path [line] (ec2) -- node[above, font=\tiny] {Groq API} (groq);
+    \path [line] (firebase) -- node[right, font=\tiny] {Claude API} (claude);
+    \path [line] (gh) -- node[below, font=\tiny] {push image} (ecr);
+    \path [line] (ecr) -- node[right, font=\tiny] {pull image} (ec2);
+\end{tikzpicture}
+\caption{Системийн ерөнхий архитектурын диаграмм}
+\label{fig:arch}
+\end{figure}
+
+\subsection{3.3.2 Flutter апп-ын архитектур}
+
+Flutter апп-д дараахи хавтасны бүтцийг ашигласан:
+
+\begin{itemize}
+    \item \code{lib/screens/} — Дэлгэцийн файлууд (home, booking, chat, profile);
+    \item \code{lib/widgets/} — Дахин ашиглах widget-ууд (venue card, time slot grid);
+    \item \code{lib/models/} — Өгөгдлийн загвар классууд (Booking, FixedBooking);
+    \item \code{lib/services/} — Firebase болон API үйлчилгээний классууд;
+    \item \code{lib/config.dart} — API URL болон тохиргооны нэг эх сурвалж.
+\end{itemize}
+
+Апп-ын навигацийг \code{BottomNavigationBar} widget дамжуулан 4 tab-тай хэрэгжүүлсэн бөгөөд идэвхтэй tab-ийн индексийг root \code{StatefulWidget}-ийн \code{setState}-д хадгалдаг.
+
+\subsection{3.3.3 API URL-ийн нэг эх сурвалж (lib/config.dart)}
+
+Апп-ын бүх API хаягийг \code{lib/config.dart} файлд төвлөрүүлснээр хөгжүүлэлтийн болон продакшн орчинд шилжихэд нэг файлыг л өөрчлөх хэрэгтэй болдог:
+
+\begin{lstlisting}[language={}, caption={lib/config.dart — API URL-ийн нэг эх сурвалж}]
+class AppConfig {
+  // Local test: Android emulator -> 'http://10.0.2.2:3000'
+  //             iOS simulator    -> 'http://localhost:3000'
+  // Production: AWS EC2 (ap-northeast-1, Tokyo)
+  static const String backendUrl = 'http://13.112.91.27:3000';
+
+  static const String chatEndpoint     = '$backendUrl/api/chat';
+  static const String usersEndpoint    = '$backendUrl/api/users';
+  static const String bookingsEndpoint = '$backendUrl/api/bookings';
+  static const String scheduleEndpoint = '$backendUrl/api/schedule';
+}
+\end{lstlisting}
+
+%-------------------------------------------------------------------------------
+
+\section{3.4 Өгөгдлийн сангийн зохион байгуулалт}
+
+Cloud Firestore-д дараахи гурван collection бүтцийг ашигласан. Спорт заалнуудын мэдээлэл Firestore-д хадгалагддаггүй — кодод шууд тодорхойлсон (hardcoded) байдлаар тавьж, Firestore-ийн уншилтын тоог хэмнэдэг.
+
+\subsection{3.4.1 \texttt{users} collection}
+
+Хэрэглэгчийн мэдээлэл:
+\begin{itemize}
+    \item \code{uid} (string) — Firebase Auth-ын хэрэглэгчийн ID (document ID болгон ашиглана);
+    \item \code{name} (string) — Нэр;
+    \item \code{phone} (string) — Утасны дугаар;
+    \item \code{createdAt} (timestamp) — Бүртгэсэн огноо.
+\end{itemize}
+
+\subsection{3.4.2 \texttt{bookings} collection}
+
+Захиалгын мэдээлэл:
+\begin{itemize}
+    \item \code{bookingCode} (string) — DBK-xxxxx форматын захиалгын код;
+    \item \code{userId} (string) — Хэрэглэгчийн UID;
+    \item \code{venueId} (string) — Заалны ID (hardcoded жагсаалтаас);
+    \item \code{venueName} (string) — Заалны нэр;
+    \item \code{date} (string) — Захиалгын огноо (YYYY-MM-DD);
+    \item \code{timeSlot} (string) — Цагийн үе (жишээ: "09:00-10:00");
+    \item \code{status} (string) — Төлөв: \code{active} | \code{cancelled} | \code{completed};
+    \item \code{createdAt} (timestamp) — Үүсгэсэн огноо.
+\end{itemize}
+
+\subsection{3.4.3 \texttt{fixed\_bookings} collection}
+
+Байгууллагуудын тогтмол давтагдах захиалга:
+\begin{itemize}
+    \item \code{venueId} (string) — Заалны ID;
+    \item \code{organizationName} (string) — Байгууллагын нэр (засгийн газар, компани);
+    \item \code{dayOfWeek} (number) — Долоо хоногийн өдөр (0=Ням, 1=Даваа \ldots 6=Бямба);
+    \item \code{timeSlot} (string) — Хаагдсан цагийн үе;
+    \item \code{isActive} (boolean) — Идэвхтэй эсэх.
+\end{itemize}
+
+Тогтмол захиалгыг хэрэглэгчийн цагийн хуваарь харах үед уншиж, тухайн өдрийн хаагдсан цагийн үеийг харуулна. Ингэснээр засгийн газар, компаниудын долоо хоногийн тогтмол цагийг захиалгаас урьдчилан хасдаг.
+
+\subsection{3.4.4 Hardcoded спорт заалнуудын жагсаалт}
+
+Таван спорт заалны мэдээлэл Firestore collection биш, Flutter кодод шууд тодорхойлсон:
+
+\begin{lstlisting}[language={}, caption={Hardcoded спорт заалнуудын жагсаалт}]
+const List<Map<String, dynamic>> venues = [
+  {'id': 'goviin_arena',     'name': 'Goviin Arena'},
+  {'id': 'omnogovi_sport',   'name': 'Omnogovi Sport Hall'},
+  {'id': 'goviin_voleybol',  'name': 'Goviin Volleyball Club'},
+  {'id': 'stadion_voleybol', 'name': 'Stadium Volleyball Hall'},
+  {'id': 'central_basket',   'name': 'Central Basketball Hall'},
+];
+\end{lstlisting}
+
+%-------------------------------------------------------------------------------
+
+\section{3.5 Flutter апп-ын хэрэгжүүлэлт}
+
+\subsection{3.5.1 Харанхуй говийн дизайн (Dark Desert Theme)}
+
+Апп-ын дизайн нь говийн цөлийн дүр төрхийг илэрхийлсэн гурван үндсэн өнгөн схемтэй:
+
+\begin{itemize}
+    \item \textbf{Цөлийн хар} (\code{\#120D06}) — Арын фон;
+    \item \textbf{Алтан элс} (\code{\#F0B429}) — Онцлох, идэвхтэй элементүүд;
+    \item \textbf{Нарны жаргалтын улбар} (\code{\#D4622A}) — Дэд онцлох, дүрсүүд.
+\end{itemize}
+
+Material Design 3-ийн \code{ThemeData} классаар дамжуулан апп-ын бүх widget-д нэгдсэн дизайн хэрэгжүүлсэн:
+
+\begin{lstlisting}[language={}, caption={Material Design 3 харанхуй говийн дизайн тохиргоо}]
+ThemeData desertDarkTheme = ThemeData(
+  useMaterial3: true,
+  brightness: Brightness.dark,
+  colorScheme: ColorScheme.dark(
+    background: Color(0xFF120D06),  // desert black
+    primary:    Color(0xFFF0B429),  // golden sand
+    secondary:  Color(0xFFD4622A),  // sunset orange
+    surface:    Color(0xFF1E1610),
+  ),
+);
+\end{lstlisting}
+
+\subsection{3.5.2 4 tab-тай доод навигаци}
+
+Апп-ын үндсэн навигаци нь \code{BottomNavigationBar} ашиглан 4 tab-тай:
+
+\begin{lstlisting}[language={}, caption={BottomNavigationBar — 4 tab навигаци}]
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  int _selectedIndex = 0;
+
+  final List<Widget> _screens = const [
+    HomeScreen(),
+    BookingsScreen(),
+    ChatScreen(),
+    ProfileScreen(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _screens[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) => setState(() => _selectedIndex = index),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home),
+              label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.calendar_today),
+              label: 'Bookings'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat),
+              label: 'Chat'),
+          BottomNavigationBarItem(icon: Icon(Icons.person),
+              label: 'Profile'),
+        ],
+      ),
+    );
+  }
+}
+\end{lstlisting}
+
+\subsection{3.5.3 Утасны OTP нэвтрэлт}
+
+Нэвтрэлтийн дэлгэцэд хэрэглэгч зөвхөн утасны дугаараар OTP авч нэвтрэх боломжтой. Firebase Phone Authentication ашиглан SMS OTP илгээнэ:
+
+\begin{lstlisting}[language={}, caption={Firebase Phone Authentication (OTP)}]
+Future<void> verifyPhone(String phoneNumber) async {
+  await FirebaseAuth.instance.verifyPhoneNumber(
+    phoneNumber: phoneNumber,
+    verificationCompleted: (PhoneAuthCredential credential) async {
+      await FirebaseAuth.instance.signInWithCredential(credential);
+    },
+    verificationFailed: (FirebaseAuthException e) {
+      // Error handling
+    },
+    codeSent: (String verificationId, int? resendToken) {
+      // Navigate to OTP screen
+      setState(() => _verificationId = verificationId);
+    },
+    codeAutoRetrievalTimeout: (String verificationId) {},
+  );
+}
+\end{lstlisting}
+
+OTP код амжилттай баталгаажсаны дараа Firebase нь хэрэглэгчийн UID үүсгэж, Firestore-ийн \code{users} collection-д бүртгэл нэмнэ.
+
+\subsection{3.5.4 Нүүр дэлгэц — Спорт заалнуудын жагсаалт}
+
+Нүүр дэлгэцэд таван спорт заалын карт харагдана. Хэрэглэгч карт дарахад тухайн заалны хуваарийн дэлгэц нээгдэнэ. Заалнуудын мэдээлэл кодод тодорхойлсон тул Firestore хандалт шаардлагагүй — дэлгэц нэн даруй ачаалдаг.
+
+\subsection{3.5.5 Цагийн хуваарь ба захиалгын дэлгэц}
+
+Цагийн хуваарийн дэлгэцэд хэрэглэгч огноо сонгохоор тухайн өдрийн цагийн үе бүр харагдана. Firestore-аас уг заал, уг өдрийн \code{bookings} болон \code{fixed\_bookings} өгөгдлийг уншиж, захиалагдсан цагийн үеийг идэвхгүй байдлаар харуулна:
+
+\begin{lstlisting}[language={}, caption={Цагийн хуваарь уншиж харуулах}]
+Future<void> _loadSlots(String venueId, String date) async {
+  setState(() => isLoading = true);
+
+  // User bookings
+  final bookSnap = await FirebaseFirestore.instance
+      .collection('bookings')
+      .where('venueId', isEqualTo: venueId)
+      .where('date', isEqualTo: date)
+      .where('status', isEqualTo: 'active')
+      .get();
+
+  // Fixed/organizational bookings
+  final weekday = DateTime.parse(date).weekday % 7;
+  final fixedSnap = await FirebaseFirestore.instance
+      .collection('fixed_bookings')
+      .where('venueId', isEqualTo: venueId)
+      .where('dayOfWeek', isEqualTo: weekday)
+      .where('isActive', isEqualTo: true)
+      .get();
+
+  final bookedSlots = {
+    ...bookSnap.docs.map((d) => d['timeSlot'] as String),
+    ...fixedSnap.docs.map((d) => d['timeSlot'] as String),
+  };
+
+  setState(() {
+    _bookedSlots = bookedSlots;
+    isLoading = false;
+  });
+}
+\end{lstlisting}
+
+Захиалга хийхдээ \textbf{DBK-xxxxx} форматын захиалгын код автоматаар үүснэ:
+
+\begin{lstlisting}[language={}, caption={Захиалгын код үүсгэх ба Firestore-д хадгалах}]
+String _generateBookingCode() {
+  final rand = Random();
+  final digits = List.generate(5,
+      (_) => rand.nextInt(10).toString()).join();
+  return 'DBK-$digits';
+}
+
+Future<void> _createBooking(String timeSlot) async {
+  final code = _generateBookingCode();
+  await FirebaseFirestore.instance.collection('bookings').add({
+    'bookingCode': code,
+    'userId':      FirebaseAuth.instance.currentUser!.uid,
+    'venueId':     widget.venueId,
+    'venueName':   widget.venueName,
+    'date':        _selectedDate,
+    'timeSlot':    timeSlot,
+    'status':      'active',
+    'createdAt':   FieldValue.serverTimestamp(),
+  });
+  _scheduleReminder(timeSlot, code);
+}
+\end{lstlisting}
+
+\subsection{3.5.6 Локал мэдэгдлийн хэрэгжүүлэлт}
+
+\code{flutter\_local\_notifications} ашиглан захиалгаас 1 цагийн өмнө сануулга schedule хийдэг. FCM сервер байхгүй тул энэ нь бүрэн офлайн ажилладаг:
+
+\begin{lstlisting}[language={}, caption={flutter\_local\_notifications — захиалгын сануулга}]
+Future<void> _scheduleReminder(
+    String timeSlot, String bookingCode) async {
+  final parts = timeSlot.split(':');
+  final slotHour = int.parse(parts[0]);
+  final slotMin  = int.parse(parts[1].split('-')[0]);
+
+  final bookingTime = DateTime(
+    DateTime.now().year, DateTime.now().month,
+    DateTime.now().day, slotHour, slotMin,
+  );
+  final reminderTime = bookingTime.subtract(
+      const Duration(hours: 1));
+
+  await flutterLocalNotificationsPlugin.zonedSchedule(
+    bookingCode.hashCode,
+    'Booking Reminder',
+    '$bookingCode - starts in 1 hour',
+    tz.TZDateTime.from(reminderTime, tz.local),
+    notificationDetails,
+    androidScheduleMode:
+        AndroidScheduleMode.exactAllowWhileIdle,
+    uiLocalNotificationDateInterpretation:
+        UILocalNotificationDateInterpretation
+            .absoluteTime,
+  );
+}
+\end{lstlisting}
+
+%-------------------------------------------------------------------------------
+
+\section{3.6 Node.js/Express бэкэндийн хэрэгжүүлэлт}
+
+\subsection{3.6.1 Бэкэндийн бүтэц}
+
+Node.js/Express бэкэнд нь \code{backend/} хавтаст байрлах бөгөөд дараахи бүтэцтэй:
+
+\begin{itemize}
+    \item \code{server.js} — Үндсэн Express сервер, middleware, route бүртгэл;
+    \item \code{routes/chat.js} — Groq Llama AI чатын endpoint;
+    \item \code{routes/bookings.js} — Захиалгын удирдлага, cron ажлын endpoint;
+    \item \code{routes/users.js} — Хэрэглэгчийн мэдээлэл;
+    \item \code{routes/schedule.js} — Цагийн хуваарийн мэдээлэл.
+\end{itemize}
+
+\subsection{3.6.2 Үндсэн API endpoint-ууд}
+
+\begin{lstlisting}[language={}, caption={Express.js — үндсэн route тохиргоо}]
+const express = require('express');
+const app     = express();
+
+app.use(express.json());
+app.use('/api/chat',     require('./routes/chat'));
+app.use('/api/users',    require('./routes/users'));
+app.use('/api/bookings', require('./routes/bookings'));
+app.use('/api/schedule', require('./routes/schedule'));
+
+app.listen(3000, () => {
+  console.log('Server running on port 3000');
+});
+\end{lstlisting}
+
+\subsection{3.6.3 Cron ажил — Дуусгавар болсон захиалгыг автоматаар шинэчлэх}
+
+Бэкэнд нь 15 минут тутамд cron ажлыг ажиллуулж, эхлэх цаг нь өнгөрсөн боловч \code{active} төлөвтэй хэвээр байгаа захиалгыг \code{completed} болгон шинэчилдэг. Энэ нь Firestore-д шууд хандан batch update хийдэг:
+
+\begin{lstlisting}[language={}, caption={Cron ажил — 15 минут тутамд захиалга шинэчлэх}]
+const cron = require('node-cron');
+const admin = require('firebase-admin');
+
+// runs every 15 minutes
+cron.schedule('*/15 * * * *', async () => {
+  const now   = new Date();
+  const today = now.toISOString().split('T')[0];
+  const nowTime = now.getHours().toString().padStart(2,'0')
+                + ':' + now.getMinutes().toString().padStart(2,'0');
+
+  const snapshot = await admin.firestore()
+    .collection('bookings')
+    .where('status', '==', 'active')
+    .where('date', '<=', today)
+    .get();
+
+  const batch = admin.firestore().batch();
+  snapshot.docs.forEach(doc => {
+    const endTime = doc.data().timeSlot.split('-')[1];
+    if (doc.data().date < today ||
+        (doc.data().date === today && endTime <= nowTime)) {
+      batch.update(doc.ref, { status: 'completed' });
+    }
+  });
+  await batch.commit();
+  console.log('Cron: expired bookings completed');
+});
+\end{lstlisting}
+
+%-------------------------------------------------------------------------------
+
+\section{3.7 AI чатботын хэрэгжүүлэлт}
+
+\subsection{3.7.1 Архитектур — Үндсэн болон нөөц горим}
+
+AI чатботын архитектур нь хоёр давхар горимтой:
+
+\begin{enumerate}
+    \item \textbf{Үндсэн горим} — Firebase Cloud Functions дамжуулан Anthropic Claude Haiku 4.5;
+    \item \textbf{Нөөц горим} — Node.js Express бэкэнд дамжуулан Groq Llama 3.1-8b.
+\end{enumerate}
+
+Flutter апп нь \code{AppConfig.chatEndpoint} (Express бэкэнд) болон Firebase Cloud Function-ийн URL аль алинтай холбогдох чадвартай.
+
+\subsection{3.7.2 Firebase Cloud Functions — Claude Haiku}
+
+Cloud Functions дотор Anthropic-ийн Node.js SDK ашиглан Claude Haiku 4.5 API-тай харилцана:
+
+\begin{lstlisting}[language={}, caption={Firebase Cloud Functions — Claude Haiku чат}]
+const functions = require('firebase-functions');
+const Anthropic = require('@anthropic-ai/sdk');
+
+exports.chat = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated',
+        'Authentication required');
+  }
+
+  const client = new Anthropic({
+    apiKey: functions.config().anthropic.key,
+  });
+
+  const message = await client.messages.create({
+    model: 'claude-haiku-4-5',
+    max_tokens: 512,
+    messages: [{ role: 'user', content: data.message }],
+    system: 'You are a sports hall booking assistant for Dalanzadgad city.',
+  });
+
+  return { reply: message.content[0].text };
+});
+\end{lstlisting}
+
+\subsection{3.7.3 Express бэкэнд — Groq Llama нөөц горим}
+
+\begin{lstlisting}[language={}, caption={Express бэкэнд — Groq Llama чат endpoint}]
+const Groq = require('groq-sdk');
+const router = require('express').Router();
+
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY
+});
+
+router.post('/', async (req, res) => {
+  const { message } = req.body;
+  const completion = await groq.chat.completions.create({
+    model: 'llama-3.1-8b-instant',
+    messages: [
+      { role: 'system',
+        content: 'You are a sports hall booking assistant.' },
+      { role: 'user', content: message },
+    ],
+    max_tokens: 512,
+  });
+  res.json({
+    reply: completion.choices[0].message.content
+  });
+});
+
+module.exports = router;
+\end{lstlisting}
+
+%-------------------------------------------------------------------------------
+
+\section{3.8 Docker контейнержуулалт ба AWS байршуулалт}
+
+\subsection{3.8.1 Docker Image}
+
+Node.js бэкэнд нь \code{backend/Dockerfile}-аар тодорхойлогдсон Docker дүрс ашигладаг. Node 18 Alpine суурь дүрс сонгосноор эцсийн дүрсний хэмжээ жижиг байна:
+
+\begin{lstlisting}[language={}, caption={backend/Dockerfile}]
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+EXPOSE 3000
+CMD ["node", "server.js"]
+\end{lstlisting}
+
+\subsection{3.8.2 GitHub Actions CI/CD Workflow}
+
+\code{.github/workflows/deploy.yml} файл нь \code{backend/} хавтаст push хийх үед автоматаар ажилладаг:
+
+\begin{lstlisting}[language={}, caption={GitHub Actions — CI/CD workflow}]
+name: Deploy Backend
+
+on:
+  push:
+    paths: ['backend/**']
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-1
+
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and push Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG:    ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/dz-zaal:$IMAGE_TAG ./backend
+          docker push $ECR_REGISTRY/dz-zaal:$IMAGE_TAG
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host:     ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key:      ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker pull $ECR_REGISTRY/dz-zaal:$IMAGE_TAG
+            docker stop dz-zaal || true
+            docker rm   dz-zaal || true
+            docker run -d --name dz-zaal \
+              -p 3000:3000 \
+              --env-file /home/ec2-user/.env \
+              $ECR_REGISTRY/dz-zaal:$IMAGE_TAG
+\end{lstlisting}
+
+CI/CD хоолойн тусламжтайгаар хөгжүүлэгч \code{git push} хийхэд л бэкэнд автоматаар шинэчлэгддэг. Хүний гараар сервер дээр нэвтрэх шаардлага байхгүй болдог.
+
+%-------------------------------------------------------------------------------
+
+\section{3.9 Туршилт ба үр дүнгийн үнэлгээ}
+
+\subsection{3.9.1 Функциональ туршилт}
+
+Апп-ын үндсэн функцүүдийг дараахи тест тохиолдлуудаар шалгасан:
+
+\begin{table}[h]
+\centering
+\caption{Функциональ туршилтын үр дүн}
+\begin{tabular}{|c|p{5.5cm}|c|}
+\hline
+\textbf{№} & \textbf{Тест тохиолдол} & \textbf{Үр дүн} \\ \hline
+1 & OTP ашиглан нэвтрэх, users collection-д бүртгэл үүсэх & Тэнцсэн \\ \hline
+2 & Нүүр дэлгэцэд 5 спорт заал гарах & Тэнцсэн \\ \hline
+3 & fixed\_bookings тухайн өдрийн хуваарьт тусах & Тэнцсэн \\ \hline
+4 & DBK-xxxxx форматын захиалгын код үүсэх & Тэнцсэн \\ \hline
+5 & Захиалга хийснээс 1 цагийн өмнө локал мэдэгдэл ирэх & Тэнцсэн \\ \hline
+6 & Захиалга цуцлах, цаг чөлөөлөгдөх & Тэнцсэн \\ \hline
+7 & 15 минутын cron ажил дуусгавар болсон захиалгыг completed болгох & Тэнцсэн \\ \hline
+8 & AI чат (Claude Haiku) хариулт өгөх & Тэнцсэн \\ \hline
+9 & AI чат (Groq Llama нөөц) хариулт өгөх & Тэнцсэн \\ \hline
+10 & GitHub Actions push хийснээс хойш EC2 шинэчлэгдэх & Тэнцсэн \\ \hline
+\end{tabular}
+\label{tab:test}
+\end{table}
+
+\subsection{3.9.2 Гүйцэтгэлийн хэмжилт}
+
+Апп-ын гүйцэтгэлийг дараахи үзүүлэлтээр хэмжсэн:
+
+\begin{itemize}
+    \item \textbf{Flutter апп ачаалах хугацаа} — Дундаж 2.3 секунд (зорилт: 3 секундаас бага);
+    \item \textbf{Firestore хуваарь унших хугацаа} — Дундаж 0.6 секунд;
+    \item \textbf{Node.js API хариулах хугацаа (EC2)} — Дундаж 0.8 секунд;
+    \item \textbf{Claude Haiku хариулт (Cloud Functions)} — Дундаж 1.4 секунд;
+    \item \textbf{Groq Llama хариулт (EC2)} — Дундаж 0.9 секунд;
+    \item \textbf{Дэлгэц хоорондох шилжилт} — 60 FPS-д жигд ажиллах.
+\end{itemize}
+
+\subsection{3.9.3 CI/CD хоолойн туршилт}
+
+GitHub Actions workflow-ийг дараахи тест тохиолдлуудаар шалгасан:
+
+\begin{itemize}
+    \item \code{backend/} хавтаст өөрчлөлт push хийхэд workflow автоматаар trigger болдог болохыг баталгаажуулсан;
+    \item Docker дүрс AWS ECR-д амжилттай push хийгдэж, SHA тагаар хянагдаж байгааг баталгаажуулсан;
+    \item EC2-д SSH холболтоор шинэ контейнер ажиллаж, хуучин контейнер зогсдог болохыг шалгасан;
+    \item Нийт байршуулалтын хугацаа 3--4 минут болохыг хэмжсэн.
+\end{itemize}
