@@ -56,11 +56,11 @@ router.get('/', async (req, res) => {
       }
     });
 
-    // 08:00–20:00 нийт 12 слот үүсгэх
+    // 08:00–00:00 нийт 16 слот үүсгэх
     const slots = [];
-    for (let hour = 8; hour < 20; hour++) {
+    for (let hour = 8; hour < 24; hour++) {
       const time = `${String(hour).padStart(2, '0')}:00`;
-      const endTime = `${String(hour + 1).padStart(2, '0')}:00`;
+      const endTime = `${String((hour + 1) % 24).padStart(2, '0')}:00`;
       const isFixed = hour in fixedHours;
       const info = slotMap[time] || { halfCourtCount: 0, hasFullCourt: false };
       const isFullyBooked = info.hasFullCourt || info.halfCourtCount >= 2;
@@ -94,8 +94,8 @@ router.post('/fixed', async (req, res) => {
   if (!Array.isArray(weekDays) || weekDays.some((d) => d < 1 || d > 7)) {
     return res.status(400).json({ error: 'weekDays: 1–7 (1=Да, 7=Ня) массив байх ёстой' });
   }
-  if (startHour >= endHour || startHour < 8 || endHour > 20) {
-    return res.status(400).json({ error: 'startHour/endHour: 8–20 хооронд байх ёстой' });
+  if (startHour >= endHour || startHour < 8 || endHour > 24) {
+    return res.status(400).json({ error: 'startHour/endHour: 8–24 хооронд байх ёстой' });
   }
 
   try {
