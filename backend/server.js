@@ -72,7 +72,7 @@ app.post('/api/chat', async (req, res) => {
     }
 
     const response = await getOpenAIClient().chat.completions.create({
-      model: 'llama-3.1-8b-instant',
+      model: 'meta-llama/llama-3.1-8b-instruct:free',
       messages: messagesWithSystem,
     });
 
