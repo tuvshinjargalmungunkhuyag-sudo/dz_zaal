@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/models.dart';
 import '../widgets/widgets.dart';
 import '../theme/app_theme.dart';
 import '../services/api_service.dart';
 import 'confirmation_screen.dart';
+import 'auth/login_screen.dart';
 
 void showBookingSheet(BuildContext context, SportVenue venue) {
   showModalBottomSheet(
@@ -25,7 +27,7 @@ class _BookingSheet extends StatefulWidget {
 class _BookingSheetState extends State<_BookingSheet> {
   DateTime _selectedDate = DateTime.now();
   List<TimeSlot> _timeSlots = [];
-  TimeSlot? _selectedSlot;
+  List<TimeSlot> _selectedSlots = [];
   bool _isFullCourt = true;
   bool _isLoadingSlots = false;
 
@@ -34,10 +36,9 @@ class _BookingSheetState extends State<_BookingSheet> {
   int get _basePrice =>
       int.tryParse(widget.venue.pricePerHour.replaceAll(RegExp(r'[^\d]'), '')) ?? 0;
 
-  int get _price => _isFullCourt ? _basePrice : (_basePrice / 2).round();
+  int get _pricePerHour => _isFullCourt ? _basePrice : (_basePrice / 2).round();
 
-  String get _priceLabel {
-    final p = _price;
+  String _formatPrice(int p) {
     if (p >= 1000) {
       final thousands = p ~/ 1000;
       final remainder = p % 1000;
@@ -46,6 +47,11 @@ class _BookingSheetState extends State<_BookingSheet> {
     }
     return '$p₮';
   }
+
+  String get _priceLabel => _formatPrice(_pricePerHour);
+  String get _halfPriceLabel => _formatPrice((_basePrice / 2).round());
+  String get _totalPriceLabel =>
+      _formatPrice(_pricePerHour * (_selectedSlots.isEmpty ? 1 : _selectedSlots.length));
 
   @override
   void initState() {
@@ -56,7 +62,7 @@ class _BookingSheetState extends State<_BookingSheet> {
   Future<void> _loadSlots(DateTime date) async {
     setState(() {
       _isLoadingSlots = true;
-      _selectedSlot = null;
+      _selectedSlots = [];
     });
     try {
       final slots = await ApiService.getSchedule(widget.venue.id, date);
@@ -71,12 +77,42 @@ class _BookingSheetState extends State<_BookingSheet> {
     }
   }
 
+  void _clearSlotSelection() {
+    for (final s in _timeSlots) { s.isSelected = false; }
+    _selectedSlots = [];
+  }
+
   void _selectSlot(TimeSlot slot) {
-    if (slot.isBooked) return;
+    if (slot.isBooked || slot.isFixed) return;
     setState(() {
-      for (final s in _timeSlots) { s.isSelected = false; }
-      slot.isSelected = true;
-      _selectedSlot = slot;
+      if (_selectedSlots.isEmpty) {
+        slot.isSelected = true;
+        _selectedSlots = [slot];
+        return;
+      }
+      // Already selected → deselect all
+      if (_selectedSlots.contains(slot)) {
+        _clearSlotSelection();
+        return;
+      }
+      final tapIdx   = _timeSlots.indexOf(slot);
+      final firstIdx = _timeSlots.indexOf(_selectedSlots.first);
+      final lastIdx  = _timeSlots.indexOf(_selectedSlots.last);
+
+      if (tapIdx == lastIdx + 1) {
+        // Дараагийн зэрэгцээ цаг — урагш өргөтгөх
+        slot.isSelected = true;
+        _selectedSlots.add(slot);
+      } else if (tapIdx == firstIdx - 1) {
+        // Өмнөх зэрэгцээ цаг — хойш өргөтгөх
+        slot.isSelected = true;
+        _selectedSlots.insert(0, slot);
+      } else {
+        // Зэрэгцээ биш — шинэ сонголт эхлүүлэх
+        _clearSlotSelection();
+        slot.isSelected = true;
+        _selectedSlots = [slot];
+      }
     });
   }
 
@@ -212,6 +248,8 @@ class _BookingSheetState extends State<_BookingSheet> {
               Expanded(
                 child: ListView(
                   controller: scrollController,
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
                   padding: EdgeInsets.fromLTRB(20, 20, 20, 20 + bottomPad),
                   children: [
                     // Court type selector
@@ -237,7 +275,7 @@ class _BookingSheetState extends State<_BookingSheet> {
                         const SizedBox(width: 10),
                         _CourtTypeCard(
                           label: 'Хагас талбай',
-                          description: '$_priceLabel / цаг',
+                          description: '$_halfPriceLabel / цаг',
                           icon: Icons.vertical_split_rounded,
                           isSelected: !_isFullCourt,
                           accentColor: widget.venue.accentColor,
@@ -355,6 +393,38 @@ class _BookingSheetState extends State<_BookingSheet> {
                     ),
                     const SizedBox(height: 12),
 
+                    // Instruction text
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: AppTheme.cardColor,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppTheme.divider),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.touch_app_rounded,
+                            color: widget.venue.accentColor,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 10),
+                          const Expanded(
+                            child: Text(
+                              'Доорх цагуудаас нэгийг дарж сонгоно уу',
+                              style: TextStyle(
+                                color: AppTheme.textSecondary,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
                     // Time slot grid
                     if (_isLoadingSlots)
                       const Center(
@@ -398,7 +468,7 @@ class _BookingSheetState extends State<_BookingSheet> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (_selectedSlot != null) ...[
+                      if (_selectedSlots.isNotEmpty) ...[
                         Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 10),
@@ -421,7 +491,7 @@ class _BookingSheetState extends State<_BookingSheet> {
                                   children: [
                                     Text(
                                       '${_selectedDate.month}-р сарын ${_selectedDate.day}, '
-                                      '${_selectedSlot!.time}–${_selectedSlot!.endTime}',
+                                      '${_selectedSlots.first.time}–${_selectedSlots.last.endTime}',
                                       style: const TextStyle(
                                         color: AppTheme.textPrimary,
                                         fontSize: 13,
@@ -429,7 +499,7 @@ class _BookingSheetState extends State<_BookingSheet> {
                                       ),
                                     ),
                                     Text(
-                                      _isFullCourt ? 'Бүтэн талбай' : 'Хагас талбай',
+                                      '${_isFullCourt ? 'Бүтэн талбай' : 'Хагас талбай'} • ${_selectedSlots.length} цаг',
                                       style: TextStyle(
                                         color: widget.venue.accentColor,
                                         fontSize: 11,
@@ -440,7 +510,7 @@ class _BookingSheetState extends State<_BookingSheet> {
                                 ),
                               ),
                               Text(
-                                _priceLabel,
+                                _totalPriceLabel,
                                 style: TextStyle(
                                   color: widget.venue.accentColor,
                                   fontSize: 14,
@@ -454,9 +524,18 @@ class _BookingSheetState extends State<_BookingSheet> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: _selectedSlot == null
+                          onPressed: _selectedSlots.isEmpty
                               ? null
                               : () {
+                                  if (FirebaseAuth.instance.currentUser == null) {
+                                    Navigator.pop(context);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) => const LoginScreen()),
+                                    );
+                                    return;
+                                  }
                                   Navigator.pop(context);
                                   Navigator.push(
                                     context,
@@ -464,31 +543,52 @@ class _BookingSheetState extends State<_BookingSheet> {
                                       builder: (_) => ConfirmationScreen(
                                         venue: widget.venue,
                                         date: _selectedDate,
-                                        timeSlot: _selectedSlot!,
+                                        startTime: _selectedSlots.first.time,
+                                        endTime: _selectedSlots.last.endTime,
                                         courtType: _isFullCourt
                                             ? 'Бүтэн талбай'
                                             : 'Хагас талбай',
-                                        price: _priceLabel,
+                                        price: _totalPriceLabel,
                                       ),
                                     ),
                                   );
                                 },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: _selectedSlot != null
+                            backgroundColor: _selectedSlots.isNotEmpty
                                 ? widget.venue.accentColor
-                                : AppTheme.divider,
-                            foregroundColor: AppTheme.primary,
+                                : AppTheme.surface,
+                            foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),
                             ),
                           ),
-                          child: Text(
-                            _selectedSlot == null ? 'Цаг сонгоно уу' : 'Захиалах',
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                            ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                _selectedSlots.isEmpty
+                                    ? Icons.touch_app_rounded
+                                    : Icons.check_circle_rounded,
+                                color: _selectedSlots.isEmpty
+                                    ? AppTheme.textSecondary
+                                    : Colors.white,
+                                size: 18,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                _selectedSlots.isEmpty
+                                    ? 'Цагаа сонгоно уу ↑'
+                                    : 'Захиалах',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                  color: _selectedSlots.isEmpty
+                                      ? AppTheme.textSecondary
+                                      : Colors.white,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),

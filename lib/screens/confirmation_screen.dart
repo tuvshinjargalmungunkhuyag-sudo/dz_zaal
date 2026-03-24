@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/models.dart';
 import '../theme/app_theme.dart';
-import '../services/notification_service.dart';
 import '../services/notification_store.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
@@ -9,7 +8,8 @@ import '../services/auth_service.dart';
 class ConfirmationScreen extends StatefulWidget {
   final SportVenue venue;
   final DateTime date;
-  final TimeSlot timeSlot;
+  final String startTime;
+  final String endTime;
   final String courtType;
   final String price;
 
@@ -17,7 +17,8 @@ class ConfirmationScreen extends StatefulWidget {
     super.key,
     required this.venue,
     required this.date,
-    required this.timeSlot,
+    required this.startTime,
+    required this.endTime,
     required this.courtType,
     required this.price,
   });
@@ -94,6 +95,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
   }
 
   Future<void> _confirm() async {
+    FocusScope.of(context).unfocus();
     final phone = _phoneController.text.replaceAll(RegExp(r'[\s\-]'), '');
     String? error;
     if (_nameController.text.trim().isEmpty) {
@@ -134,8 +136,8 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
         venueLocation: widget.venue.location,
         venueAccentColor: widget.venue.accentColor.toARGB32(),
         date: widget.date,
-        timeSlot: widget.timeSlot.time,
-        timeSlotEnd: widget.timeSlot.endTime,
+        timeSlot: widget.startTime,
+        timeSlotEnd: widget.endTime,
         courtType: widget.courtType,
         price: widget.price,
         userName: name,
@@ -157,19 +159,13 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
       return;
     }
 
-    await NotificationService.scheduleBookingReminder(
-      venue: widget.venue,
-      date: widget.date,
-      timeSlot: widget.timeSlot,
-    );
-
     NotificationStore.instance.add(AppNotification(
       id: 'booking_${DateTime.now().millisecondsSinceEpoch}',
       type: AppNotificationType.booking,
       title: 'Захиалга баталгаажлаа',
       body:
           '${widget.venue.name} — ${widget.courtType}, ${widget.date.month}-р сарын ${widget.date.day}, '
-          '${widget.timeSlot.time}–${widget.timeSlot.endTime}',
+          '${widget.startTime}–${widget.endTime}',
       createdAt: DateTime.now(),
     ));
 
@@ -195,7 +191,9 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
       return _buildSuccessScreen();
     }
 
-    return Scaffold(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
       appBar: AppBar(
         title: const Text('Захиалга баталгаажуулах'),
         leading: IconButton(
@@ -281,8 +279,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
                   _BookingDetailRow(
                     icon: Icons.access_time_rounded,
                     label: 'Цаг',
-                    value:
-                        '${widget.timeSlot.time} – ${widget.timeSlot.endTime}',
+                    value: '${widget.startTime} – ${widget.endTime}',
                     color: widget.venue.accentColor,
                   ),
                   const SizedBox(height: 14),
@@ -429,7 +426,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
               onPressed: _isLoading ? null : _confirm,
               style: ElevatedButton.styleFrom(
                 backgroundColor: widget.venue.accentColor,
-                foregroundColor: AppTheme.primary,
+                foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -455,6 +452,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
           ),
         ),
       ),
+    ),
     );
   }
 
@@ -535,7 +533,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '${_formatDate(widget.date)} • ${widget.timeSlot.time}–${widget.timeSlot.endTime}',
+                      '${_formatDate(widget.date)} • ${widget.startTime}–${widget.endTime}',
                       style: const TextStyle(
                         color: AppTheme.textSecondary,
                         fontSize: 14,
@@ -602,7 +600,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: widget.venue.accentColor,
-                    foregroundColor: AppTheme.primary,
+                    foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),

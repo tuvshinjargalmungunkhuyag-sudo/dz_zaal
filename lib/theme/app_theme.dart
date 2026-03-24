@@ -1,27 +1,31 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Говийн цөлийн өнгө — шөнийн тэнгэр + алтан элс + наранжин үдэш
-  static const Color primary     = Color(0xFF120D06); // цөлийн харанхуй шөнө
-  static const Color secondary   = Color(0xFFF0B429); // алтан элс
-  static const Color accent      = Color(0xFFD4622A); // наранжин үдэш
-  static const Color surface     = Color(0xFF1C1508); // хар хад
-  static const Color cardColor   = Color(0xFF271D0A); // дулаан харанхуй карт
-  static const Color textPrimary = Color(0xFFF2E2C0); // сарны гэрэл цагаан
-  static const Color textSecondary = Color(0xFF8C7A56); // хөрсний өнгө
-  static const Color success     = Color(0xFF6BA86E); // оазис ногоон
-  static const Color warning     = Color(0xFFE8901A); // хань шар
-  static const Color divider     = Color(0xFF3A2D15); // хөрсний зааг
+  // Нүдэнд ээлтэй дулаан тон — цааснай шохой биш, харанхуй биш
+  static const Color primary       = Color(0xFFEDE7DA); // дулаан бежийн дэвсгэр
+  static const Color secondary     = Color(0xFFD4700F); // наранжин
+  static const Color accent        = Color(0xFFB85C08); // гүн наранжин
+  static const Color surface       = Color(0xFFE4DDD0); // бага зэрэг харанхуй
+  static const Color cardColor     = Color(0xFFF8F4EE); // цайвар карт
+  static const Color textPrimary   = Color(0xFF1A1208); // харанхуй хүрэн текст
+  static const Color textSecondary = Color(0xFF6B5438); // дунд хүрэн
+  static const Color success       = Color(0xFF2E7D32); // ногоон
+  static const Color warning       = Color(0xFFD4700F); // шар
+  static const Color error         = Color(0xFFC0392B); // улаан
+  static const Color divider       = Color(0xFFD0C4B0); // харагдах хил
 
-  static ThemeData get darkTheme {
+  static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
+      fontFamily: 'Montserrat',
+      brightness: Brightness.light,
       scaffoldBackgroundColor: primary,
-      colorScheme: const ColorScheme.dark(
+      colorScheme: const ColorScheme.light(
         primary: secondary,
+        onPrimary: Colors.white,
         secondary: accent,
         surface: surface,
+        error: error,
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: primary,
@@ -59,12 +63,12 @@ class AppTheme {
         ),
         bodyLarge: TextStyle(
           color: textPrimary,
-          fontSize: 15,
+          fontSize: 16,
           fontWeight: FontWeight.w400,
         ),
         bodyMedium: TextStyle(
           color: textSecondary,
-          fontSize: 13,
+          fontSize: 14,
           fontWeight: FontWeight.w400,
         ),
         labelLarge: TextStyle(
@@ -85,7 +89,7 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: secondary,
-          foregroundColor: primary,
+          foregroundColor: Colors.white,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           shape: RoundedRectangleBorder(
@@ -115,6 +119,10 @@ class AppTheme {
         ),
         labelStyle: const TextStyle(color: textSecondary),
         hintStyle: const TextStyle(color: textSecondary),
+      ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: cardColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
     );
   }

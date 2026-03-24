@@ -14,7 +14,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String _selectedCategory = 'Бүгд';
   String _searchQuery = '';
   String _selectedSort = 'Үнэлгээ';
   bool _onlyAvailable = false;
@@ -36,12 +35,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _rebuild() => setState(() {});
 
-  final List<String> _categories = [
-    'Бүгд',
-    'Сагсан бөмбөг',
-    'Волейбол',
-  ];
-
   bool get _hasActiveFilters =>
       _selectedSort != 'Үнэлгээ' || _onlyAvailable;
 
@@ -51,9 +44,6 @@ class _HomeScreenState extends State<HomeScreen> {
   List<SportVenue> get _filteredVenues {
     List<SportVenue> list = AppData.venues;
 
-    if (_selectedCategory != 'Бүгд') {
-      list = list.where((v) => v.type == _selectedCategory).toList();
-    }
     if (_onlyAvailable) {
       list = list.where((v) => v.isAvailable).toList();
     }
@@ -105,7 +95,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Drag handle
                   Center(
                     child: Container(
                       width: 40,
@@ -117,8 +106,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-
-                  // Header
                   Row(
                     children: [
                       const Text(
@@ -157,8 +144,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   const SizedBox(height: 24),
-
-                  // Sort section
                   const Text(
                     'Эрэмбэлэх',
                     style: TextStyle(
@@ -194,8 +179,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   const SizedBox(height: 24),
-
-                  // Availability section
                   const Text(
                     'Нээлттэй байдал',
                     style: TextStyle(
@@ -229,7 +212,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Container(
                             width: 8,
                             height: 8,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               color: AppTheme.success,
                               shape: BoxShape.circle,
                             ),
@@ -270,8 +253,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(height: 28),
-
-                  // Apply button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -296,377 +277,243 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final venues = _filteredVenues;
     return Scaffold(
       body: CustomScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         slivers: [
-          // ── AppBar ──────────────────────────────────────────────────────────
+          // ── AppBar: гарчиг + мэдэгдэл ─────────────────────────────────────
           SliverAppBar(
             floating: true,
+            snap: true,
             backgroundColor: AppTheme.primary,
-            expandedHeight: 0,
-            flexibleSpace: const FlexibleSpaceBar(),
             automaticallyImplyLeading: false,
-            title: Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: Row(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
+            title: const Text(
+              'Говийн Спорт',
+              style: TextStyle(
+                color: AppTheme.textPrimary,
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.5,
+              ),
+            ),
+            actions: [
+              GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const NotificationsScreen()),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 16),
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    alignment: Alignment.center,
                     children: [
-                      Row(
+                      Icon(
+                        _notifStore.unreadCount > 0
+                            ? Icons.notifications_rounded
+                            : Icons.notifications_outlined,
+                        color: _notifStore.unreadCount > 0
+                            ? AppTheme.textPrimary
+                            : AppTheme.textSecondary,
+                        size: 26,
+                      ),
+                      if (_notifStore.unreadCount > 0)
+                        Positioned(
+                          top: 6,
+                          right: 0,
+                          child: Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: AppTheme.accent,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                  color: AppTheme.primary, width: 1.5),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          // ── Хайлт ──────────────────────────────────────────────────────────
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                decoration: BoxDecoration(
+                  color: AppTheme.cardColor,
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(
+                    color: _searchQuery.isNotEmpty
+                        ? AppTheme.secondary
+                        : AppTheme.divider,
+                    width: _searchQuery.isNotEmpty ? 1.5 : 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: _searchQuery.isNotEmpty
+                          ? AppTheme.secondary.withValues(alpha: 0.18)
+                          : Colors.black.withValues(alpha: 0.06),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    const SizedBox(width: 14),
+                    Icon(
+                      Icons.search_rounded,
+                      color: _searchQuery.isNotEmpty
+                          ? AppTheme.secondary
+                          : AppTheme.textSecondary,
+                      size: 22,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: _searchController,
+                        style: const TextStyle(
+                          color: AppTheme.textPrimary,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        decoration: const InputDecoration(
+                          hintText: 'Спорт заал хайх...',
+                          hintStyle: TextStyle(
+                            color: AppTheme.textSecondary,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          isDense: true,
+                          contentPadding: EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        onChanged: (val) =>
+                            setState(() => _searchQuery = val),
+                      ),
+                    ),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 200),
+                      child: _searchQuery.isNotEmpty
+                          ? GestureDetector(
+                              key: const ValueKey('clear'),
+                              onTap: () {
+                                _searchController.clear();
+                                setState(() => _searchQuery = '');
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.all(10),
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(
+                                  color: AppTheme.divider,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.close_rounded,
+                                  color: AppTheme.textSecondary,
+                                  size: 14,
+                                ),
+                              ),
+                            )
+                          : GestureDetector(
+                              key: const ValueKey('filter'),
+                              onTap: _showFilterSheet,
+                              child: Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.all(8),
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: _hasActiveFilters
+                                          ? AppTheme.secondary
+                                              .withValues(alpha: 0.25)
+                                          : AppTheme.secondary
+                                              .withValues(alpha: 0.15),
+                                      borderRadius:
+                                          BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: _hasActiveFilters
+                                            ? AppTheme.secondary
+                                            : AppTheme.secondary
+                                                .withValues(alpha: 0.3),
+                                        width: _hasActiveFilters ? 1.5 : 1,
+                                      ),
+                                    ),
+                                    child: const Icon(
+                                      Icons.tune_rounded,
+                                      color: AppTheme.secondary,
+                                      size: 17,
+                                    ),
+                                  ),
+                                  if (_hasActiveFilters)
+                                    Positioned(
+                                      top: 6,
+                                      right: 6,
+                                      child: Container(
+                                        width: 8,
+                                        height: 8,
+                                        decoration: const BoxDecoration(
+                                          color: AppTheme.accent,
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // ── Заалнуудын жагсаалт ─────────────────────────────────────────────
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            sliver: venues.isEmpty
+                ? SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 60),
+                      child: Column(
                         children: [
                           const Icon(
-                            Icons.location_on_rounded,
-                            color: AppTheme.secondary,
-                            size: 13,
+                            Icons.search_off_rounded,
+                            color: AppTheme.textSecondary,
+                            size: 48,
                           ),
-                          const SizedBox(width: 2),
-                          const Text(
-                            'Даланзадгад',
-                            style: TextStyle(
+                          const SizedBox(height: 12),
+                          Text(
+                            '"$_searchQuery" олдсонгүй',
+                            style: const TextStyle(
                               color: AppTheme.textSecondary,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
+                              fontSize: 15,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 2),
-                      const Text(
-                        'Говийн Спорт',
-                        style: TextStyle(
-                          color: AppTheme.textPrimary,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  GestureDetector(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const NotificationsScreen(),
-                      ),
                     ),
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        Icon(
-                          _notifStore.unreadCount > 0
-                              ? Icons.notifications_rounded
-                              : Icons.notifications_outlined,
-                          color: _notifStore.unreadCount > 0
-                              ? AppTheme.textPrimary
-                              : AppTheme.textSecondary,
-                          size: 26,
-                        ),
-                        if (_notifStore.unreadCount > 0)
-                          Positioned(
-                            top: -4,
-                            right: -4,
-                            child: Container(
-                              padding: const EdgeInsets.all(3),
-                              decoration: BoxDecoration(
-                                color: AppTheme.accent,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: AppTheme.primary,
-                                  width: 1.5,
-                                ),
-                              ),
-                              constraints: const BoxConstraints(
-                                  minWidth: 16, minHeight: 16),
-                              child: Text(
-                                _notifStore.unreadCount > 9
-                                    ? '9+'
-                                    : '${_notifStore.unreadCount}',
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w800,
-                                  height: 1,
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
+                  )
+                : SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, i) => VenueCard(
+                        venue: venues[i],
+                        onTap: () => showBookingSheet(context, venues[i]),
+                      ),
+                      childCount: venues.length,
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 16),
-
-                  // ── Хайлт ───────────────────────────────────────────────────
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    decoration: BoxDecoration(
-                      color: AppTheme.cardColor,
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(
-                        color: _searchQuery.isNotEmpty
-                            ? AppTheme.secondary
-                            : AppTheme.divider,
-                        width: _searchQuery.isNotEmpty ? 1.5 : 1,
-                      ),
-                      boxShadow: _searchQuery.isNotEmpty
-                          ? [
-                              BoxShadow(
-                                color: AppTheme.secondary.withValues(alpha: 0.18),
-                                blurRadius: 16,
-                                offset: const Offset(0, 4),
-                              ),
-                            ]
-                          : [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.18),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                    ),
-                    child: Row(
-                      children: [
-                        const SizedBox(width: 16),
-                        AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 200),
-                          child: Icon(
-                            Icons.search_rounded,
-                            key: ValueKey(_searchQuery.isNotEmpty),
-                            color: _searchQuery.isNotEmpty
-                                ? AppTheme.secondary
-                                : AppTheme.textSecondary,
-                            size: 22,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: TextField(
-                            controller: _searchController,
-                            style: const TextStyle(
-                              color: AppTheme.textPrimary,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            decoration: const InputDecoration(
-                              hintText: 'Спорт заал хайх...',
-                              hintStyle: TextStyle(
-                                color: AppTheme.textSecondary,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                              ),
-                              border: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              isDense: true,
-                              contentPadding: EdgeInsets.symmetric(vertical: 14),
-                            ),
-                            onChanged: (val) => setState(() => _searchQuery = val),
-                          ),
-                        ),
-                        AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 200),
-                          child: _searchQuery.isNotEmpty
-                              ? GestureDetector(
-                                  key: const ValueKey('clear'),
-                                  onTap: () {
-                                    _searchController.clear();
-                                    setState(() => _searchQuery = '');
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.all(10),
-                                    padding: const EdgeInsets.all(4),
-                                    decoration: BoxDecoration(
-                                      color: AppTheme.divider,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.close_rounded,
-                                      color: AppTheme.textSecondary,
-                                      size: 14,
-                                    ),
-                                  ),
-                                )
-                              : GestureDetector(
-                                  key: const ValueKey('filter'),
-                                  onTap: _showFilterSheet,
-                                  child: Stack(
-                                    clipBehavior: Clip.none,
-                                    children: [
-                                      Container(
-                                        margin: const EdgeInsets.all(8),
-                                        padding: const EdgeInsets.all(8),
-                                        decoration: BoxDecoration(
-                                          color: _hasActiveFilters
-                                              ? AppTheme.secondary.withValues(alpha: 0.25)
-                                              : AppTheme.secondary.withValues(alpha: 0.15),
-                                          borderRadius: BorderRadius.circular(10),
-                                          border: Border.all(
-                                            color: _hasActiveFilters
-                                                ? AppTheme.secondary
-                                                : AppTheme.secondary.withValues(alpha: 0.3),
-                                            width: _hasActiveFilters ? 1.5 : 1,
-                                          ),
-                                        ),
-                                        child: const Icon(
-                                          Icons.tune_rounded,
-                                          color: AppTheme.secondary,
-                                          size: 17,
-                                        ),
-                                      ),
-                                      if (_hasActiveFilters)
-                                        Positioned(
-                                          top: 6,
-                                          right: 6,
-                                          child: Container(
-                                            width: 8,
-                                            height: 8,
-                                            decoration: const BoxDecoration(
-                                              color: AppTheme.accent,
-                                              shape: BoxShape.circle,
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // ── Говийн тэмээ баннер ──────────────────────────────────────
-                  _GobiBanner(),
-
-                  const SizedBox(height: 20),
-
-                  // ── Статистик ────────────────────────────────────────────────
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: AppTheme.cardColor,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: AppTheme.divider),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _StatItem(
-                          value: '${AppData.venues.length}',
-                          label: 'Спорт заал',
-                          color: AppTheme.secondary,
-                        ),
-                        Container(
-                            width: 1, height: 28, color: AppTheme.divider),
-                        _StatItem(
-                          value: '08–20',
-                          label: 'Цагийн хуваарь',
-                          color: AppTheme.success,
-                        ),
-                        Container(
-                            width: 1, height: 28, color: AppTheme.divider),
-                        _StatItem(
-                          value: '2',
-                          label: 'Спортын төрөл',
-                          color: AppTheme.textSecondary,
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-                ],
-              ),
-            ),
-          ),
-
-          // ── Ангилал chips ────────────────────────────────────────────────────
-          SliverToBoxAdapter(
-            child: SizedBox(
-              height: 40,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemCount: _categories.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
-                itemBuilder: (context, i) {
-                  final cat = _categories[i];
-                  final isSelected = _selectedCategory == cat;
-                  return GestureDetector(
-                    onTap: () => setState(() => _selectedCategory = cat),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 18,
-                        vertical: 9,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? AppTheme.secondary
-                            : AppTheme.cardColor,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: isSelected
-                              ? AppTheme.secondary
-                              : AppTheme.divider,
-                        ),
-                      ),
-                      child: Text(
-                        cat,
-                        style: TextStyle(
-                          color: isSelected
-                              ? AppTheme.primary
-                              : AppTheme.textSecondary,
-                          fontSize: 13,
-                          fontWeight: isSelected
-                              ? FontWeight.w700
-                              : FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-              child: SectionHeader(
-                title: 'Заалнууд (${_filteredVenues.length})',
-              ),
-            ),
-          ),
-
-          // ── Заалнуудын жагсаалт ──────────────────────────────────────────────
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate((context, i) {
-                final venue = _filteredVenues[i];
-                return VenueCard(
-                  venue: venue,
-                  onTap: () => showBookingSheet(context, venue),
-                );
-              }, childCount: _filteredVenues.length),
-            ),
           ),
 
           const SliverToBoxAdapter(child: SizedBox(height: 24)),
@@ -727,150 +574,6 @@ class _SortChip extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-// ── Говийн Спорт баннер ───────────────────────────────────────────────────────
-class _GobiBanner extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF2E1B05), Color(0xFF1A1004)],
-        ),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: AppTheme.secondary.withValues(alpha: 0.3),
-        ),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: const BoxDecoration(
-                        color: AppTheme.success,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    const Text(
-                      'Одоо нээлттэй',
-                      style: TextStyle(
-                        color: AppTheme.success,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Даланзадгадын\nспорт заалнууд',
-                  style: TextStyle(
-                    color: AppTheme.textPrimary,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                    height: 1.3,
-                    letterSpacing: -0.3,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  '08:00 – 20:00 • 1 цагийн слот',
-                  style: TextStyle(
-                    color: AppTheme.textSecondary.withValues(alpha: 0.9),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 16),
-          Column(
-            children: [
-              _BannerEmoji(emoji: '🐪'),
-              const SizedBox(height: 8),
-              _BannerEmoji(emoji: '🦅'),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BannerEmoji extends StatelessWidget {
-  final String emoji;
-  const _BannerEmoji({required this.emoji});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        color: AppTheme.secondary.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppTheme.secondary.withValues(alpha: 0.15),
-        ),
-      ),
-      child: Center(
-        child: Text(emoji, style: const TextStyle(fontSize: 20)),
-      ),
-    );
-  }
-}
-
-// ── Статистик item ────────────────────────────────────────────────────────────
-class _StatItem extends StatelessWidget {
-  final String value;
-  final String label;
-  final Color color;
-
-  const _StatItem({
-    required this.value,
-    required this.label,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: TextStyle(
-            color: color,
-            fontSize: 16,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          label,
-          style: const TextStyle(
-            color: AppTheme.textSecondary,
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
     );
   }
 }

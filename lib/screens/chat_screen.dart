@@ -75,8 +75,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   color: AppTheme.secondary.withValues(alpha: 0.3),
                 ),
               ),
-              child: const Center(
-                child: Text('🦅', style: TextStyle(fontSize: 36)),
+              child: const Icon(
+                Icons.smart_toy_rounded,
+                color: AppTheme.secondary,
+                size: 38,
               ),
             ),
             const SizedBox(height: 20),
@@ -104,19 +106,19 @@ class _ChatScreenState extends State<ChatScreen> {
               alignment: WrapAlignment.center,
               children: [
                 _SuggestionChip(
-                  label: '🐪 Ямар заалнууд байна?',
+                  label: 'Ямар заалнууд байна?',
                   onTap: () => _sendSuggestion('Ямар спорт заалнууд байна?'),
                 ),
                 _SuggestionChip(
-                  label: '🦅 Сагсан бөмбөгийн заал',
+                  label: 'Сагсан бөмбөгийн заал',
                   onTap: () => _sendSuggestion('Сагсан бөмбөгийн заал хаана байна?'),
                 ),
                 _SuggestionChip(
-                  label: '🐻 Үнэ хэд вэ?',
+                  label: 'Үнэ хэд вэ?',
                   onTap: () => _sendSuggestion('Заалнуудын үнэ хэд вэ?'),
                 ),
                 _SuggestionChip(
-                  label: '🦎 Захиалга хэрхэн хийх?',
+                  label: 'Захиалга хэрхэн хийх?',
                   onTap: () => _sendSuggestion('Захиалга хэрхэн хийх вэ?'),
                 ),
               ],
@@ -148,8 +150,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   color: AppTheme.secondary.withValues(alpha: 0.3),
                 ),
               ),
-              child: const Center(
-                child: Text('🦅', style: TextStyle(fontSize: 18)),
+              child: const Icon(
+                Icons.smart_toy_rounded,
+                color: AppTheme.secondary,
+                size: 20,
               ),
             ),
             const SizedBox(width: 10),
@@ -185,6 +189,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 ? _buildWelcome()
                 : ListView.builder(
                     controller: _scrollController,
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 12,
@@ -259,7 +265,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
               child: Icon(
                 _loading ? Icons.hourglass_empty_rounded : Icons.send_rounded,
-                color: AppTheme.primary,
+                color: Colors.white,
                 size: 20,
               ),
             ),
@@ -300,34 +306,36 @@ class _ChatBubble extends StatelessWidget {
                 color: AppTheme.secondary.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
               ),
-              child: const Center(
-                child: Text('🦅', style: TextStyle(fontSize: 14)),
-              ),
+              child: const Icon(Icons.smart_toy_rounded, color: AppTheme.secondary, size: 16),
             ),
           ],
           Flexible(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: isUser
-                    ? AppTheme.secondary.withValues(alpha: 0.2)
-                    : AppTheme.cardColor,
+                color: isUser ? AppTheme.secondary : AppTheme.cardColor,
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(18),
                   topRight: const Radius.circular(18),
                   bottomLeft: Radius.circular(isUser ? 18 : 4),
                   bottomRight: Radius.circular(isUser ? 4 : 18),
                 ),
-                border: Border.all(
-                  color: isUser
-                      ? AppTheme.secondary.withValues(alpha: 0.3)
-                      : AppTheme.divider,
-                ),
+                border: isUser
+                    ? null
+                    : Border.all(color: AppTheme.divider),
+                boxShadow: [
+                  BoxShadow(
+                    color: (isUser ? AppTheme.secondary : Colors.black)
+                        .withValues(alpha: isUser ? 0.25 : 0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Text(
                 message.text,
                 style: TextStyle(
-                  color: isUser ? AppTheme.secondary : AppTheme.textPrimary,
+                  color: isUser ? Colors.white : AppTheme.textPrimary,
                   fontSize: 14,
                   height: 1.5,
                 ),

@@ -48,80 +48,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _upcomingBookings = upcoming;
           _isLoading = false;
         });
-        if (name == null || name.isEmpty) {
-          _askForName();
-        }
       }
     } catch (_) {
       if (mounted) setState(() => _isLoading = false);
     }
-  }
-
-  Future<void> _askForName() async {
-    final controller = TextEditingController();
-    await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => AlertDialog(
-        backgroundColor: AppTheme.cardColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Нэрээ оруулна уу',
-            style: TextStyle(color: AppTheme.textPrimary)),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          textCapitalization: TextCapitalization.words,
-          style: const TextStyle(color: AppTheme.textPrimary),
-          decoration: InputDecoration(
-            hintText: 'Таны нэр',
-            hintStyle: const TextStyle(color: AppTheme.textSecondary),
-            prefixIcon: const Icon(Icons.person_rounded, color: AppTheme.secondary),
-            filled: true,
-            fillColor: AppTheme.surface,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: AppTheme.divider),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: AppTheme.divider),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: AppTheme.secondary),
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              final name = controller.text.trim();
-              if (name.isEmpty) return;
-              try {
-                await AuthService.saveUserName(name);
-                if (mounted) {
-                  setState(() => _userName = name);
-                  Navigator.pop(context);
-                }
-              } catch (e) {
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Алдаа: $e'),
-                      backgroundColor: Colors.redAccent,
-                    ),
-                  );
-                }
-              }
-            },
-            child: const Text('Хадгалах',
-                style: TextStyle(
-                    color: AppTheme.secondary, fontWeight: FontWeight.w700)),
-          ),
-        ],
-      ),
-    );
-    controller.dispose();
   }
 
   Future<void> _logout() async {
@@ -186,12 +116,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     gradient: const LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [Color(0xFF3D2008), Color(0xFF1C1006)],
+                      colors: [AppTheme.secondary, AppTheme.accent],
                     ),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: AppTheme.secondary.withValues(alpha: 0.3),
-                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.secondary.withValues(alpha: 0.35),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
                   ),
                   child: Column(
                     children: [
@@ -201,13 +135,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Container(
                             width: 80,
                             height: 80,
-                            decoration: const BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [AppTheme.secondary, AppTheme.accent],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.25),
                               shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.5),
+                                width: 2,
+                              ),
                             ),
                             child: Center(
                               child: Text(
@@ -220,32 +154,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
                           ),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: Container(
-                              width: 26,
-                              height: 26,
-                              decoration: BoxDecoration(
-                                color: AppTheme.cardColor,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: AppTheme.secondary.withValues(alpha: 0.4),
-                                ),
-                              ),
-                              child: const Center(
-                                child: Text('🐻',
-                                    style: TextStyle(fontSize: 13)),
-                              ),
-                            ),
-                          ),
                         ],
                       ),
                       const SizedBox(height: 14),
                       Text(
                         _userName ?? 'Хэрэглэгч',
                         style: const TextStyle(
-                          color: AppTheme.textPrimary,
+                          color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
                         ),
@@ -254,15 +169,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.phone_rounded,
-                              color: AppTheme.textSecondary, size: 13),
+                          Icon(Icons.phone_rounded,
+                              color: Colors.white.withValues(alpha: 0.8), size: 13),
                           const SizedBox(width: 4),
                           Text(
                             phone.length >= 8
                                 ? '+976 ${phone.substring(0, 4)}-${phone.substring(4)}'
                                 : '+976 $phone',
-                            style: const TextStyle(
-                                color: AppTheme.textSecondary, fontSize: 13),
+                            style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.8), fontSize: 13),
                           ),
                         ],
                       ),
@@ -275,41 +190,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 label: 'Нийт захиалга'),
                           ),
                           Container(
-                              width: 1, height: 30, color: AppTheme.divider),
+                              width: 1, height: 30, color: Colors.white.withValues(alpha: 0.3)),
                           Expanded(
                             child: _StatPill(
                                 value: '$_upcomingBookings',
                                 label: 'Хүлээгдэж буй'),
                           ),
                           Container(
-                              width: 1, height: 30, color: AppTheme.divider),
+                              width: 1, height: 30, color: Colors.white.withValues(alpha: 0.3)),
                           const Expanded(
                             child: _StatPill(value: '🏅', label: 'Гишүүн'),
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 24),
-
-                // ── Говийн амьтдын зурвас ────────────────────────────────────
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 14, horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: AppTheme.cardColor,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppTheme.divider),
-                  ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _AnimalBadge(emoji: '🐪', label: 'Тэмээ'),
-                      _AnimalBadge(emoji: '🦅', label: 'Ёл шувуу'),
-                      _AnimalBadge(emoji: '🐻', label: 'Мазаалай'),
-                      _AnimalBadge(emoji: '🦎', label: 'Гүрвэл'),
                     ],
                   ),
                 ),
@@ -369,29 +262,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-class _AnimalBadge extends StatelessWidget {
-  final String emoji;
-  final String label;
-  const _AnimalBadge({required this.emoji, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(emoji, style: const TextStyle(fontSize: 26)),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: const TextStyle(
-            color: AppTheme.textSecondary,
-            fontSize: 10,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
-    );
-  }
-}
 
 class _StatPill extends StatelessWidget {
   final String value;
@@ -406,7 +276,7 @@ class _StatPill extends StatelessWidget {
           value,
           textAlign: TextAlign.center,
           style: const TextStyle(
-            color: AppTheme.secondary,
+            color: Colors.white,
             fontSize: 17,
             fontWeight: FontWeight.w800,
           ),
@@ -416,8 +286,8 @@ class _StatPill extends StatelessWidget {
           label,
           textAlign: TextAlign.center,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-              color: AppTheme.textSecondary, fontSize: 10),
+          style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.75), fontSize: 10),
         ),
       ],
     );

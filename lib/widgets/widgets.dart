@@ -9,320 +9,172 @@ class VenueCard extends StatelessWidget {
 
   const VenueCard({super.key, required this.venue, required this.onTap});
 
-  IconData _getIcon(String type) {
-    switch (type) {
-      case 'Сагсан бөмбөг':
-        return Icons.sports_basketball_rounded;
-      case 'Волейбол':
-        return Icons.sports_volleyball_rounded;
-      default:
-        return Icons.sports_rounded;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 14),
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
           color: AppTheme.cardColor,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(color: AppTheme.divider),
           boxShadow: [
             BoxShadow(
-              color: venue.accentColor.withValues(alpha: 0.12),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            // ── Баннер ─────────────────────────────────────────────────────
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-              child: Container(
-                height: 140,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      venue.accentColor.withValues(alpha: 0.18),
-                      venue.accentColor.withValues(alpha: 0.06),
-                    ],
-                  ),
-                ),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    // Background pattern dots
-                    Positioned(
-                      right: -20,
-                      bottom: -20,
-                      child: Icon(
-                        _getIcon(venue.type),
-                        size: 130,
-                        color: venue.accentColor.withValues(alpha: 0.1),
-                      ),
-                    ),
-                    // Centered sport icon
-                    Center(
-                      child: Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          color: venue.accentColor.withValues(alpha: 0.15),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: venue.accentColor.withValues(alpha: 0.3),
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Icon(
-                          _getIcon(venue.type),
-                          size: 32,
-                          color: venue.accentColor.withValues(alpha: 0.9),
-                        ),
-                      ),
-                    ),
-                    // Bottom gradient for text readability
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      child: Container(
-                        height: 48,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
-                            colors: [
-                              AppTheme.cardColor.withValues(alpha: 0.7),
-                              Colors.transparent,
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Төрлийн badge
-                    Positioned(
-                      top: 12,
-                      left: 12,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 5,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppTheme.primary.withValues(alpha: 0.88),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: venue.accentColor.withValues(alpha: 0.4),
-                          ),
-                        ),
-                        child: Text(
-                          venue.type,
-                          style: TextStyle(
-                            color: venue.accentColor,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Нээлттэй/Бүрэн badge
-                    Positioned(
-                      top: 12,
-                      right: 12,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 9,
-                          vertical: 5,
-                        ),
-                        decoration: BoxDecoration(
-                          color: venue.isAvailable
-                              ? AppTheme.success.withValues(alpha: 0.25)
-                              : AppTheme.warning.withValues(alpha: 0.25),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: venue.isAvailable
-                                ? AppTheme.success.withValues(alpha: 0.4)
-                                : AppTheme.warning.withValues(alpha: 0.4),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 6,
-                              height: 6,
-                              decoration: BoxDecoration(
-                                color: venue.isAvailable
-                                    ? AppTheme.success
-                                    : AppTheme.warning,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 5),
-                            Text(
-                              venue.isAvailable ? 'Нээлттэй' : 'Бүрэн',
-                              style: TextStyle(
-                                color: venue.isAvailable
-                                    ? AppTheme.success
-                                    : AppTheme.warning,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    // Price badge at bottom-right
-                    Positioned(
-                      bottom: 10,
-                      right: 12,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: venue.accentColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          venue.pricePerHour,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ),
-                    ),
+            // ── Зүүн: дүрс ─────────────────────────────────────────────────
+            Container(
+              width: 54,
+              height: 54,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    venue.accentColor.withValues(alpha: 0.25),
+                    venue.accentColor.withValues(alpha: 0.1),
                   ],
                 ),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: venue.accentColor.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Icon(
+                Icons.sports_rounded,
+                size: 26,
+                color: venue.accentColor,
               ),
             ),
-            // ── Мэдээлэл ───────────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+            const SizedBox(width: 12),
+            // ── Дунд: нэр, байршил, рейтинг ────────────────────────────────
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     venue.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       color: AppTheme.textPrimary,
-                      fontSize: 16,
+                      fontSize: 15,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 3),
                   Row(
                     children: [
                       const Icon(
                         Icons.location_on_rounded,
                         color: AppTheme.textSecondary,
-                        size: 13,
+                        size: 11,
                       ),
-                      const SizedBox(width: 3),
+                      const SizedBox(width: 2),
                       Flexible(
                         child: Text(
                           venue.location,
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             color: AppTheme.textSecondary,
-                            fontSize: 12,
+                            fontSize: 11,
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 5),
                   Row(
                     children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.star_rounded,
-                            color: AppTheme.warning,
-                            size: 15,
-                          ),
-                          const SizedBox(width: 3),
-                          Text(
-                            venue.rating.toString(),
-                            style: const TextStyle(
-                              color: AppTheme.textPrimary,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(width: 3),
-                          Text(
-                            '(${venue.reviewCount})',
-                            style: const TextStyle(
-                              color: AppTheme.textSecondary,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Spacer(),
-                      ...venue.facilities.take(2).map(
-                        (f) => Container(
-                          margin: const EdgeInsets.only(left: 6),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 3,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppTheme.divider,
-                            borderRadius: BorderRadius.circular(7),
-                          ),
-                          child: Text(
-                            f,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: AppTheme.textSecondary,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
+                      const Icon(Icons.star_rounded,
+                          color: AppTheme.warning, size: 13),
+                      const SizedBox(width: 2),
+                      Text(
+                        venue.rating.toString(),
+                        style: const TextStyle(
+                          color: AppTheme.textPrimary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 5,
-                        ),
-                        decoration: BoxDecoration(
-                          color: venue.accentColor.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: venue.accentColor.withValues(alpha: 0.3),
-                          ),
-                        ),
-                        child: Text(
-                          'Захиалах',
-                          style: TextStyle(
-                            color: venue.accentColor,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                          ),
+                      const SizedBox(width: 2),
+                      Text(
+                        '(${venue.reviewCount})',
+                        style: const TextStyle(
+                          color: AppTheme.textSecondary,
+                          fontSize: 11,
                         ),
                       ),
                     ],
                   ),
                 ],
               ),
+            ),
+            const SizedBox(width: 10),
+            // ── Баруун: үнэ, боломж ─────────────────────────────────────────
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: venue.accentColor,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    venue.pricePerHour,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 7,
+                      height: 7,
+                      decoration: BoxDecoration(
+                        color: venue.isAvailable
+                            ? AppTheme.success
+                            : AppTheme.warning,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      venue.isAvailable ? 'Нээлттэй' : 'Бүрэн',
+                      style: TextStyle(
+                        color: venue.isAvailable
+                            ? AppTheme.success
+                            : AppTheme.warning,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  color: AppTheme.textSecondary,
+                  size: 18,
+                ),
+              ],
             ),
           ],
         ),
@@ -357,15 +209,15 @@ class TimeSlotChip extends StatelessWidget {
       border = _fixedColor.withValues(alpha: 0.5);
       text   = _fixedColor;
     } else if (slot.isBooked) {
-      bg     = AppTheme.divider.withValues(alpha: 0.5);
+      bg     = AppTheme.divider.withValues(alpha: 0.7);
       border = AppTheme.divider;
-      text   = AppTheme.textSecondary.withValues(alpha: 0.5);
+      text   = AppTheme.textSecondary.withValues(alpha: 0.6);
     } else if (slot.isSelected) {
       bg     = accentColor.withValues(alpha: 0.2);
       border = accentColor;
       text   = accentColor;
     } else {
-      bg     = AppTheme.cardColor;
+      bg     = AppTheme.surface;
       border = AppTheme.divider;
       text   = AppTheme.textPrimary;
     }
@@ -383,17 +235,24 @@ class TimeSlotChip extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              slot.time,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: text,
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
+            if (slot.isBooked)
+              const Icon(
+                Icons.block_rounded,
+                size: 14,
+                color: AppTheme.textSecondary,
+              )
+            else
+              Text(
+                slot.time,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: text,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
-            ),
             const SizedBox(height: 2),
             Text(
               slot.isFixed
@@ -442,58 +301,66 @@ class CustomBottomNav extends StatelessWidget {
     ];
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
+        color: AppTheme.cardColor,
         border: const Border(
           top: BorderSide(color: AppTheme.divider, width: 1),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 16,
+            offset: const Offset(0, -4),
+          ),
+        ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: items.asMap().entries.map((entry) {
-          final i = entry.key;
-          final item = entry.value;
-          final isActive = currentIndex == i;
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: items.asMap().entries.map((entry) {
+              final i = entry.key;
+              final item = entry.value;
+              final isActive = currentIndex == i;
 
-          return GestureDetector(
-            onTap: () => onTap(i),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              decoration: BoxDecoration(
-                color: isActive
-                    ? AppTheme.secondary.withValues(alpha: 0.15)
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    item['icon'] as IconData,
+              return GestureDetector(
+                onTap: () => onTap(i),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 220),
+                  curve: Curves.easeInOut,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
                     color: isActive
                         ? AppTheme.secondary
-                        : AppTheme.textSecondary,
-                    size: 22,
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(24),
                   ),
-                  const SizedBox(height: 3),
-                  Text(
-                    item['label'] as String,
-                    style: TextStyle(
-                      color: isActive
-                          ? AppTheme.secondary
-                          : AppTheme.textSecondary,
-                      fontSize: 10,
-                      fontWeight:
-                          isActive ? FontWeight.w700 : FontWeight.w400,
-                    ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        item['icon'] as IconData,
+                        color: isActive ? Colors.white : AppTheme.textSecondary,
+                        size: 22,
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        item['label'] as String,
+                        style: TextStyle(
+                          color: isActive ? Colors.white : AppTheme.textSecondary,
+                          fontSize: 10,
+                          fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          );
-        }).toList(),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
       ),
     );
   }

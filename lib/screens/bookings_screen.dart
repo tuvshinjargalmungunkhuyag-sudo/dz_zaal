@@ -139,7 +139,7 @@ class _BookingStatusFilter extends StatelessWidget {
                 e.value,
                 style: TextStyle(
                   color:
-                      isActive ? AppTheme.primary : AppTheme.textSecondary,
+                      isActive ? Colors.white : AppTheme.textSecondary,
                   fontSize: 12,
                   fontWeight:
                       isActive ? FontWeight.w700 : FontWeight.w400,
@@ -266,15 +266,18 @@ class _BookingCard extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(
                     horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: _statusColor.withValues(alpha: 0.15),
+                  color: _statusColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: _statusColor.withValues(alpha: 0.4),
+                  ),
                 ),
                 child: Text(
                   _statusLabel,
                   style: TextStyle(
                     color: _statusColor,
                     fontSize: 12,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),

@@ -33,9 +33,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // ── Алхам 1: OTP илгээх ─────────────────────────────────────────────────
   Future<void> _sendOtp() async {
+    FocusScope.of(context).unfocus();
     final phone = _phoneController.text.replaceAll(RegExp(r'\D'), '');
     if (phone.length != 8) {
-      setState(() => _error = 'Утасны дугаар 8 оронтой байх ёстой');
+      setState(() => _error = 'Утасны дугаар буруу байна. 8 тоо оруулна уу');
       return;
     }
 
@@ -70,9 +71,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // ── Алхам 2: OTP баталгаажуулах ─────────────────────────────────────────
   Future<void> _verifyOtp() async {
+    FocusScope.of(context).unfocus();
     final otp = _otpController.text.trim();
     if (otp.length != 6) {
-      setState(() => _error = '6 оронтой кодоо оруулна уу');
+      setState(() => _error = 'Утасны дугаарт ирсэн 6 оронтой кодоо оруулна уу');
       return;
     }
 
@@ -91,30 +93,10 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // ── Нэр шалгах: байхгүй бол оруулуулах ─────────────────────────────────
+  // ── Нэр шалгах: auth stream автоматаар MainShell руу явна ───────────────
   Future<void> _checkName() async {
-    try {
-      final name = await AuthService.getUserName();
-      if (!mounted) return;
-      if (name == null || name.isEmpty) {
-        setState(() { _step = 2; _isLoading = false; });
-      }
-      // Нэр байвал auth stream автоматаар MainShell руу явна
-    } catch (_) {
-      if (mounted) setState(() { _step = 2; _isLoading = false; });
-    }
-  }
-
-  // ── Алхам 3: Нэр хадгалах ───────────────────────────────────────────────
-  Future<void> _saveName() async {
-    final name = _nameController.text.trim();
-    if (name.isEmpty) {
-      setState(() => _error = 'Нэрээ оруулна уу');
-      return;
-    }
-    setState(() { _isLoading = true; _error = null; });
-    await AuthService.saveUserName(name);
-    // auth stream MainShell руу автоматаар шилжинэ
+    // Нэр байгаа эсэхээс үл хамааран MainShell руу шилжинэ
+    if (mounted) setState(() => _isLoading = false);
   }
 
   String _parseAuthError(String code) {
@@ -129,7 +111,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(28),
@@ -170,9 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Text(
                       _step == 0
                           ? 'Утасны дугаараа оруулна уу'
-                          : _step == 1
-                              ? '+976 ${_phoneController.text}-д OTP илгээлээ'
-                              : 'Нэрээ оруулна уу',
+                          : '+976 ${_phoneController.text} дугаарт илгээсэн\n6 оронтой кодоо оруулна уу',
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: AppTheme.textSecondary,
@@ -183,7 +165,28 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
 
-              const SizedBox(height: 48),
+              const SizedBox(height: 32),
+
+              // ── Алхамын progress indicator ────────────────────────────────
+              Row(
+                children: List.generate(2, (i) {
+                  final isActive = _step >= i;
+                  return Expanded(
+                    child: Container(
+                      margin: EdgeInsets.only(right: i < 1 ? 6 : 0),
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: isActive
+                            ? AppTheme.secondary
+                            : AppTheme.divider,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+
+              const SizedBox(height: 32),
 
               // ── Алхамын мэдэгдэл ─────────────────────────────────────────
               if (_step > 0)
@@ -236,7 +239,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onSubmitted: (_) => _sendOtp(),
                 ),
               ] else if (_step == 1) ...[
-                _label('Баталгаажуулах код (OTP)'),
+                _label('Баталгаажуулах код'),
                 const SizedBox(height: 8),
                 TextField(
                   controller: _otpController,
@@ -259,24 +262,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       setState(() { _step = 0; _error = null; });
                     },
                     child: const Text(
-                      'OTP дахин илгээх',
+                      'Код дахин илгээх',
                       style: TextStyle(color: AppTheme.secondary, fontSize: 13),
                     ),
                   ),
-                ),
-              ] else ...[
-                _label('Таны нэр'),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _nameController,
-                  textCapitalization: TextCapitalization.words,
-                  style: const TextStyle(
-                      color: AppTheme.textPrimary, fontSize: 16),
-                  decoration: _inputDecoration(
-                    hint: 'Нэрээ оруулна уу',
-                    icon: Icons.person_rounded,
-                  ),
-                  onSubmitted: (_) => _saveName(),
                 ),
               ],
 
@@ -287,21 +276,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 14, vertical: 10),
                   decoration: BoxDecoration(
-                    color: AppTheme.accent.withValues(alpha: 0.12),
+                    color: AppTheme.error.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                        color: AppTheme.accent.withValues(alpha: 0.4)),
+                        color: AppTheme.error.withValues(alpha: 0.4)),
                   ),
                   child: Row(
                     children: [
                       const Icon(Icons.error_outline_rounded,
-                          color: AppTheme.accent, size: 16),
+                          color: AppTheme.error, size: 16),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           _error!,
                           style: const TextStyle(
-                              color: AppTheme.accent, fontSize: 13),
+                              color: AppTheme.error, fontSize: 13),
                         ),
                       ),
                     ],
@@ -319,9 +308,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ? null
                       : _step == 0
                           ? _sendOtp
-                          : _step == 1
-                              ? _verifyOtp
-                              : _saveName,
+                          : _verifyOtp,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.secondary,
                     foregroundColor: Colors.white,
@@ -339,11 +326,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               strokeWidth: 2, color: Colors.white),
                         )
                       : Text(
-                          _step == 0
-                              ? 'OTP илгээх'
-                              : _step == 1
-                                  ? 'Нэвтрэх'
-                                  : 'Үргэлжлүүлэх',
+                          _step == 0 ? 'Код илгээх' : 'Нэвтрэх',
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w700),
                         ),
@@ -355,7 +338,7 @@ class _LoginScreenState extends State<LoginScreen> {
               // ── Footer ────────────────────────────────────────────────────
               Center(
                 child: Text(
-                  '🐪 Говийн амьдрал 🦅 🐻',
+                  'Говийн Спорт • Даланзадгад',
                   style: TextStyle(
                     color: AppTheme.textSecondary.withValues(alpha: 0.5),
                     fontSize: 12,
@@ -366,6 +349,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
+    ),
     );
   }
 
