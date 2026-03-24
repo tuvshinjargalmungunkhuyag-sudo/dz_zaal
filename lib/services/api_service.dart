@@ -114,6 +114,8 @@ class ApiService {
         isBooked: s['isBooked'] as bool,
         isFixed: s['isFixed'] as bool,
         fixedBy: s['fixedBy'] as String?,
+        halfCourtCount: (s['halfCourtCount'] as int?) ?? 0,
+        hasFullCourt: (s['hasFullCourt'] as bool?) ?? false,
       );
     }).toList();
   }

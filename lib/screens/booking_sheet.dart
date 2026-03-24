@@ -83,7 +83,14 @@ class _BookingSheetState extends State<_BookingSheet> {
   }
 
   void _selectSlot(TimeSlot slot) {
-    if (slot.isBooked || slot.isFixed) return;
+    if (slot.isFixed) return;
+    if (_isFullCourt) {
+      // Бүтэн талбай: ямар ч захиалга байвал блок
+      if (slot.isBooked || slot.hasFullCourt || slot.halfCourtCount > 0) return;
+    } else {
+      // Хагас талбай: бүтэн талбай байвал эсвэл 2 хагас дүүрсэн бол блок
+      if (slot.hasFullCourt || slot.halfCourtCount >= 2) return;
+    }
     setState(() {
       if (_selectedSlots.isEmpty) {
         slot.isSelected = true;

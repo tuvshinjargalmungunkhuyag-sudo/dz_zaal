@@ -44,7 +44,17 @@ router.get('/', async (req, res) => {
       .where('status', 'in', ['upcoming', 'active'])
       .get();
 
-    const bookedSlots = new Set(bookedSnap.docs.map((d) => d.data().timeSlot));
+    // Слот бүрийн захиалгын мэдээлэл: хагас/бүтэн талбай
+    const slotMap = {};
+    bookedSnap.docs.forEach((d) => {
+      const { timeSlot, courtType } = d.data();
+      if (!slotMap[timeSlot]) slotMap[timeSlot] = { halfCourtCount: 0, hasFullCourt: false };
+      if (courtType === 'Хагас талбай') {
+        slotMap[timeSlot].halfCourtCount++;
+      } else {
+        slotMap[timeSlot].hasFullCourt = true;
+      }
+    });
 
     // 08:00–20:00 нийт 12 слот үүсгэх
     const slots = [];
@@ -52,12 +62,16 @@ router.get('/', async (req, res) => {
       const time = `${String(hour).padStart(2, '0')}:00`;
       const endTime = `${String(hour + 1).padStart(2, '0')}:00`;
       const isFixed = hour in fixedHours;
+      const info = slotMap[time] || { halfCourtCount: 0, hasFullCourt: false };
+      const isFullyBooked = info.hasFullCourt || info.halfCourtCount >= 2;
       slots.push({
         time,
         endTime,
-        isBooked: isFixed || bookedSlots.has(time),
+        isBooked: isFixed || isFullyBooked,
         isFixed,
         fixedBy: fixedHours[hour] || null,
+        halfCourtCount: info.halfCourtCount,
+        hasFullCourt: info.hasFullCourt,
       });
     }
 

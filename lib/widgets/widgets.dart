@@ -204,6 +204,9 @@ class TimeSlotChip extends StatelessWidget {
     Color border;
     Color text;
 
+    final isHalfBooked = slot.halfCourtCount == 1 && !slot.hasFullCourt && !slot.isBooked;
+    const halfColor = Color(0xFFF59E0B); // анбер/улбар шар
+
     if (slot.isFixed) {
       bg     = _fixedColor.withValues(alpha: 0.12);
       border = _fixedColor.withValues(alpha: 0.5);
@@ -216,6 +219,10 @@ class TimeSlotChip extends StatelessWidget {
       bg     = accentColor.withValues(alpha: 0.2);
       border = accentColor;
       text   = accentColor;
+    } else if (isHalfBooked) {
+      bg     = halfColor.withValues(alpha: 0.1);
+      border = halfColor.withValues(alpha: 0.5);
+      text   = halfColor;
     } else {
       bg     = AppTheme.surface;
       border = AppTheme.divider;
@@ -259,7 +266,9 @@ class TimeSlotChip extends StatelessWidget {
                   ? 'Гэрээт'
                   : slot.isBooked
                       ? 'Захиалаатай'
-                      : slot.endTime,
+                      : isHalfBooked
+                          ? '½ захиалаатай'
+                          : slot.endTime,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
@@ -268,7 +277,7 @@ class TimeSlotChip extends StatelessWidget {
                     ? _fixedColor.withValues(alpha: 0.8)
                     : slot.isBooked
                         ? AppTheme.textSecondary.withValues(alpha: 0.4)
-                        : text.withValues(alpha: 0.7),
+                        : text.withValues(alpha: 0.75),
                 fontSize: 10,
                 fontWeight: slot.isFixed ? FontWeight.w600 : FontWeight.w400,
               ),

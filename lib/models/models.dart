@@ -56,6 +56,8 @@ class TimeSlot {
   bool isSelected;
   final bool isFixed;
   final String? fixedBy;
+  final int halfCourtCount;
+  final bool hasFullCourt;
 
   TimeSlot({
     required this.id,
@@ -65,6 +67,8 @@ class TimeSlot {
     this.isSelected = false,
     this.isFixed = false,
     this.fixedBy,
+    this.halfCourtCount = 0,
+    this.hasFullCourt = false,
   });
 }
 

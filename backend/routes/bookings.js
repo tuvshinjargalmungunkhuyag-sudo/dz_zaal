@@ -27,16 +27,28 @@ router.post('/', async (req, res) => {
   }
 
   try {
-    // Давхцал шалгах: тухайн заал + өдөр + цаг аль хэдийн захиалагдсан эсэх
-    const conflict = await bookings
+    // Давхцал шалгах — талбайн төрлийг харгалзана
+    const existingSnap = await bookings
       .where('venueId', '==', venueId)
       .where('dateKey', '==', date)
       .where('timeSlot', '==', timeSlot)
       .where('status', 'in', ['upcoming', 'active'])
       .get();
 
-    if (!conflict.empty) {
-      return res.status(409).json({ error: 'Тухайн цаг аль хэдийн захиалагдсан байна' });
+    if (!existingSnap.empty) {
+      if (courtType !== 'Хагас талбай') {
+        // Бүтэн талбай авахад ямар ч захиалга байвал болохгүй
+        return res.status(409).json({ error: 'Тухайн цаг аль хэдийн захиалагдсан байна' });
+      }
+      // Хагас талбай: бүтэн талбай байвал болохгүй, 2 хагас байвал болохгүй
+      const hasFullCourt = existingSnap.docs.some((d) => d.data().courtType !== 'Хагас талбай');
+      if (hasFullCourt) {
+        return res.status(409).json({ error: 'Тухайн цаг бүтэн талбайгаар захиалагдсан байна' });
+      }
+      const halfCount = existingSnap.docs.filter((d) => d.data().courtType === 'Хагас талбай').length;
+      if (halfCount >= 2) {
+        return res.status(409).json({ error: 'Тухайн цаг аль хэдийн 2 хагас талбайгаар захиалагдсан байна' });
+      }
     }
 
     const code = `DBK-${Date.now() % 100000}`;
