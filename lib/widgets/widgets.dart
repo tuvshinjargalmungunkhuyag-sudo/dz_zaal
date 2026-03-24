@@ -205,7 +205,7 @@ class TimeSlotChip extends StatelessWidget {
     Color text;
 
     final isHalfBooked = slot.halfCourtCount == 1 && !slot.hasFullCourt && !slot.isBooked;
-    const halfColor = Color(0xFFF59E0B); // анбер/улбар шар
+    const halfColor = Color(0xFFA07030); // хөнгөн алтан өнгө
 
     if (slot.isFixed) {
       bg     = _fixedColor.withValues(alpha: 0.12);
@@ -220,8 +220,8 @@ class TimeSlotChip extends StatelessWidget {
       border = accentColor;
       text   = accentColor;
     } else if (isHalfBooked) {
-      bg     = halfColor.withValues(alpha: 0.1);
-      border = halfColor.withValues(alpha: 0.5);
+      bg     = halfColor.withValues(alpha: 0.08);
+      border = halfColor.withValues(alpha: 0.35);
       text   = halfColor;
     } else {
       bg     = AppTheme.surface;
@@ -248,19 +248,6 @@ class TimeSlotChip extends StatelessWidget {
                 size: 14,
                 color: AppTheme.textSecondary,
               )
-            else if (isHalfBooked)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.vertical_split_rounded, size: 11, color: text),
-                  const SizedBox(width: 2),
-                  Text(
-                    slot.time,
-                    style: TextStyle(color: text, fontSize: 13, fontWeight: FontWeight.w700),
-                  ),
-                ],
-              )
             else
               Text(
                 slot.time,
@@ -280,7 +267,7 @@ class TimeSlotChip extends StatelessWidget {
                   : slot.isBooked
                       ? 'Захиалаатай'
                       : isHalfBooked
-                          ? 'Нэг хагас авсан'
+                          ? 'Хагас талбай'
                           : slot.endTime,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
