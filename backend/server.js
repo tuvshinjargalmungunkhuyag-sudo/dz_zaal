@@ -29,10 +29,12 @@ const { startCron } = require('./cron');
 startCron();
 
 // ── Business logic routes ──────────────────────────────────────────────────
+const authRouter     = require('./routes/auth');
 const usersRouter    = require('./routes/users');
 const bookingsRouter = require('./routes/bookings');
 const scheduleRouter = require('./routes/schedule');
 
+app.use('/api/auth',     authRouter);
 app.use('/api/users',    usersRouter);
 app.use('/api/bookings', bookingsRouter);
 app.use('/api/schedule', scheduleRouter);

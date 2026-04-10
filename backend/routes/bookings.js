@@ -8,14 +8,14 @@ const bookings = db.collection('bookings');
 // POST /api/bookings
 // Body: { venueId, venueName, venueType, venueLocation, venueAccentColor,
 //         date (YYYY-MM-DD), timeSlot, timeSlotEnd, courtType, price,
-//         userName, userPhone }
+//         userName, userEmail }
 router.post('/', async (req, res) => {
   const {
     venueId, venueName, venueType, venueLocation, venueAccentColor,
-    date, timeSlot, timeSlotEnd, courtType, price, userName, userPhone,
+    date, timeSlot, timeSlotEnd, courtType, price, userName, userEmail,
   } = req.body;
 
-  const required = { venueId, venueName, date, timeSlot, timeSlotEnd, userName, userPhone };
+  const required = { venueId, venueName, date, timeSlot, timeSlotEnd, userName, userEmail };
   const missing = Object.keys(required).filter((k) => !required[k]);
   if (missing.length) {
     return res.status(400).json({ error: `Дутуу талбар: ${missing.join(', ')}` });
@@ -65,7 +65,7 @@ router.post('/', async (req, res) => {
       courtType: courtType || '',
       price: price || '',
       userName,
-      userPhone,
+      userEmail,
       status: 'upcoming',
       code,
       createdAt: new Date(),
@@ -79,16 +79,16 @@ router.post('/', async (req, res) => {
 });
 
 // Хэрэглэгчийн захиалгуудыг унших
-// GET /api/bookings?phone=88001234
+// GET /api/bookings?email=user@example.com
 router.get('/', async (req, res) => {
-  const { phone } = req.query;
-  if (!phone) {
-    return res.status(400).json({ error: 'phone query шаардлагатай' });
+  const { email } = req.query;
+  if (!email) {
+    return res.status(400).json({ error: 'email query шаардлагатай' });
   }
 
   try {
     const snap = await bookings
-      .where('userPhone', '==', phone.replace(/\D/g, ''))
+      .where('userEmail', '==', email)
       .orderBy('createdAt', 'desc')
       .get();
 

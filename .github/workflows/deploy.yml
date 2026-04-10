@@ -38,6 +38,8 @@ jobs:
           EC2_USER: ${{ secrets.EC2_USER }}
           EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
         run: |
           printf '%s\n' "$EC2_SSH_KEY" | tr -d '\r' > /tmp/deploy_key
           chmod 600 /tmp/deploy_key
@@ -53,6 +55,8 @@ jobs:
                 --name dz-zaal-backend \
                 --restart unless-stopped \
                 --env-file ~/backend/.env \
+                -e EMAIL_USER=$EMAIL_USER \
+                -e EMAIL_PASS=$EMAIL_PASS \
                 -p 3000:3000 \
                 $ECR_REGISTRY/dz-zaal-backend:latest
             "
