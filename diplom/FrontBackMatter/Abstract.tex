@@ -18,17 +18,17 @@
 
 \bigskip
 
-\textit{\textbf{Түлхүүр үгс:} \keywordnames}
+\textit{\textbf{Түлхүүр үгс:} Flutter, Firebase, Node.js, Nodemailer, Docker, AWS EC2, GitHub Actions, AI чатбот, мобайл аппликейшн, email нэвтрэлт, цаг захиалга, спорт заал, Даланзадгад}
 
 \bigskip
 
 Өнөөгийн дижитал хөгжлийн эрин үед иргэдэд үйлчилгээг хурдан, хялбар, цахимаар хүргэх нь улам бүр чухал болж байна. Өмнөговь аймгийн Даланзадгад хотод таван спорт заал үйл ажиллагаа явуулж байгаа ч иргэд цаг захиалахдаа утсаар залгах, биечлэн очих зэрэг уламжлалт аргыг ашигладаг бөгөөд энэ нь цаг хугацаа дэмий үрэх болон буруу ойлголцол үүсгэх эрсдэлтэй.
 
-Энэхүү бакалаврын төгсөлтийн ажлын зорилго нь Өмнөговь аймгийн Даланзадгад хотын спорт заалнуудын цаг захиалгыг цахимжуулах мобайл аппликейшн хөгжүүлэх явдал юм. Уг апп нь \textbf{Flutter} фреймворк болон \textbf{Dart} програмчлалын хэлийг ашиглан хөгжүүлэгдсэн бөгөөд Android болон iOS платформд нэгэн зэрэг ажиллах чадвартай. Хэрэглэгчийн интерфэйс нь \textbf{Material Design 3} стандартад нийцсэн, говийн цөлийн дүр төрхийг илэрхийлсэн харанхуй өнгөний схем бүхий дизайнтай (цөлийн хар \#120D06, алтан элс \#F0B429, нарны жаргалтын улбар \#D4622A).
+Энэхүү бакалаврын төгсөлтийн ажлын зорилго нь Өмнөговь аймгийн Даланзадгад хотын спорт заалнуудын цаг захиалгыг цахимжуулах мобайл аппликейшн хөгжүүлэх явдал юм. Уг апп нь \textbf{Flutter} фреймворк болон \textbf{Dart} програмчлалын хэлийг ашиглан хөгжүүлэгдсэн бөгөөд Android болон iOS платформд нэгэн зэрэг ажиллах чадвартай. Хэрэглэгчийн интерфэйс нь \textbf{Material Design 3} стандартад нийцсэн, говийн цөлийн дулаан тонийг илэрхийлсэн цайвар өнгөний схем бүхий дизайнтай (бежийн дэвсгэр \#EDE7DA, наранжин \#D4700F, гүн наранжин \#B85C08, Montserrat фонт).
 
 Системийн архитектур нь Flutter клиент, \textbf{Node.js/Express} бэкэнд (AWS EC2, Токио бүс), \textbf{Firebase} (Authentication, Cloud Firestore, Cloud Functions) болон \textbf{AI чатботын} үйлчилгээнээс бүрдэнэ. Бэкэнд сервер нь \textbf{Docker} контейнержуулалт ашиглан \textbf{AWS EC2} дээр байрладаг бөгөөд \textbf{GitHub Actions} CI/CD хоолойгоор автоматаар байршуулагдана.
 
-Системийн үндсэн функцүүдэд дараахи зүйлс орно: таван спорт заалны цагийн хуваарь харах, OTP нэвтрэлт (утасны дугаараар), цаг захиалах болон цуцлах, захиалгын түүх харах, \textbf{flutter\_local\_notifications} ашиглан нэг цагийн өмнө сануулга авах, AI чатботтой харилцах. Захиалгын мэдээллийг \textbf{Cloud Firestore}-ийн \code{bookings}, \code{users}, \code{fixed\_bookings} гэсэн гурван цуглуулгад хадгалдаг. Байгууллагуудын тогтмол (давтагдах) захиалгыг \code{fixed\_bookings} цуглуулгад тусад нь хадгалж, долоо хоногийн тогтмол хуваарийг хэрэгжүүлнэ. Захиалгын код нь \textbf{DBK-xxxxx} форматтай.
+Системийн үндсэн функцүүдэд дараахи зүйлс орно: таван спорт заалны цагийн хуваарь харах, \textbf{email/нууц үгийн нэвтрэлт} (бүртгэлийн үед Nodemailer-ээр баталгаажуулах код илгээх), цаг захиалах болон цуцлах, захиалгын түүх харах, \textbf{flutter\_local\_notifications} ашиглан нэг цагийн өмнө сануулга авах, AI чатботтой харилцах. Захиалгын мэдээллийг \textbf{Cloud Firestore}-ийн \code{bookings}, \code{users}, \code{fixed\_bookings} гэсэн гурван цуглуулгад хадгалдаг. Байгууллагуудын тогтмол (давтагдах) захиалгыг \code{fixed\_bookings} цуглуулгад тусад нь хадгалж, долоо хоногийн тогтмол хуваарийг хэрэгжүүлнэ. Захиалгын код нь \textbf{DBK-xxxxx} форматтай.
 
 AI чатботын үйлчилгээ нь \textbf{Anthropic Claude Haiku 4.5}-г Firebase Cloud Functions дамжуулан (үндсэн горим) болон \textbf{Groq Llama 3.1-8b}-г Express бэкэнд дамжуулан (нөөц горим) ажилладаг. Бэкэнд дэх cron ажил нь 15 минут тутамд дуусгавар болсон захиалгыг автоматаар \code{completed} төлөвт шилжүүлдэг.
 
@@ -36,8 +36,8 @@ AI чатботын үйлчилгээ нь \textbf{Anthropic Claude Haiku 4.5}-
 
 \bigskip
 
-\textit{\textbf{Keywords:} Flutter, Firebase, Node.js, Docker, AWS EC2, GitHub Actions, AI chatbot, mobile application, time booking, sports hall, Dalanzadgad}
+\textit{\textbf{Keywords:} Flutter, Firebase, Node.js, Nodemailer, Docker, AWS EC2, GitHub Actions, AI chatbot, mobile application, email authentication, time booking, sports hall, Dalanzadgad}
 
 \bigskip
 
-The aim of this bachelor's thesis is to develop a mobile application for booking sports hall time slots in Dalanzadgad city, Ömnögovi Province of Mongolia. The application is built using the Flutter framework and Dart language, featuring a dark desert-themed Material Design 3 interface. The system architecture consists of a Flutter mobile client, a Node.js/Express backend deployed on AWS EC2 (Tokyo region) via Docker containers, Firebase services (Authentication, Firestore, Cloud Functions), and AI chat capabilities powered by Anthropic Claude Haiku 4.5 and Groq Llama 3.1-8b. The project employs GitHub Actions for CI/CD automation, AWS ECR for Docker image registry, and flutter\_local\_notifications for local booking reminders. Five sports venues are supported, with three Firestore collections (bookings, users, fixed\_bookings) managing all reservation data.
+The aim of this bachelor's thesis is to develop a mobile application for booking sports hall time slots in Dalanzadgad city, Ömnögovi Province of Mongolia. The application is built using the Flutter framework and Dart language, featuring a warm desert-themed Material Design 3 interface with a light color scheme (beige \#EDE7DA, orange \#D4700F, deep orange \#B85C08). The system architecture consists of a Flutter mobile client, a Node.js/Express backend deployed on AWS EC2 (Tokyo region, ap-northeast-1) via Docker containers, Firebase services (Authentication, Firestore, Cloud Functions), and AI chat capabilities powered by Anthropic Claude Haiku 4.5 and Groq Llama 3.1-8b. User registration employs email/password authentication with a 6-digit verification code delivered via Nodemailer (Gmail SMTP). The project employs GitHub Actions for CI/CD automation, AWS ECR for Docker image registry, and flutter\_local\_notifications for local booking reminders. Five sports venues are supported, with four Firestore collections (bookings, users, fixed\_bookings, email\_verifications) managing all reservation data.

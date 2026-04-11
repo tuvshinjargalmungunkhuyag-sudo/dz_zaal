@@ -18,6 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String _selectedSort = 'Үнэлгээ';
   bool _onlyAvailable = false;
   final _searchController = TextEditingController();
+  final _searchFocusNode = FocusNode();
   final _notifStore = NotificationStore.instance;
 
   @override
@@ -29,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _searchController.dispose();
+    _searchFocusNode.dispose();
     _notifStore.removeListener(_rebuild);
     super.dispose();
   }
@@ -345,7 +347,9 @@ class _HomeScreenState extends State<HomeScreen> {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: AnimatedContainer(
+              child: GestureDetector(
+                onTap: () => _searchFocusNode.requestFocus(),
+                child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 decoration: BoxDecoration(
                   color: AppTheme.cardColor,
@@ -380,6 +384,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Expanded(
                       child: TextField(
                         controller: _searchController,
+                        focusNode: _searchFocusNode,
                         style: const TextStyle(
                           color: AppTheme.textPrimary,
                           fontSize: 15,
@@ -475,6 +480,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 ),
+              ),
               ),
             ),
           ),

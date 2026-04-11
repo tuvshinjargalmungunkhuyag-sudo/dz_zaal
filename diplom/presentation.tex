@@ -141,20 +141,103 @@
 \end{frame}
 
 %--- 02 Outline ----------------------------------------------------------------
-\begin{frame}{Илтгэлийн агуулга}
+\begin{frame}{Илтгэлийн бүтэц}
   \begin{columns}[T]
-    \begin{column}{0.48\textwidth}
-      \tableofcontents[sections={1-5}]
+    \begin{column}{0.31\textwidth}
+      \begin{beamercolorbox}[sep=6pt,rounded=true]{block title}
+        \centering\textbf{I. Судалгааны үндэс}
+      \end{beamercolorbox}
+      \vspace{4pt}
+      \small
+      \begin{itemize}
+        \item Яагаад энэ сэдэв?
+        \item Асуудлын тодорхойлолт
+        \item Ижил системүүдийн харьцуулалт
+      \end{itemize}
     \end{column}
-    \begin{column}{0.48\textwidth}
-      \tableofcontents[sections={6-9}]
+    \begin{column}{0.35\textwidth}
+      \begin{beamercolorbox}[sep=6pt,rounded=true]{block title}
+        \centering\textbf{II. Хэрэгжүүлэлт}
+      \end{beamercolorbox}
+      \vspace{4pt}
+      \small
+      \begin{itemize}
+        \item Use Case (Хэрэглэгч + Админ)
+        \item Системийн архитектур
+        \item Төслийн flowchart
+        \item Хэрэгжүүлэлтийн үр дүн
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{beamercolorbox}[sep=6pt,rounded=true]{block title}
+        \centering\textbf{III. Цаашдын үр дүн}
+      \end{beamercolorbox}
+      \vspace{4pt}
+      \small
+      \begin{itemize}
+        \item Хийгдсэн / хийгдэх ажлын хуваарь
+        \item Үүлэн орчны тасралтгүй хөгжил
+        \item Өргөтгөлийн чиглэл
+      \end{itemize}
     \end{column}
   \end{columns}
+  \vspace{8pt}
+  \begin{beamercolorbox}[sep=4pt,center,rounded=true]{block body}
+    \small Нийт илтгэлийн хугацаа: \textbf{15 минут} \quad|\quad
+    Зорилт: нэг спорт заал, нэг сургуулийн асуудлыг бүрэн шийдэх
+  \end{beamercolorbox}
 \end{frame}
 
 %===============================================================================
-\section{Асуудлын тодорхойлолт}
+\section{Судалгааны үндэс}
 %===============================================================================
+
+%--- Яагаад? -------------------------------------------------------------------
+\begin{frame}{Яагаад энэ сэдвийг сонгосон бэ?}
+  \begin{center}
+  \begin{tikzpicture}[scale=0.9]
+    \tikzset{
+      qbox/.style={rectangle, rounded corners=6pt, draw=navyblue!60,
+                   fill=lightbg, text width=3.0cm, align=center,
+                   minimum height=1.1cm, font=\small},
+      abox/.style={rectangle, rounded corners=6pt, draw=okgreen!70,
+                   fill=okgreen!10, text width=3.2cm, align=center,
+                   minimum height=1.1cm, font=\small},
+      arr/.style={-{Stealth[length=5pt]}, thick, navyblue!60}
+    }
+    % Row 1: Problems
+    \node[qbox] (p1) at (0, 0)   {Утсаар захиалахад \textbf{шугам завгүй}};
+    \node[qbox] (p2) at (4, 0)   {Боломжтой цаг \textbf{ил тод бус}};
+    \node[qbox] (p3) at (8, 0)   {Захиалгын \textbf{баталгаажуулалт} байхгүй};
+
+    % Center: School
+    \node[draw=goldcolor, fill=goldcolor!15, rounded corners=6pt,
+          text width=3.5cm, align=center, minimum height=1.3cm, font=\small\bfseries]
+      (school) at (4, -2.0) {Говийн Арена\\спорт заал\\Даланзадгад};
+
+    % Bottom: Solutions
+    \node[abox] (s1) at (0, -3.8) {Цахим захиалгын систем};
+    \node[abox] (s2) at (4, -3.8) {Бодит цагийн хуваарь};
+    \node[abox] (s3) at (8, -3.8) {DBK-xxxxx захиалгын код};
+
+    % Arrows down to school
+    \draw[arr, red!50] (p1.south) -- (school.north west);
+    \draw[arr, red!50] (p2.south) -- (school.north);
+    \draw[arr, red!50] (p3.south) -- (school.north east);
+
+    % Arrows from school to solutions
+    \draw[arr, okgreen!60] (school.south west) -- (s1.north);
+    \draw[arr, okgreen!60] (school.south) -- (s2.north);
+    \draw[arr, okgreen!60] (school.south east) -- (s3.north);
+
+    % Labels
+    \node[font=\footnotesize, red!60] at (-1.5, 0) {\textbf{Асуудал}};
+    \node[font=\footnotesize, okgreen!70] at (-1.5, -3.8) {\textbf{Шийдэл}};
+  \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+%--- Асуудал -------------------------------------------------------------------
 \begin{frame}{Асуудлын тодорхойлолт}
   \begin{columns}[T]
     \begin{column}{0.46\textwidth}
@@ -311,46 +394,75 @@
 %===============================================================================
 \section{UML диаграммууд}
 %===============================================================================
-\begin{frame}{Use Case диаграмм}
+\begin{frame}{Use Case диаграмм — Хэрэглэгч ба Админ}
   \begin{center}
-  \begin{tikzpicture}[scale=0.82]
+  \begin{tikzpicture}[scale=0.78]
     \tikzset{
       uc/.style={ellipse, draw=navyblue!70, fill=blue!8,
-                 text width=2.6cm, align=center, font=\tiny,
-                 minimum height=0.65cm},
-      ucarr/.style={navyblue!60, thin}
+                 text width=2.5cm, align=center, font=\tiny,
+                 minimum height=0.62cm},
+      uadm/.style={ellipse, draw=goldcolor!80, fill=goldcolor!12,
+                 text width=2.5cm, align=center, font=\tiny,
+                 minimum height=0.62cm},
+      ucarr/.style={navyblue!60, thin},
+      admarr/.style={goldcolor!70, thin}
     }
     % System boundary
-    \draw[navyblue!50, thick, rounded corners=6pt]
-      (1.5,-0.6) rectangle (10.5,5.4);
-    \node[font=\footnotesize, navyblue] at (6.0,5.15) {Спорт заалны цаг захиалгын систем};
+    \draw[navyblue!40, thick, rounded corners=6pt]
+      (1.2,-0.5) rectangle (11.2,5.5);
+    \node[font=\footnotesize, navyblue] at (6.2,5.28) {Говийн Арена — Спорт заалны цаг захиалгын систем};
 
-    % Actor — stick figure
-    \draw[thick] (-0.4, 3.8) circle (0.28);
-    \draw[thick] (-0.4, 3.5) -- (-0.4, 2.6);
-    \draw[thick] (-0.9, 3.2) -- (0.1, 3.2);
-    \draw[thick] (-0.4, 2.6) -- (-0.8, 2.0);
-    \draw[thick] (-0.4, 2.6) -- (0.0, 2.0);
-    \node[below, font=\scriptsize] at (-0.4, 1.95) {\textbf{Хэрэглэгч}};
+    %--- User actor (left) ---
+    \draw[thick] (-0.5, 3.8) circle (0.28);
+    \draw[thick] (-0.5, 3.5) -- (-0.5, 2.6);
+    \draw[thick] (-1.0, 3.2) -- (0.0, 3.2);
+    \draw[thick] (-0.5, 2.6) -- (-0.9, 2.0);
+    \draw[thick] (-0.5, 2.6) -- (-0.1, 2.0);
+    \node[below, font=\scriptsize\bfseries, navyblue] at (-0.5, 1.95) {Хэрэглэгч};
 
-    % Use cases (2 columns)
-    \node[uc] (uc1) at (3.5, 4.8) {OTP-р нэвтрэх};
-    \node[uc] (uc2) at (3.5, 3.7) {Хуваарь харах};
-    \node[uc] (uc3) at (3.5, 2.6) {Цаг захиалах};
-    \node[uc] (uc4) at (3.5, 1.5) {Захиалга цуцлах};
-    \node[uc] (uc5) at (3.5, 0.4) {Профайл харах};
-    \node[uc] (uc6) at (7.5, 4.8) {AI чат ашиглах};
-    \node[uc] (uc7) at (7.5, 3.5) {Мэдэгдэл хүлээн авах};
-    \node[uc] (uc8) at (7.5, 2.2) {Захиалгын код харах};
-    \node[uc] (uc9) at (7.5, 0.9) {Захиалгын түүх};
+    %--- Admin actor (right) ---
+    \draw[thick, goldcolor!80] (12.2, 3.8) circle (0.28);
+    \draw[thick, goldcolor!80] (12.2, 3.5) -- (12.2, 2.6);
+    \draw[thick, goldcolor!80] (11.7, 3.2) -- (12.7, 3.2);
+    \draw[thick, goldcolor!80] (12.2, 2.6) -- (11.8, 2.0);
+    \draw[thick, goldcolor!80] (12.2, 2.6) -- (12.6, 2.0);
+    \node[below, font=\scriptsize\bfseries, goldcolor!80!black] at (12.2, 1.95) {Админ};
 
-    % Lines from actor
+    %--- User use cases (left column) ---
+    \node[uc] (uc1) at (3.2, 5.0)  {Email-р нэвтрэх};
+    \node[uc] (uc2) at (3.2, 3.95) {Хуваарь харах};
+    \node[uc] (uc3) at (3.2, 2.9)  {Цаг захиалах};
+    \node[uc] (uc4) at (3.2, 1.85) {Захиалга цуцлах};
+    \node[uc] (uc5) at (3.2, 0.8)  {AI чат ашиглах};
+
+    %--- Right column (shared + admin) ---
+    \node[uc]   (uc6)  at (7.5, 5.0)  {Мэдэгдэл авах};
+    \node[uc]   (uc7)  at (7.5, 3.95) {DBK-xxxxx код харах};
+    \node[uc]   (uc8)  at (7.5, 2.9)  {Захиалгын түүх};
+    \node[uadm] (ua1)  at (7.5, 1.85) {Тогтмол захиалга нэмэх};
+    \node[uadm] (ua2)  at (7.5, 0.8)  {Хэрэглэгч блоклох};
+
+    %--- Far right (admin only) ---
+    \node[uadm] (ua3)  at (10.2, 4.5) {Бүх захиалга харах};
+    \node[uadm] (ua4)  at (10.2, 3.3) {Цагийн хуваарь засах};
+    \node[uadm] (ua5)  at (10.2, 2.1) {3 цуцлалт → блок};
+    \node[uadm] (ua6)  at (10.2, 0.9) {Тайлан харах};
+
+    %--- Lines from user ---
     \foreach \uc in {uc1,uc2,uc3,uc4,uc5} {
-      \draw[ucarr] (0.1, 2.9) -- (\uc.west);
+      \draw[ucarr] (0.05, 2.9) -- (\uc.west);
     }
-    \foreach \uc in {uc6,uc7,uc8,uc9} {
-      \draw[ucarr] (0.1, 2.9) -- (\uc.west);
+    \foreach \uc in {uc6,uc7,uc8} {
+      \draw[ucarr] (0.05, 2.9) -- (\uc.west);
     }
+
+    %--- Lines from admin ---
+    \foreach \ua in {ua1,ua2,ua3,ua4,ua5,ua6} {
+      \draw[admarr] (11.75, 2.9) -- (\ua.east);
+    }
+    % Admin also sees shared
+    \draw[admarr] (11.75, 2.9) -- (uc6.east);
+    \draw[admarr] (11.75, 2.9) -- (uc7.east);
   \end{tikzpicture}
   \end{center}
 \end{frame}
@@ -395,6 +507,63 @@
     \small \texttt{git push} $\Rightarrow$ GitHub Actions автоматаар ажиллаж
     $\Rightarrow$ EC2 дээрх контейнер \textbf{хүний гараас хамааралгүйгээр} шинэчлэгдэнэ
   \end{beamercolorbox}
+\end{frame}
+
+%--- Project Flowchart ----------------------------------------------------------
+\begin{frame}{Төслийн явцын flowchart}
+  \begin{center}
+  \begin{tikzpicture}[scale=0.82]
+    \tikzset{
+      fbox/.style={rectangle, rounded corners=5pt, draw=navyblue!60,
+                   fill=lightbg, text width=2.4cm, align=center,
+                   minimum height=0.95cm, font=\small},
+      done/.style={rectangle, rounded corners=5pt, draw=okgreen!70,
+                   fill=okgreen!12, text width=2.4cm, align=center,
+                   minimum height=0.95cm, font=\small},
+      inprog/.style={rectangle, rounded corners=5pt, draw=goldcolor!80,
+                   fill=goldcolor!12, text width=2.4cm, align=center,
+                   minimum height=0.95cm, font=\small},
+      farr/.style={-{Stealth[length=5pt]}, thick, navyblue!50}
+    }
+    % Row 1
+    \node[done]   (r1a) at (0,   0) {\YES\ Сургуулийн асуудлыг судалсан};
+    \node[done]   (r1b) at (3.2, 0) {\YES\ Use Case боловсруулсан};
+    \node[done]   (r1c) at (6.4, 0) {\YES\ Системийн архитектур};
+    \node[done]   (r1d) at (9.6, 0) {\YES\ Flutter апп хөгжүүлсэн};
+
+    % Row 2
+    \node[done]   (r2a) at (0,  -2.0) {\YES\ Firebase Auth + Firestore};
+    \node[done]   (r2b) at (3.2,-2.0) {\YES\ Node.js бэкэнд};
+    \node[done]   (r2c) at (6.4,-2.0) {\YES\ Docker + AWS EC2};
+    \node[done]   (r2d) at (9.6,-2.0) {\YES\ CI/CD автоматжуулалт};
+
+    % Row 3
+    \node[inprog] (r3a) at (0,  -4.0) {\PART\ Нэг заалтай туршилт};
+    \node[inprog] (r3b) at (3.2,-4.0) {\PART\ Admin панел};
+    \node[fbox]   (r3c) at (6.4,-4.0) {Блоклох систем};
+    \node[fbox]   (r3d) at (9.6,-4.0) {QPay төлбөр};
+
+    % Arrows row 1
+    \draw[farr] (r1a) -- (r1b);
+    \draw[farr] (r1b) -- (r1c);
+    \draw[farr] (r1c) -- (r1d);
+    % Arrows row 1→2
+    \draw[farr] (r1d.south) |- ++(0,-0.5) -| (r2a.north);
+    \draw[farr] (r2a) -- (r2b);
+    \draw[farr] (r2b) -- (r2c);
+    \draw[farr] (r2c) -- (r2d);
+    % Arrows row 2→3
+    \draw[farr] (r2d.south) |- ++(0,-0.5) -| (r3a.north);
+    \draw[farr] (r3a) -- (r3b);
+    \draw[farr] (r3b) -- (r3c);
+    \draw[farr] (r3c) -- (r3d);
+
+    % Legend
+    \node[done,   text width=1.5cm, minimum height=0.6cm, font=\tiny] at (3.5,-5.1) {\YES\ Дууссан};
+    \node[inprog, text width=1.5cm, minimum height=0.6cm, font=\tiny] at (6.0,-5.1) {\PART\ Үргэлжлэх};
+    \node[fbox,   text width=1.5cm, minimum height=0.6cm, font=\tiny] at (8.5,-5.1) {Цаашид};
+  \end{tikzpicture}
+  \end{center}
 \end{frame}
 
 %===============================================================================
@@ -504,24 +673,20 @@
       \end{tikzpicture}
     \end{column}
     \begin{column}{0.67\textwidth}
-      \textbf{Dark Desert Theme}\\
+      \textbf{Warm Desert Theme}\\
       \small
       \begin{tabular}{ll}
-        Цөлийн хар & \colorbox{black!85}{\color{white}\small\texttt{\#120D06}} \\
-        Алтан элс  & \colorbox{yellow!70}{\small\texttt{\#F0B429}} \\
-        Нарны жаргалт & \colorbox{orange!60}{\small\texttt{\#D4622A}}
+        Бежийн дэвсгэр & \colorbox{black!8}{\small\texttt{\#EDE7DA}} \\
+        Наранжин       & \colorbox{orange!70}{\small\texttt{\#D4700F}} \\
+        Гүн наранжин   & \colorbox{orange!80}{\small\texttt{\#B85C08}}
       \end{tabular}
       \vspace{6pt}
 
       \textbf{Үндсэн функцүүд:}
       \begin{itemize}
-        \item Firebase OTP утасны нэвтрэлт
-        \item Бодит цагийн цагийн хуваарь (Firestore)
-        \item \textbf{DBK-xxxxx} форматын захиалгын код
-        \item fixed\_bookings — байгууллагын тогтмол цаг
-        \item Захиалгаас \textbf{1 цагийн өмнө} локал сануулга
-        \item Захиалга цуцлах / захиалгын түүх
-        \item AI чатбот дэлгэц
+        \item Email + нууц үгийн нэвтрэлт (Nodemailer 6 оронтой код)
+        \item Бодит цагийн хуваарь — 16 слот (08:00–00:00)
+        \item \textbf{DBK-xxxxx} захиалгын код, автомат сануулга
       \end{itemize}
     \end{column}
   \end{columns}
@@ -1064,7 +1229,7 @@
         \textbf{URL:} \texttt{console.groq.com}\\[4pt]
         \textbf{Model:} \texttt{llama-3.1-8b-instant}\\
         \textbf{API base:} \texttt{api.groq.com/openai/v1}\\
-        \textbf{SDK:} OpenAI-compatible (\texttt{openai} ^6.29)\\[4pt]
+        \textbf{SDK:} OpenAI-compatible (\texttt{openai \^{}6.29})\\[4pt]
         \textbf{Консолд харагдах:}
         \begin{itemize}
           \item API key удирдах
@@ -1084,7 +1249,7 @@
       \begin{block}{Anthropic Console}
         \textbf{URL:} \texttt{console.anthropic.com}\\[4pt]
         \textbf{Model:} \texttt{claude-haiku-4-5-20251001}\\
-        \textbf{SDK:} \texttt{@anthropic-ai/sdk} ^0.78\\
+        \textbf{SDK:} \texttt{@anthropic-ai/sdk \^{}0.78}\\
         \textbf{Deploy:} Firebase Cloud Functions\\[4pt]
         \textbf{Консолд харагдах:}
         \begin{itemize}
@@ -1142,36 +1307,80 @@
 \end{frame}
 
 %===============================================================================
+\section{Цаашдын үр дүн}
+%===============================================================================
+
+%--- Timeline ------------------------------------------------------------------
+\begin{frame}{Ажлын явцын хуваарь — хийгдсэн ба хийгдэх}
+  \begin{center}
+  \small
+  \renewcommand{\arraystretch}{1.28}
+  \begin{tabular}{clcc}
+    \toprule
+    \rowcolor{navyblue}
+    {\color{white}\textbf{Хугацаа}} &
+    {\color{white}\textbf{Ажлын агуулга}} &
+    {\color{white}\textbf{Төлөв}} &
+    {\color{white}\textbf{Тайлбар}} \\
+    \midrule
+    \rowcolor{okgreen!8}
+    2025 оны 10-р сар & Судалгаа, шаардлагын дүн шинжилгээ & \YES & Говийн Арена-тай ярилцлага \\
+    \rowcolor{okgreen!8}
+    2025 оны 11-р сар & Flutter апп + Firebase хэрэгжүүлэлт  & \YES & Use Case $\to$ код \\
+    \rowcolor{okgreen!8}
+    2025 оны 12-р сар & Node.js бэкэнд + Docker/AWS           & \YES & CI/CD хоолой ажилладаг \\
+    \rowcolor{okgreen!8}
+    2026 оны 1-р сар  & AI чатбот, email нэвтрэлт             & \YES & Claude Haiku + Groq \\
+    \rowcolor{okgreen!8}
+    2026 оны 2-р сар  & Туршилт, дипломын баримт бичиг        & \YES & 10/10 тест тэнцсэн \\
+    \rowcolor{goldcolor!12}
+    2026 оны 4-р сар  & Говийн Арена дээр туршилтын ажиллагаа & \PART & \textbf{Энэ долоо хоног} \\
+    \rowcolor{gray!6}
+    2026 оны 5-р сар  & Admin панел, блоклох систем            & \NO & Цаашдын хөгжил \\
+    \rowcolor{gray!6}
+    2026 оны 6+ сар   & QPay, бусад заалд өргөтгөх             & \NO & Үүлэн орчин — тасралтгүй \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vspace{4pt}
+  \begin{beamercolorbox}[sep=4pt,center,rounded=true]{block body}
+    \small Үүлэн орчинд суурилсан систем нь байнга өргөжиж, хөгжиж байдаг —
+    \textbf{Cloud development нь тасралтгүй үйл явц}
+  \end{beamercolorbox}
+\end{frame}
+
+%===============================================================================
 \section{Дүгнэлт}
 %===============================================================================
 \begin{frame}{Дүгнэлт}
   \begin{columns}[T]
     \begin{column}{0.52\textwidth}
-      \begin{block}{Хэрэгжүүлсэн бүтээгдэхүүн}
+      \begin{block}{Хэрэгжүүлсэн үр дүн}
         \begin{itemize}
-          \item[\YES] Flutter мобайл апп (Android + iOS)
-          \item[\YES] Firebase Auth (OTP) + Cloud Firestore
-          \item[\YES] Node.js/Express REST API бэкэнд
-          \item[\YES] Docker + AWS EC2 байршуулалт
-          \item[\YES] GitHub Actions CI/CD хоолой
-          \item[\YES] Claude Haiku + Groq AI чатбот
-          \item[\YES] 10/10 функциональ тест тэнцсэн
+          \item[\YES] Flutter апп — email нэвтрэлт, 16 цагийн хуваарь
+          \item[\YES] Firebase + Node.js/Express — REST API
+          \item[\YES] Docker + AWS EC2 + GitHub Actions CI/CD
         \end{itemize}
       \end{block}
       \vspace{4pt}
-      \textbf{Бүх 7 зорилт биелэгдсэн.}
+      \begin{beamercolorbox}[sep=4pt,rounded=true]{block body}
+        \small \textbf{Говийн Арена} — нэг спорт заалын бүх асуудлыг\\
+        шийдэж, бодит ажиллагаанд бэлэн болсон
+      \end{beamercolorbox}
     \end{column}
     \begin{column}{0.45\textwidth}
-      \begin{block}{Цаашдын хөгжлийн чиглэл}
+      \begin{alertblock}{Цаашдын хөгжил (Cloud — тасралтгүй)}
         \begin{itemize}
-          \item QPay / SocialPay төлбөрийн систем
-          \item Push мэдэгдэл (FCM)
-          \item Захирагчийн admin панел
-          \item GPS байршлын функц
-          \item Статистик, тайлан үүсгэх
-          \item iOS App Store, Google Play-д нийтлэх
+          \item Admin панел — 3 цуцлалт $\to$ 1 сарийн блок
+          \item Хэрэглэгчийн оноо, урамшуулал
+          \item QPay/SocialPay төлбөрийн систем
         \end{itemize}
-      \end{block}
+      \end{alertblock}
+      \vspace{4pt}
+      \begin{beamercolorbox}[sep=4pt,rounded=true]{block body}
+        \tiny Үүлэн орчин дахь систем нь байнга хөгждөг —\\
+        хоёр дахь заал, сургуулийн нэгтгэл дараагийн шат
+      \end{beamercolorbox}
     \end{column}
   \end{columns}
 \end{frame}

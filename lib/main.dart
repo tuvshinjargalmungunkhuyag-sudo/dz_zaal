@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,7 +27,7 @@ void main() async {
   );
   runApp(const SportBookingApp());
 }
-
+ 
 class SportBookingApp extends StatelessWidget {
   const SportBookingApp({super.key});
 
@@ -36,75 +37,7 @@ class SportBookingApp extends StatelessWidget {
       title: 'Говийн Спорт',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const _SplashScreen();
-          }
-          return const MainShell();
-        },
-      ),
-    );
-  }
-}
-
-class _SplashScreen extends StatelessWidget {
-  const _SplashScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppTheme.primary,
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 88,
-              height: 88,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppTheme.secondary, AppTheme.accent],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppTheme.secondary.withValues(alpha: 0.35),
-                    blurRadius: 24,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: const Center(
-                child: Text('🏀', style: TextStyle(fontSize: 40)),
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Говийн Спорт',
-              style: TextStyle(
-                color: AppTheme.textPrimary,
-                fontSize: 22,
-                fontWeight: FontWeight.w800,
-                fontFamily: 'Montserrat',
-                letterSpacing: -0.5,
-              ),
-            ),
-            const SizedBox(height: 32),
-            const SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                color: AppTheme.secondary,
-                strokeWidth: 2.5,
-              ),
-            ),
-          ],
-        ),
-      ),
+      home: const MainShell(),
     );
   }
 }
@@ -118,9 +51,27 @@ class MainShell extends StatefulWidget {
 
 class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
+  StreamSubscription<User?>? _authSub;
 
   // Захиалга (1), Профайл (2) — нэвтрэх шаардлагатай табууд
   static const _authRequiredTabs = {1, 2};
+
+  @override
+  void initState() {
+    super.initState();
+    // Logout хийхэд auth state null болно → HomeScreen (tab 0) руу буцна
+    _authSub = FirebaseAuth.instance.authStateChanges().listen((user) {
+      if (user == null && mounted && _currentIndex != 0) {
+        setState(() => _currentIndex = 0);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _authSub?.cancel();
+    super.dispose();
+  }
 
   void _onTabTap(int i) {
     if (_authRequiredTabs.contains(i) &&
@@ -182,7 +133,7 @@ class _MainShellState extends State<MainShell> {
             ),
             const SizedBox(height: 8),
             const Text(
-              'Энэ хэсгийг ашиглахын тулд\nутасны дугаараараа нэвтэрнэ үү',
+              'Энэ хэсгийг ашиглахын тулд\nemail хаягаараа нэвтэрнэ үү',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: AppTheme.textSecondary,

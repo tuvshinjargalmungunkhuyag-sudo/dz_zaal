@@ -12,344 +12,536 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // Алхам: 0=утас, 1=OTP, 2=нэр оруулах
-  int _step = 0;
+  // mode: login / register
+  bool _isRegisterMode = false;
 
-  final _phoneController = TextEditingController();
-  final _otpController   = TextEditingController();
-  final _nameController  = TextEditingController();
+  // register алхам: 0=мэдээлэл, 1=код
+  int _registerStep = 0;
 
-  String _verificationId = '';
+  final _emailController    = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _nameController     = TextEditingController();
+  final _codeController     = TextEditingController();
+
+  final _nameFocus     = FocusNode();
+  final _emailFocus    = FocusNode();
+  final _passwordFocus = FocusNode();
+  final _codeFocus     = FocusNode();
+
   bool _isLoading = false;
+  bool _obscurePassword = true;
   String? _error;
+
+  void _showKeyboard(FocusNode node) {
+    node.requestFocus();
+    SystemChannels.textInput.invokeMethod<void>('TextInput.show');
+  }
 
   @override
   void dispose() {
-    _phoneController.dispose();
-    _otpController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     _nameController.dispose();
+    _codeController.dispose();
+    _nameFocus.dispose();
+    _emailFocus.dispose();
+    _passwordFocus.dispose();
+    _codeFocus.dispose();
     super.dispose();
   }
 
-  // ── Алхам 1: OTP илгээх ─────────────────────────────────────────────────
-  Future<void> _sendOtp() async {
+  // ── Нэвтрэх ───────────────────────────────────────────────────────────────
+  Future<void> _login() async {
     FocusScope.of(context).unfocus();
-    final phone = _phoneController.text.replaceAll(RegExp(r'\D'), '');
-    if (phone.length != 8) {
-      setState(() => _error = 'Утасны дугаар буруу байна. 8 тоо оруулна уу');
+    final email    = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    if (email.isEmpty || !email.contains('@')) {
+      setState(() => _error = 'Зөв email хаяг оруулна уу');
       return;
     }
-
-    setState(() { _isLoading = true; _error = null; });
-
-    await AuthService.verifyPhone(
-      phone: phone,
-      onAutoVerified: (credential) async {
-        // Android автоматаар OTP-г унших үед
-        await FirebaseAuth.instance.signInWithCredential(credential);
-        await _checkName();
-      },
-      onFailed: (e) {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-            _error = _parseAuthError(e.code);
-          });
-        }
-      },
-      onCodeSent: (verificationId, _) {
-        if (mounted) {
-          setState(() {
-            _verificationId = verificationId;
-            _isLoading = false;
-            _step = 1;
-          });
-        }
-      },
-    );
-  }
-
-  // ── Алхам 2: OTP баталгаажуулах ─────────────────────────────────────────
-  Future<void> _verifyOtp() async {
-    FocusScope.of(context).unfocus();
-    final otp = _otpController.text.trim();
-    if (otp.length != 6) {
-      setState(() => _error = 'Утасны дугаарт ирсэн 6 оронтой кодоо оруулна уу');
+    if (password.length < 6) {
+      setState(() => _error = 'Нууц үг хамгийн багадаа 6 тэмдэгт байх ёстой');
       return;
     }
 
     setState(() { _isLoading = true; _error = null; });
 
     try {
-      await AuthService.signInWithOtp(_verificationId, otp);
-      await _checkName();
+      await AuthService.signInWithEmail(email, password);
+      if (mounted) Navigator.of(context).pop();
     } on FirebaseAuthException catch (e) {
+      if (mounted) setState(() { _isLoading = false; _error = _parseLoginError(e.code); });
+    } catch (e) {
       if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _error = _parseAuthError(e.code);
-        });
+        final msg = e.toString().replaceFirst('Exception: ', '');
+        if (msg == 'email-not-verified') {
+          setState(() {
+            _isLoading = false;
+            _error = 'Email баталгаажаагүй байна. Эхлээд бүртгүүлнэ үү';
+          });
+        } else {
+          setState(() { _isLoading = false; _error = msg; });
+        }
       }
     }
   }
 
-  // ── Нэр шалгах: auth stream автоматаар MainShell руу явна ───────────────
-  Future<void> _checkName() async {
-    // Нэр байгаа эсэхээс үл хамааран MainShell руу шилжинэ
-    if (mounted) setState(() => _isLoading = false);
+  // ── Бүртгүүлэх - Алхам 1: Firebase user үүсгэж код илгээх ────────────────
+  Future<void> _register() async {
+    FocusScope.of(context).unfocus();
+    final name     = _nameController.text.trim();
+    final email    = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    if (name.isEmpty) {
+      setState(() => _error = 'Нэрээ оруулна уу');
+      return;
+    }
+    if (email.isEmpty || !email.contains('@')) {
+      setState(() => _error = 'Зөв email хаяг оруулна уу');
+      return;
+    }
+    if (password.length < 6) {
+      setState(() => _error = 'Нууц үг хамгийн багадаа 6 тэмдэгт байх ёстой');
+      return;
+    }
+
+    setState(() { _isLoading = true; _error = null; });
+
+    try {
+      await AuthService.registerWithEmail(
+        email: email,
+        password: password,
+        name: name,
+      );
+    } on FirebaseAuthException catch (e) {
+      if (mounted) setState(() { _isLoading = false; _error = _parseRegisterError(e.code); });
+      return;
+    } catch (e) {
+      if (mounted) setState(() {
+        _isLoading = false;
+        _error = e.toString().replaceFirst('Exception: ', '');
+      });
+      return;
+    }
+
+    // Firebase user үүссэн — код илгээхийг оролдоно
+    try {
+      await AuthService.sendVerificationCode();
+      if (mounted) setState(() { _isLoading = false; _registerStep = 1; });
+    } catch (e) {
+      // Код илгээхэд алдаа → Firebase user-г буцааж устгана (retry боломжтой болгох)
+      await AuthService.deleteCurrentUser();
+      if (mounted) setState(() {
+        _isLoading = false;
+        _error = e.toString().replaceFirst('Exception: ', '');
+      });
+    }
   }
 
-  String _parseAuthError(String code) {
-    switch (code) {
-      case 'invalid-phone-number':  return 'Утасны дугаар буруу байна';
-      case 'too-many-requests':     return 'Хэт олон оролдлого. Түр хүлээнэ үү';
-      case 'invalid-verification-code': return 'OTP код буруу байна';
-      case 'session-expired':       return 'Код хугацаа дууссан. Дахин илгээнэ үү';
-      default:                      return 'Алдаа гарлаа ($code)';
+  // ── Бүртгүүлэх - Алхам 2: Код баталгаажуулах ─────────────────────────────
+  Future<void> _verifyCode() async {
+    FocusScope.of(context).unfocus();
+    final code = _codeController.text.trim();
+    if (code.length != 6) {
+      setState(() => _error = 'Email-д ирсэн 6 оронтой кодоо оруулна уу');
+      return;
     }
+
+    setState(() { _isLoading = true; _error = null; });
+
+    try {
+      await AuthService.verifyEmailCode(code);
+      if (mounted) Navigator.of(context).pop();
+    } catch (e) {
+      if (mounted) setState(() {
+        _isLoading = false;
+        _error = e.toString().replaceFirst('Exception: ', '');
+      });
+    }
+  }
+
+  // ── Код дахин илгээх ──────────────────────────────────────────────────────
+  Future<void> _resendCode() async {
+    setState(() { _isLoading = true; _error = null; });
+    try {
+      await AuthService.sendVerificationCode();
+      if (mounted) setState(() {
+        _isLoading = false;
+        _codeController.clear(); // хуучин кодыг арилгана
+      });
+    } catch (e) {
+      if (mounted) setState(() {
+        _isLoading = false;
+        _error = e.toString().replaceFirst('Exception: ', '');
+      });
+    }
+  }
+
+  String _parseLoginError(String code) {
+    switch (code) {
+      case 'user-not-found':
+      case 'invalid-credential':   return 'Email эсвэл нууц үг буруу байна';
+      case 'wrong-password':       return 'Нууц үг буруу байна';
+      case 'user-disabled':        return 'Энэ аккаунт хаагдсан байна';
+      case 'too-many-requests':    return 'Хэт олон оролдлого. Түр хүлээнэ үү';
+      case 'invalid-email':        return 'Email хаяг буруу байна';
+      default:                     return 'Нэвтрэхэд алдаа гарлаа ($code)';
+    }
+  }
+
+  String _parseRegisterError(String code) {
+    switch (code) {
+      case 'email-already-in-use':  return 'Энэ email аль хэдийн бүртгэлтэй байна';
+      case 'invalid-email':         return 'Email хаяг буруу байна';
+      case 'weak-password':         return 'Нууц үг хэтэрхий энгийн байна';
+      case 'too-many-requests':     return 'Хэт олон оролдлого. Түр хүлээнэ үү';
+      case 'operation-not-allowed': return 'Email бүртгэл идэвхгүй байна. Администратортой холбоо барина уу';
+      case 'network-request-failed':return 'Интернэт холболт алдаатай байна';
+      default:                      return 'Бүртгүүлэхэд алдаа гарлаа ($code)';
+    }
+  }
+
+  void _switchMode(bool toRegister) {
+    FocusManager.instance.primaryFocus?.unfocus();
+    setState(() {
+      _isRegisterMode = toRegister;
+      _registerStep = 0;
+      _error = null;
+      _emailController.clear();
+      _passwordController.clear();
+      _nameController.clear();
+      _codeController.clear();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(28),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 40),
-
-              // ── Logo / гарчиг ─────────────────────────────────────────────
-              Center(
-                child: Column(
-                  children: [
-                    Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [AppTheme.secondary, AppTheme.accent],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      child: const Center(
-                        child: Text('🏀', style: TextStyle(fontSize: 38)),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'Говийн Спорт',
-                      style: TextStyle(
-                        color: AppTheme.textPrimary,
-                        fontSize: 26,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      _step == 0
-                          ? 'Утасны дугаараа оруулна уу'
-                          : '+976 ${_phoneController.text} дугаарт илгээсэн\n6 оронтой кодоо оруулна уу',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: AppTheme.textSecondary,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 32),
-
-              // ── Алхамын progress indicator ────────────────────────────────
-              Row(
-                children: List.generate(2, (i) {
-                  final isActive = _step >= i;
-                  return Expanded(
-                    child: Container(
-                      margin: EdgeInsets.only(right: i < 1 ? 6 : 0),
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: isActive
-                            ? AppTheme.secondary
-                            : AppTheme.divider,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  );
-                }),
-              ),
-
-              const SizedBox(height: 32),
-
-              // ── Алхамын мэдэгдэл ─────────────────────────────────────────
-              if (_step > 0)
-                GestureDetector(
-                  onTap: _isLoading ? null : () => setState(() {
-                    _step = 0;
-                    _otpController.clear();
-                    _error = null;
-                  }),
-                  child: Row(
-                    children: const [
-                      Icon(Icons.arrow_back_ios_rounded,
-                          color: AppTheme.secondary, size: 14),
-                      SizedBox(width: 4),
-                      Text(
-                        'Өөр дугаар ашиглах',
-                        style: TextStyle(
-                            color: AppTheme.secondary, fontSize: 13),
-                      ),
-                    ],
-                  ),
-                ),
-
-              if (_step > 0) const SizedBox(height: 20),
-
-              // ── Input хэсэг ───────────────────────────────────────────────
-              if (_step == 0) ...[
-                _label('Утасны дугаар'),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _phoneController,
-                  keyboardType: TextInputType.phone,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(8),
-                  ],
-                  style: const TextStyle(
-                      color: AppTheme.textPrimary, fontSize: 18, letterSpacing: 2),
-                  decoration: _inputDecoration(
-                    hint: '8800 1234',
-                    prefix: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: const Text('+976',
-                          style: TextStyle(
-                              color: AppTheme.textSecondary,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600)),
-                    ),
-                  ),
-                  onSubmitted: (_) => _sendOtp(),
-                ),
-              ] else if (_step == 1) ...[
-                _label('Баталгаажуулах код'),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _otpController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(6),
-                  ],
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: AppTheme.textPrimary, fontSize: 24,
-                      letterSpacing: 8, fontWeight: FontWeight.w700),
-                  decoration: _inputDecoration(hint: '000000'),
-                  onSubmitted: (_) => _verifyOtp(),
-                ),
-                const SizedBox(height: 12),
-                Center(
-                  child: TextButton(
-                    onPressed: _isLoading ? null : () {
-                      setState(() { _step = 0; _error = null; });
+    return Scaffold(
+        body: SafeArea(
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            padding: const EdgeInsets.all(28),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Back button
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    onPressed: () {
+                      if (_isRegisterMode && _registerStep == 1) {
+                        setState(() { _registerStep = 0; _error = null; _codeController.clear(); });
+                      } else {
+                        Navigator.of(context).pop();
+                      }
                     },
-                    child: const Text(
-                      'Код дахин илгээх',
-                      style: TextStyle(color: AppTheme.secondary, fontSize: 13),
-                    ),
+                    icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                    color: AppTheme.textSecondary,
+                    padding: EdgeInsets.zero,
                   ),
                 ),
-              ],
 
-              // ── Алдаа ─────────────────────────────────────────────────────
-              if (_error != null) ...[
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 14, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: AppTheme.error.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                        color: AppTheme.error.withValues(alpha: 0.4)),
-                  ),
-                  child: Row(
+                // Logo / гарчиг
+                Center(
+                  child: Column(
                     children: [
-                      const Icon(Icons.error_outline_rounded,
-                          color: AppTheme.error, size: 16),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          _error!,
-                          style: const TextStyle(
-                              color: AppTheme.error, fontSize: 13),
+                      Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [AppTheme.secondary, AppTheme.accent],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        child: const Center(
+                          child: Text('🏀', style: TextStyle(fontSize: 38)),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Говийн Спорт',
+                        style: TextStyle(
+                          color: AppTheme.textPrimary,
+                          fontSize: 26,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        _isRegisterMode
+                            ? (_registerStep == 0
+                                ? 'Шинэ аккаунт үүсгэх'
+                                : '${_emailController.text.trim()} хаягт\nилгээсэн 6 оронтой кодоо оруулна уу')
+                            : 'Email хаягаараа нэвтэрнэ үү',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: AppTheme.textSecondary,
+                          fontSize: 14,
                         ),
                       ),
                     ],
                   ),
                 ),
-              ],
 
-              const SizedBox(height: 32),
+                const SizedBox(height: 32),
 
-              // ── Товч ──────────────────────────────────────────────────────
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isLoading
-                      ? null
-                      : _step == 0
-                          ? _sendOtp
-                          : _verifyOtp,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.secondary,
-                    foregroundColor: Colors.white,
-                    disabledBackgroundColor: AppTheme.divider,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                // Progress indicator (register mode)
+                if (_isRegisterMode) ...[
+                  Row(
+                    children: List.generate(2, (i) {
+                      final isActive = _registerStep >= i;
+                      return Expanded(
+                        child: Container(
+                          margin: EdgeInsets.only(right: i < 1 ? 6 : 0),
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: isActive ? AppTheme.secondary : AppTheme.divider,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 32),
+                ],
+
+                // ── Input хэсэг ─────────────────────────────────────────────
+
+                // Login mode
+                if (!_isRegisterMode) ...[
+                  _label('Email хаяг'),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _emailController,
+                    focusNode: _emailFocus,
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    style: const TextStyle(color: AppTheme.textPrimary, fontSize: 16),
+                    decoration: _inputDecoration(
+                      hint: 'name@example.com',
+                      icon: Icons.email_outlined,
+                    ),
+                    onTap: () => _showKeyboard(_emailFocus),
+                    onSubmitted: (_) => _showKeyboard(_passwordFocus),
+                  ),
+                  const SizedBox(height: 16),
+                  _label('Нууц үг'),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _passwordController,
+                    focusNode: _passwordFocus,
+                    obscureText: _obscurePassword,
+                    textInputAction: TextInputAction.done,
+                    style: const TextStyle(color: AppTheme.textPrimary, fontSize: 16),
+                    decoration: _inputDecoration(
+                      hint: '••••••••',
+                      icon: Icons.lock_outline_rounded,
+                    ).copyWith(
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                          color: AppTheme.textSecondary,
+                          size: 20,
+                        ),
+                        onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                      ),
+                    ),
+                    onTap: () => _showKeyboard(_passwordFocus),
+                    onSubmitted: (_) => _login(),
+                  ),
+                ],
+
+                // Register mode — step 0: мэдээлэл
+                if (_isRegisterMode && _registerStep == 0) ...[
+                  _label('Нэр'),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _nameController,
+                    focusNode: _nameFocus,
+                    textInputAction: TextInputAction.next,
+                    style: const TextStyle(color: AppTheme.textPrimary, fontSize: 16),
+                    decoration: _inputDecoration(hint: 'Таны нэр', icon: Icons.person_outline_rounded),
+                    onTap: () => _showKeyboard(_nameFocus),
+                    onSubmitted: (_) => _showKeyboard(_emailFocus),
+                  ),
+                  const SizedBox(height: 16),
+                  _label('Email хаяг'),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _emailController,
+                    focusNode: _emailFocus,
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    style: const TextStyle(color: AppTheme.textPrimary, fontSize: 16),
+                    decoration: _inputDecoration(hint: 'name@example.com', icon: Icons.email_outlined),
+                    onTap: () => _showKeyboard(_emailFocus),
+                    onSubmitted: (_) => _showKeyboard(_passwordFocus),
+                  ),
+                  const SizedBox(height: 16),
+                  _label('Нууц үг'),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _passwordController,
+                    focusNode: _passwordFocus,
+                    obscureText: _obscurePassword,
+                    textInputAction: TextInputAction.done,
+                    style: const TextStyle(color: AppTheme.textPrimary, fontSize: 16),
+                    decoration: _inputDecoration(hint: '••••••••  (6+ тэмдэгт)', icon: Icons.lock_outline_rounded).copyWith(
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                          color: AppTheme.textSecondary,
+                          size: 20,
+                        ),
+                        onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                      ),
+                    ),
+                    onTap: () => _showKeyboard(_passwordFocus),
+                    onSubmitted: (_) => _register(),
+                  ),
+                ],
+
+                // Register mode — step 1: код
+                if (_isRegisterMode && _registerStep == 1) ...[
+                  _label('Баталгаажуулах код'),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _codeController,
+                    focusNode: _codeFocus,
+                    keyboardType: TextInputType.number,
+                    textInputAction: TextInputAction.done,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(6),
+                    ],
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: AppTheme.textPrimary,
+                      fontSize: 28,
+                      letterSpacing: 10,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    decoration: _inputDecoration(hint: '000000'),
+                    onTap: () => _showKeyboard(_codeFocus),
+                    onSubmitted: (_) => _verifyCode(),
+                  ),
+                  const SizedBox(height: 12),
+                  Center(
+                    child: TextButton(
+                      onPressed: _isLoading ? null : _resendCode,
+                      child: const Text(
+                        'Код дахин илгээх',
+                        style: TextStyle(color: AppTheme.secondary, fontSize: 13),
+                      ),
                     ),
                   ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white),
-                        )
-                      : Text(
-                          _step == 0 ? 'Код илгээх' : 'Нэвтрэх',
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w700),
+                ],
+
+                // Алдаа
+                if (_error != null) ...[
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: AppTheme.error.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: AppTheme.error.withValues(alpha: 0.4)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.error_outline_rounded, color: AppTheme.error, size: 16),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _error!,
+                            style: const TextStyle(color: AppTheme.error, fontSize: 13),
+                          ),
                         ),
-                ),
-              ),
+                      ],
+                    ),
+                  ),
+                ],
 
-              const SizedBox(height: 40),
+                const SizedBox(height: 32),
 
-              // ── Footer ────────────────────────────────────────────────────
-              Center(
-                child: Text(
-                  'Говийн Спорт • Даланзадгад',
-                  style: TextStyle(
-                    color: AppTheme.textSecondary.withValues(alpha: 0.5),
-                    fontSize: 12,
+                // Үндсэн товч
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _isLoading
+                        ? null
+                        : _isRegisterMode
+                            ? (_registerStep == 0 ? _register : _verifyCode)
+                            : _login,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.secondary,
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor: AppTheme.divider,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    ),
+                    child: _isLoading
+                        ? const SizedBox(
+                            width: 22, height: 22,
+                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          )
+                        : Text(
+                            _isRegisterMode
+                                ? (_registerStep == 0 ? 'Бүртгүүлэх' : 'Баталгаажуулах')
+                                : 'Нэвтрэх',
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                          ),
                   ),
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 20),
+
+                // Mode switch
+                if (!(_isRegisterMode && _registerStep == 1))
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          _isRegisterMode ? 'Аккаунт байгаа юу? ' : 'Аккаунт байхгүй юу? ',
+                          style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+                        ),
+                        GestureDetector(
+                          onTap: () => _switchMode(!_isRegisterMode),
+                          child: Text(
+                            _isRegisterMode ? 'Нэвтрэх' : 'Бүртгүүлэх',
+                            style: const TextStyle(
+                              color: AppTheme.secondary,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                const SizedBox(height: 32),
+
+                // Footer
+                Center(
+                  child: Text(
+                    'Говийн Спорт • Даланзадгад',
+                    style: TextStyle(
+                      color: AppTheme.textSecondary.withValues(alpha: 0.5),
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    ),
     );
   }
 
@@ -363,18 +555,11 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
 
-  InputDecoration _inputDecoration({
-    required String hint,
-    Widget? prefix,
-    IconData? icon,
-  }) {
+  InputDecoration _inputDecoration({required String hint, IconData? icon}) {
     return InputDecoration(
       hintText: hint,
       hintStyle: const TextStyle(color: AppTheme.textSecondary),
-      prefixIcon: icon != null
-          ? Icon(icon, color: AppTheme.secondary, size: 20)
-          : null,
-      prefix: prefix,
+      prefixIcon: icon != null ? Icon(icon, color: AppTheme.secondary, size: 20) : null,
       filled: true,
       fillColor: AppTheme.cardColor,
       border: OutlineInputBorder(

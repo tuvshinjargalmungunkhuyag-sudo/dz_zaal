@@ -1,72 +1,131 @@
+import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
+import '../config.dart';
 
 class AuthService {
   static final _auth = FirebaseAuth.instance;
   static final _db = FirebaseFirestore.instance;
 
   static User? get currentUser => _auth.currentUser;
-
-  // Firebase-с ирсэн +97688001234 → 88001234 болгоно
-  static String? get currentPhone {
-    final p = _auth.currentUser?.phoneNumber;
-    if (p == null) return null;
-    final digits = p.replaceAll(RegExp(r'\D'), '');
-    return digits.length >= 8 ? digits.substring(digits.length - 8) : digits;
-  }
-
+  static String? get currentEmail => _auth.currentUser?.email;
   static Stream<User?> get authStateChanges => _auth.authStateChanges();
 
-  // Хэрэглэгчийн нэрийг Firestore-оос татах
-  static Future<String?> getUserName() async {
-    final user = _auth.currentUser;
-    if (user == null) return null;
-    final phone = currentPhone ?? user.uid;
-    final snap = await _db.collection('users').doc(phone).get();
-    return snap.data()?['name'] as String?;
+  // ── Бүртгүүлэх ────────────────────────────────────────────────────────────
+
+  // Firebase user үүсгэж, Firestore-д хадгалах (emailVerified: false)
+  static Future<void> registerWithEmail({
+    required String email,
+    required String password,
+    required String name,
+  }) async {
+    final credential = await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    final uid = credential.user!.uid;
+
+    await _db.collection('users').doc(uid).set({
+      'name': name,
+      'email': email,
+      'uid': uid,
+      'emailVerified': false,
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
   }
 
-  // Хэрэглэгчийн нэрийг хадгалах (эхний нэвтрэлтэд)
-  static Future<void> saveUserName(String name) async {
+  // ── Email баталгаажуулах код ───────────────────────────────────────────────
+
+  // Firebase user болон Firestore doc-г устгах (rollback)
+  static Future<void> deleteCurrentUser() async {
+    final uid = _auth.currentUser?.uid;
+    try {
+      if (uid != null) {
+        await _db.collection('users').doc(uid).delete();
+      }
+    } catch (_) {}
+    try {
+      await _auth.currentUser?.delete();
+    } catch (_) {}
+  }
+
+  static Future<void> sendVerificationCode() async {
     final user = _auth.currentUser;
     if (user == null) throw Exception('Нэвтрээгүй байна');
 
-    // Phone: +97689773009 → 89773009 (сүүлийн 8 орон)
-    final phone = currentPhone ?? user.uid;
-    await _db.collection('users').doc(phone).set({
-      'name': name,
-      'phone': phone,
-      'uid': user.uid,
-      'createdAt': FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true));
+    try {
+      final res = await http.post(
+        Uri.parse('${AppConfig.authEndpoint}/send-code'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': user.email, 'uid': user.uid}),
+      ).timeout(const Duration(seconds: 15));
+
+      if (res.statusCode != 200) {
+        String errorMsg = 'Код илгээхэд алдаа гарлаа';
+        try {
+          final body = jsonDecode(res.body);
+          errorMsg = body['error'] ?? errorMsg;
+        } catch (_) {}
+        throw Exception(errorMsg);
+      }
+    } on Exception catch (e) {
+      final msg = e.toString();
+      if (msg.contains('SocketException') ||
+          msg.contains('Connection') ||
+          msg.contains('TimeoutException') ||
+          msg.contains('Cleartext')) {
+        throw Exception('Сервертэй холбогдож чадсангүй. Интернэт холболтоо шалгана уу');
+      }
+      rethrow;
+    }
   }
 
-  // Утасны дугаар баталгаажуулах OTP илгээх
-  static Future<void> verifyPhone({
-    required String phone, // 8 оронтой: 88001234
-    required void Function(PhoneAuthCredential) onAutoVerified,
-    required void Function(FirebaseAuthException) onFailed,
-    required void Function(String verificationId, int? resendToken) onCodeSent,
-  }) async {
-    await _auth.verifyPhoneNumber(
-      phoneNumber: '+976$phone',
-      verificationCompleted: onAutoVerified,
-      verificationFailed: onFailed,
-      codeSent: onCodeSent,
-      codeAutoRetrievalTimeout: (_) {},
-      timeout: const Duration(seconds: 60),
+  static Future<void> verifyEmailCode(String code) async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception('Нэвтрээгүй байна');
+
+    final res = await http.post(
+      Uri.parse('${AppConfig.authEndpoint}/verify-code'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'uid': user.uid, 'code': code}),
     );
+
+    if (res.statusCode != 200) {
+      final body = jsonDecode(res.body);
+      throw Exception(body['error'] ?? 'Код буруу байна');
+    }
   }
 
-  // OTP баталгаажуулж нэвтрэх
-  static Future<UserCredential> signInWithOtp(
-      String verificationId, String smsCode) {
-    final credential = PhoneAuthProvider.credential(
-      verificationId: verificationId,
-      smsCode: smsCode,
+  // ── Нэвтрэх ───────────────────────────────────────────────────────────────
+
+  static Future<UserCredential> signInWithEmail(
+      String email, String password) async {
+    final credential = await _auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
     );
-    return _auth.signInWithCredential(credential);
+
+    // Email баталгаажсан эсэх шалгах
+    final uid = credential.user!.uid;
+    final snap = await _db.collection('users').doc(uid).get();
+    final verified = snap.data()?['emailVerified'] == true;
+    if (!verified) {
+      await _auth.signOut();
+      throw Exception('email-not-verified');
+    }
+
+    return credential;
+  }
+
+  // ── Хэрэглэгчийн мэдээлэл ─────────────────────────────────────────────────
+
+  static Future<String?> getUserName() async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return null;
+    final snap = await _db.collection('users').doc(uid).get();
+    return snap.data()?['name'] as String?;
   }
 
   static Future<void> signOut() => _auth.signOut();

@@ -1,11 +1,12 @@
 \babel@toc {english}{}\relax 
-\beamer@sectionintoc {1}{Асуудлын тодорхойлолт}{3}{0}{1}
-\beamer@sectionintoc {2}{Судлагдсан байдал}{4}{0}{2}
-\beamer@sectionintoc {3}{Системийн архитектур}{6}{0}{3}
-\beamer@sectionintoc {4}{UML диаграммууд}{7}{0}{4}
-\beamer@sectionintoc {5}{Өгөгдлийн сангийн загвар}{9}{0}{5}
-\beamer@sectionintoc {6}{Хэрэгжүүлэлт}{10}{0}{6}
-\beamer@sectionintoc {7}{Туршилтын үр дүн}{12}{0}{7}
-\beamer@sectionintoc {8}{Шинэлэг тал}{13}{0}{8}
-\beamer@sectionintoc {9}{Технологи ба консол холбоосууд}{14}{0}{9}
-\beamer@sectionintoc {10}{Дүгнэлт}{21}{0}{10}
+\beamer@sectionintoc {1}{Судалгааны үндэс}{3}{0}{1}
+\beamer@sectionintoc {2}{Судлагдсан байдал}{5}{0}{2}
+\beamer@sectionintoc {3}{Системийн архитектур}{7}{0}{3}
+\beamer@sectionintoc {4}{UML диаграммууд}{8}{0}{4}
+\beamer@sectionintoc {5}{Өгөгдлийн сангийн загвар}{11}{0}{5}
+\beamer@sectionintoc {6}{Хэрэгжүүлэлт}{12}{0}{6}
+\beamer@sectionintoc {7}{Туршилтын үр дүн}{14}{0}{7}
+\beamer@sectionintoc {8}{Шинэлэг тал}{15}{0}{8}
+\beamer@sectionintoc {9}{Технологи ба консол холбоосууд}{16}{0}{9}
+\beamer@sectionintoc {10}{Цаашдын үр дүн}{23}{0}{10}
+\beamer@sectionintoc {11}{Дүгнэлт}{24}{0}{11}

@@ -24,16 +24,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _loadProfile() async {
     try {
-      final phone = AuthService.currentPhone;
+      final email = AuthService.currentEmail;
 
       final name = await AuthService.getUserName();
 
       int total = 0;
       int upcoming = 0;
-      if (phone != null) {
+      if (email != null) {
         final snap = await FirebaseFirestore.instance
             .collection('bookings')
-            .where('userPhone', isEqualTo: phone)
+            .where('userEmail', isEqualTo: email)
             .get();
         total = snap.docs.length;
         upcoming = snap.docs
@@ -83,11 +83,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final phone = AuthService.currentPhone ?? '';
+    final email = AuthService.currentEmail ?? '';
     final initials = (_userName?.isNotEmpty == true)
         ? _userName![0].toUpperCase()
-        : phone.isNotEmpty
-            ? phone[0]
+        : email.isNotEmpty
+            ? email[0].toUpperCase()
             : '?';
 
     return Scaffold(
@@ -169,13 +169,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.phone_rounded,
+                          Icon(Icons.email_outlined,
                               color: Colors.white.withValues(alpha: 0.8), size: 13),
                           const SizedBox(width: 4),
                           Text(
-                            phone.length >= 8
-                                ? '+976 ${phone.substring(0, 4)}-${phone.substring(4)}'
-                                : '+976 $phone',
+                            email,
                             style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.8), fontSize: 13),
                           ),

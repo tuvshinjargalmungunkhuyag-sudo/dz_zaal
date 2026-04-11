@@ -17,7 +17,7 @@ class FirestoreService {
     required String courtType,
     required String price,
     required String userName,
-    required String userPhone,
+    required String userEmail,
   }) async {
     final code = 'DBK-${DateTime.now().millisecondsSinceEpoch % 10000}';
     final dateKey =
@@ -36,7 +36,7 @@ class FirestoreService {
       'courtType': courtType,
       'price': price,
       'userName': userName,
-      'userPhone': userPhone,
+      'userEmail': userEmail,
       'status': 'upcoming',
       'code': code,
       'createdAt': FieldValue.serverTimestamp(),

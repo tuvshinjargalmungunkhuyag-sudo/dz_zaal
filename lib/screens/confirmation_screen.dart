@@ -4,6 +4,7 @@ import '../theme/app_theme.dart';
 import '../services/notification_store.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
+import 'auth/login_screen.dart';
 
 class ConfirmationScreen extends StatefulWidget {
   final SportVenue venue;
@@ -30,7 +31,6 @@ class ConfirmationScreen extends StatefulWidget {
 class _ConfirmationScreenState extends State<ConfirmationScreen>
     with SingleTickerProviderStateMixin {
   final _nameController = TextEditingController();
-  final _phoneController = TextEditingController();
   bool _isLoading = false;
   bool _isConfirmed = false;
   int _selectedPayment = 0;
@@ -53,8 +53,6 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
   }
 
   Future<void> _prefillFromAuth() async {
-    final phone = AuthService.currentPhone;
-    if (phone != null) _phoneController.text = phone;
     final name = await AuthService.getUserName();
     if (name != null && mounted) _nameController.text = name;
   }
@@ -63,7 +61,6 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
   void dispose() {
     _animController.dispose();
     _nameController.dispose();
-    _phoneController.dispose();
     super.dispose();
   }
 
@@ -96,16 +93,22 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
 
   Future<void> _confirm() async {
     FocusScope.of(context).unfocus();
-    final phone = _phoneController.text.replaceAll(RegExp(r'[\s\-]'), '');
+
+    if (AuthService.currentUser == null) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
+      );
+      if (!mounted || AuthService.currentUser == null) return;
+      await _prefillFromAuth();
+    }
+
     String? error;
     if (_nameController.text.trim().isEmpty) {
       error = 'Нэрээ оруулна уу';
-    } else if (phone.isEmpty) {
-      error = 'Утасны дугаараа оруулна уу';
-    } else if (!RegExp(r'^\d{8}$').hasMatch(phone)) {
-      error = 'Утасны дугаар 8 оронтой байх ёстой';
     }
     if (error != null) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(error),
@@ -123,10 +126,10 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
 
     try {
       final name = _nameController.text.trim();
-      final phone = _phoneController.text.replaceAll(RegExp(r'[\s\-]'), '');
+      final email = AuthService.currentEmail ?? '';
 
-      // Хэрэглэгч бүртгэх / шинэчлэх
-      await ApiService.registerUser(name: name, phone: phone);
+      // Хэрэглэгчийн нэр шинэчлэх
+      await ApiService.registerUser(name: name, email: email);
 
       // Захиалга үүсгэх (давхцал server-т шалгана)
       final result = await ApiService.createBooking(
@@ -141,7 +144,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
         courtType: widget.courtType,
         price: widget.price,
         userName: name,
-        userPhone: phone,
+        userEmail: email,
       );
       _bookingCode = result.code;
     } catch (e) {
@@ -191,9 +194,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
       return _buildSuccessScreen();
     }
 
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: const Text('Захиалга баталгаажуулах'),
         leading: IconButton(
@@ -202,6 +203,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
         ),
       ),
       body: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -351,21 +353,15 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
             ),
             const SizedBox(height: 16),
 
-            // Phone field — auth-аас автоматаар дүүргэгддэг
+            // Email — auth-аас автоматаар дүүргэгддэг (readonly)
             TextField(
-              controller: _phoneController,
-              keyboardType: TextInputType.phone,
               readOnly: true,
+              controller: TextEditingController(text: AuthService.currentEmail ?? ''),
               style: const TextStyle(color: AppTheme.textPrimary),
               decoration: InputDecoration(
-                labelText: 'Утасны дугаар',
-                hintText: '9999-9999',
-                prefixIcon: Icon(
-                  Icons.phone_rounded,
-                  color: widget.venue.accentColor,
-                ),
-                suffixIcon: const Icon(Icons.lock_rounded,
-                    color: AppTheme.textSecondary, size: 16),
+                labelText: 'Email',
+                prefixIcon: Icon(Icons.email_outlined, color: widget.venue.accentColor),
+                suffixIcon: const Icon(Icons.lock_rounded, color: AppTheme.textSecondary, size: 16),
               ),
             ),
 
@@ -452,7 +448,6 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
           ),
         ),
       ),
-    ),
     );
   }
 
@@ -504,7 +499,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
               ),
               const SizedBox(height: 16),
               Text(
-                'Таны захиалга баталгаажлаа.\nУтасны дугаарт мэдэгдэл илгээнэ.',
+                'Таны захиалга баталгаажлаа.\nEmail хаягт мэдэгдэл илгээнэ.',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   color: AppTheme.textSecondary,

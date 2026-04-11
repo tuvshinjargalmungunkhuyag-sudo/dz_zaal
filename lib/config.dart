@@ -8,4 +8,5 @@ class AppConfig {
   static const String usersEndpoint    = '$backendUrl/api/users';
   static const String bookingsEndpoint = '$backendUrl/api/bookings';
   static const String scheduleEndpoint = '$backendUrl/api/schedule';
+  static const String authEndpoint     = '$backendUrl/api/auth';
 }

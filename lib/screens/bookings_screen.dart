@@ -16,8 +16,18 @@ class _BookingsScreenState extends State<BookingsScreen> {
 
   List<Map<String, dynamic>> _filter(List<Map<String, dynamic>> all) {
     if (_filterIndex == 0) return all;
-    const statusMap = {1: 'active', 2: 'upcoming', 3: 'completed'};
+    const statusMap = {1: 'upcoming', 2: 'active', 3: 'completed', 4: 'cancelled'};
     return all.where((b) => b['status'] == statusMap[_filterIndex]).toList();
+  }
+
+  static int _statusOrder(String? s) {
+    switch (s) {
+      case 'upcoming':  return 0;
+      case 'active':    return 1;
+      case 'completed': return 2;
+      case 'cancelled': return 3;
+      default:          return 4;
+    }
   }
 
   @override
@@ -30,17 +40,27 @@ class _BookingsScreenState extends State<BookingsScreen> {
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('bookings')
-            .where('userPhone', isEqualTo: AuthService.currentPhone)
+            .where('userEmail', isEqualTo: AuthService.currentEmail)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
+          if (snapshot.hasError) {
+            return const Center(
+              child: Text('Мэдээлэл ачааллахад алдаа гарлаа',
+                  style: TextStyle(color: AppTheme.textSecondary)),
+            );
+          }
+
           final all = (snapshot.data?.docs
                   .map((d) => {'id': d.id, ...d.data() as Map<String, dynamic>})
                   .toList() ?? [])
             ..sort((a, b) {
+              final statusCmp = _statusOrder(a['status'] as String?)
+                  .compareTo(_statusOrder(b['status'] as String?));
+              if (statusCmp != 0) return statusCmp;
               final aTs = a['createdAt'];
               final bTs = b['createdAt'];
               if (aTs == null || bTs == null) return 0;

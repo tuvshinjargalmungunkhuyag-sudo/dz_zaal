@@ -2,10 +2,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../config.dart';
 import '../models/models.dart';
+import 'auth_service.dart';
 
 class ApiService {
-  // Сессийн хугацаанд хэрэглэгчийн утасны дугаарыг санана
-  static String? currentUserPhone;
   static String? currentUserName;
 
   static Map<String, String> get _headers => {
@@ -16,18 +15,23 @@ class ApiService {
 
   static Future<void> registerUser({
     required String name,
-    required String phone,
+    required String email,
   }) async {
     final res = await http.post(
       Uri.parse(AppConfig.usersEndpoint),
       headers: _headers,
-      body: jsonEncode({'name': name, 'phone': phone}),
+      body: jsonEncode({'name': name, 'email': email, 'uid': _currentUid()}),
     );
     if (res.statusCode != 200 && res.statusCode != 201) {
       throw Exception(_error(res));
     }
     currentUserName = name;
-    currentUserPhone = phone;
+  }
+
+  static String _currentUid() {
+    final uid = AuthService.currentUser?.uid;
+    if (uid == null) throw Exception('Нэвтрээгүй байна');
+    return uid;
   }
 
   // ── Захиалга ───────────────────────────────────────────────────────────────
@@ -44,7 +48,7 @@ class ApiService {
     required String courtType,
     required String price,
     required String userName,
-    required String userPhone,
+    required String userEmail,
   }) async {
     final dateKey =
         '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
@@ -64,7 +68,7 @@ class ApiService {
         'courtType': courtType,
         'price': price,
         'userName': userName,
-        'userPhone': userPhone,
+        'userEmail': userEmail,
       }),
     );
 

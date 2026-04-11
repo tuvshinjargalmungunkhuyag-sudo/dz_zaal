@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../models/models.dart';
 import '../widgets/widgets.dart';
 import '../theme/app_theme.dart';
 import '../services/api_service.dart';
 import 'confirmation_screen.dart';
-import 'auth/login_screen.dart';
 
 void showBookingSheet(BuildContext context, SportVenue venue) {
   showModalBottomSheet(
@@ -535,15 +533,6 @@ class _BookingSheetState extends State<_BookingSheet> {
                           onPressed: _selectedSlots.isEmpty
                               ? null
                               : () {
-                                  if (FirebaseAuth.instance.currentUser == null) {
-                                    Navigator.pop(context);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) => const LoginScreen()),
-                                    );
-                                    return;
-                                  }
                                   Navigator.pop(context);
                                   Navigator.push(
                                     context,
