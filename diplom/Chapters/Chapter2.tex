@@ -11,17 +11,65 @@
 
 Мобайл аппликейшн хөгжүүлэлтэд өнөөдөр гурван үндсэн арга хандлага байдаг: \keyword{Native}, \keyword{Hybrid}, \keyword{Cross-platform}. Эдгээрийг харьцуулбал:
 
-\begin{itemize}
-    \item \textbf{Native апп} — iOS-д Swift/Objective-C, Android-д Kotlin/Java ашигладаг. Гүйцэтгэл хамгийн өндөр боловч платформ бүрт тусдаа код бичих шаардлагатай.
-    \item \textbf{Hybrid апп} — HTML, CSS, JavaScript ашиглан WebView дотор ажиллана. Хөгжүүлэлт хялбар боловч гүйцэтгэл доогуур.
-    \item \textbf{Cross-platform апп} — Нэг кодоос олон платформд гаргана. Flutter, React Native зэрэг хэрэгсэл ашигладаг.
-\end{itemize}
+\begin{table}[h]
+\centering
+\caption{Мобайл аппликейшн хөгжүүлэлтийн арга хандлагуудын харьцуулалт}
+\label{tab:mobile_approach}
+\begin{tabularx}{\textwidth}{|p{2.5cm}|X|X|X|}
+\hline
+\textbf{Шалгуур} & \textbf{Native} & \textbf{Hybrid} & \textbf{Cross-platform} \\
+\hline
+Хэл/хэрэгсэл & Swift, Kotlin/Java & HTML, JS, CSS & Flutter, React Native \\
+\hline
+Гүйцэтгэл & Хамгийн өндөр & Доогуур & Native-д ойр \\
+\hline
+Нэг кодын бааз & Үгүй & Тийм & Тийм \\
+\hline
+UI нийцтэй байдал & Платформ бүрт ялгаатай & WebView хязгаарлагдмал & Бүрэн нийцтэй \\
+\hline
+Хөгжүүлэлтийн зардал & Өндөр (×2 баг) & Бага & Дунд \\
+\hline
+\textbf{Энэ ажилд} & — & — & \textbf{Flutter} \\
+\hline
+\end{tabularx}
+\end{table}
 
 Энэхүү ажилд cross-platform хандлагыг сонгосон бөгөөд үүний тулд \keyword{Flutter} фреймворкийг ашигласан. Flutter нь Google-ийн боловсруулсан, Dart хэл дээр суурилсан, Android болон iOS платформд нэгэн зэрэг ажиллах чадвартай, гүйцэтгэлийн хувьд native-д ойр шийдэл юм \cite{flutter_doc}. Cross-platform хандлагыг сонгосноор нэг кодын баазаас хоёр платформ дэмжих боломжтой бөгөөд хөгжүүлэлтийн нийт хугацаа, зардлыг мэдэгдэхүйц бууруулдаг.
 
 %-------------------------------------------------------------------------------
 
 \section{Flutter фреймворк ба Dart хэл}
+
+\subsection{Flutter-ийг сонгосон үндэслэл}
+
+Cross-platform хандлагад \keyword{Flutter} болон \keyword{React Native} хоёр нь гол өрсөлдөгчид юм. Энэхүү ажилд Flutter-ийг сонгосон шалтгааныг дараах харьцуулалтаар тодорхойлж болно:
+
+\begin{table}[h]
+\centering
+\caption{Flutter болон React Native харьцуулалт}
+\label{tab:flutter_rn}
+\begin{tabularx}{\textwidth}{|X|p{4cm}|p{4cm}|}
+\hline
+\textbf{Шалгуур} & \textbf{Flutter} & \textbf{React Native} \\
+\hline
+Render engine & Skia/Impeller (өөрийн) & Native bridge (платформын) \\
+\hline
+Хэл & Dart & JavaScript/TypeScript \\
+\hline
+UI нийцтэй байдал & Платформ бүрт яг ижил & Зарим UI ялгаатай \\
+\hline
+Гүйцэтгэл & Өндөр (AOT compile) & Бага зэрэг доогуур \\
+\hline
+Material Design 3 & Бүрэн дэмжлэгтэй & Гуравдагч талын багц хэрэгтэй \\
+\hline
+Widget сан & Баялаг, суурилагдсан & Нэмэлт багц хэрэгтэй \\
+\hline
+\textbf{Дүгнэлт} & \textbf{Энэ ажилд сонгосон} & — \\
+\hline
+\end{tabularx}
+\end{table}
+
+Flutter-ийн \textbf{Skia/Impeller} дүрслэлийн хөдөлгүүр нь бүх UI-г платформаас үл хамааран өөрөө зурдаг тул Android болон iOS-д яг ижил харагдах баталгаа олгодог нь энэ ажлын хувьд чухал давуу тал юм.
 
 \subsection{Flutter-ийн тухай}
 
@@ -135,11 +183,38 @@ Firestore-ийн security rules нь collection бүрт хэрэглэгч ха
     \item \textbf{Хөнгөн бүтэц} — Шаардлагатай зүйлийг л ачаалдаг.
 \end{itemize}
 
-Энэ ажлын бэкэнд нь Express.js ашиглан дараахи API endpoint-уудыг хангадаг: \code{/api/auth} (email баталгаажуулалт), \code{/api/users} (хэрэглэгчийн мэдээлэл), \code{/api/bookings} (захиалгын менежмент), \code{/api/schedule} (цагийн хуваарь), \code{/api/chat} (Groq AI чат).
+Энэ ажлын бэкэнд нь Express.js ашиглан дараахи REST API endpoint-уудыг хангадаг:
+
+\begin{table}[h]
+\centering
+\caption{Node.js/Express REST API endpoint-уудын жагсаалт}
+\label{tab:api_endpoints}
+\begin{tabularx}{\textwidth}{|p{1.5cm}|p{4.5cm}|X|}
+\hline
+\textbf{Арга} & \textbf{Endpoint} & \textbf{Тайлбар} \\
+\hline
+POST & \code{/api/auth/send-code} & Бүртгэлийн баталгаажуулах код илгээх (Nodemailer) \\
+\hline
+POST & \code{/api/auth/verify-code} & 6 оронтой кодыг шалгаж, email баталгаажуулах \\
+\hline
+POST & \code{/api/users/create} & Шинэ хэрэглэгч Firestore-д бүртгэх \\
+\hline
+GET  & \code{/api/bookings/:venueId} & Тухайн заалны захиалгуудын жагсаалт авах \\
+\hline
+POST & \code{/api/bookings/create} & Шинэ захиалга үүсгэх (давхардал шалгах) \\
+\hline
+PUT  & \code{/api/bookings/:id/cancel} & Захиалга цуцлах \\
+\hline
+GET  & \code{/api/schedule/:venueId} & Цагийн хуваарь + fixed\_bookings авах \\
+\hline
+POST & \code{/api/chat} & Groq Llama 3.1-8b AI хариулт авах \\
+\hline
+\end{tabularx}
+\end{table}
 
 \subsection{REST API архитектур}
 
-\keyword{REST} (Representational State Transfer) нь веб үйлчилгээний архитектурын хэв маяг юм. REST API нь HTTP протоколын GET, POST, PUT, DELETE арга ашиглан нөөцийг удирддаг. Энэ ажилд Flutter апп болон Node.js бэкэнд хоорондын харилцааг RESTful API-аар гүйцэтгэдэг бөгөөд өгөгдлийн солилцоог JSON форматаар хийдэг.
+\keyword{REST} (Representational State Transfer) нь Roy Fielding (2000) \cite{rest_fielding} боловсруулсан веб үйлчилгээний архитектурын хэв маяг юм. REST API нь HTTP протоколын GET, POST, PUT, DELETE арга ашиглан нөөцийг удирддаг. REST-ийн гол шинж чанарууд: \textit{Stateless} (сервер хүсэлт бүрийг бие даасан гэж үздэг), \textit{Uniform Interface} (стандарт URL + HTTP арга), \textit{Resource-based} (нөөц бүрийг URL-ээр илэрхийлнэ). Энэ ажилд Flutter апп болон Node.js бэкэнд хоорондын харилцааг RESTful API-аар гүйцэтгэдэг бөгөөд өгөгдлийн солилцоог JSON форматаар хийдэг.
 
 %-------------------------------------------------------------------------------
 
@@ -219,36 +294,86 @@ GitHub Actions нь AWS-ийн нэвтрэлтийн нууцлал (access key
 
 \section{flutter\_local\_notifications}
 
-\keyword{flutter\_local\_notifications} нь Firebase Cloud Messaging (FCM) ашиглахгүйгээр төхөөрөмж дотор мэдэгдэл (local notification) харуулах Flutter багц юм \cite{local_notifications_doc}. Энэ нь серверийн тал байхгүйгээр мэдэгдэл үүсгэх боломжтой бөгөөд захиалгын 1 цагийн өмнө сануулга илгээхэд тохиромжтой:
+\keyword{flutter\_local\_notifications} нь Firebase Cloud Messaging (FCM) ашиглахгүйгээр төхөөрөмж дотор мэдэгдэл (local notification) харуулах Flutter багц юм \cite{local_notifications_doc}. Мобайл аппликейшнд push notification хэрэгжүүлэхэд ихэвчлэн FCM сервер шаарддаг боловч энэ багц нь сервергүйгээр хэрэглэгчийн төхөөрөмж дотор мэдэгдэл шедуль хийх боломжтой.
+
+Энэ ажилд \code{flutter\_local\_notifications}-ийг дараах зорилгоор ашигласан:
 
 \begin{itemize}
-    \item Хэрэглэгч цаг захиалах үед Flutter апп тухайн цагаас 1 цаг хасаж сануулгын мэдэгдлийг schedule хийнэ;
-    \item FCM сервер байхгүй тул өгөгдлийн дамжуулалт хялбар, найдвартай;
-    \item Android болон iOS аль алинд дэмжлэгтэй.
+    \item \textbf{1 цагийн өмнөх сануулга} — Хэрэглэгч цаг захиалах үед Flutter апп тухайн цагаас 1 цаг хасаж (\code{scheduledDate = bookingTime.subtract(Duration(hours: 1))}) сануулгын мэдэгдлийг schedule хийнэ;
+    \item \textbf{Offline найдвартай байдал} — Интернет холболт байхгүй тохиолдолд ч гэсэн төхөөрөмж дотор хадгалагдсан мэдэгдэл ажилладаг;
+    \item \textbf{Хоёр платформ} — Android болон iOS аль алинд дэмжлэгтэй, тохиргоо нэг кодоор хийгддэг;
+    \item \textbf{Нэмэлт зардалгүй} — FCM сервер байхгүй тул серверийн нэмэлт зардал шаарддаггүй.
 \end{itemize}
+
+%-------------------------------------------------------------------------------
+
+\section{Технологийн стекийн нэгтгэсэн дүгнэлт}
+
+Энэхүү ажилд ашигласан технологиудыг үүрэг, сонгосон шалтгааны хамт дараах хүснэгтэд нэгтгэн харуулав:
+
+\begin{table}[h]
+\centering
+\caption{Ашигласан технологийн стекийн нэгтгэсэн хүснэгт}
+\label{tab:tech_stack}
+\begin{tabularx}{\textwidth}{|p{3cm}|p{3.5cm}|X|}
+\hline
+\textbf{Технологи} & \textbf{Үүрэг} & \textbf{Сонгосон шалтгаан} \\
+\hline
+Flutter 3.x & Мобайл клиент (Android/iOS) & Нэг кодоос хоёр платформ, Material Design 3 \\
+\hline
+Dart & Flutter-ийн програмчлалын хэл & AOT compile, Null Safety, Stream дэмжлэг \\
+\hline
+Firebase Auth & Нэвтрэлтийн систем & Аюулгүй, Google-ийн үүлэн дэмжлэгтэй \\
+\hline
+Cloud Firestore & NoSQL өгөгдлийн сан & Real-time listener, автомат масштабчлал \\
+\hline
+Firebase Cloud Functions & Serverless AI endpoint & API түлхүүрийг аюулгүй хадгалах \\
+\hline
+Node.js/Express & REST API бэкэнд & Event-driven, JSON API бариход тохиромжтой \\
+\hline
+Nodemailer & Email илгээлт & Gmail SMTP-ээр баталгаажуулах код \\
+\hline
+Docker & Контейнержуулалт & Орчны тогтвортой байдал, хурдан байршуулалт \\
+\hline
+AWS EC2 & Үүлэн сервер & Бүрэн хяналт, Docker дэмжлэг \\
+\hline
+AWS ECR & Docker image registry & EC2-тэй хамт ашиглахад оновчтой \\
+\hline
+GitHub Actions & CI/CD хоолой & Git workflow-той нэгдмэл \\
+\hline
+Claude Haiku 4.5 & AI чатбот (үндсэн) & Хурдан, хэмнэлттэй LLM \\
+\hline
+Groq Llama 3.1-8b & AI чатбот (нөөц) & LPU-д суурилсан, асаар хурдан хариулт \\
+\hline
+flutter\_local\_notifications & Локал мэдэгдэл & FCM сервергүйгээр мэдэгдэл \\
+\hline
+\end{tabularx}
+\end{table}
 
 %-------------------------------------------------------------------------------
 
 \section{Ижил төстэй системүүдийн дүн шинжилгээ}
 
-Дэлхийн болон Монгол дахь цаг захиалгын системүүдийг судалж дараахи дүгнэлтэд хүрсэн:
+\subsection{Монгол улсын цаг захиалгын системүүд}
 
-\begin{itemize}
-    \item \textbf{Mindbody, Booksy} (дэлхийн платформ) — Олон функцтэй боловч орон нутгийн нөхцөлд тохируулах боломжгүй, Монгол хэлгүй;
-    \item \textbf{Монгол дахь ижил апп-ууд} — Хязгаарлагдмал функц, нэг заалд зориулагдсан, ерөнхий шийдэл дутмаг;
-    \item \textbf{Энэ ажлын давуу тал} — Даланзадгад хотын таван заалыг нэг платформд нэгтгэсэн, говийн дүр төрхтэй дизайн, AI чатбот, Node.js+Firebase хосолсон архитектур, Docker/AWS автоматжуулсан байршуулалт бүхий орчин үеийн шийдэл.
-\end{itemize}
+Монгол улсын Google Play дээрх судалгаанаас спортын байгууламжийн захиалгатай холбоотой дараах системийг илрүүлж, дүн шинжилгээ хийсэн:
+
+\textbf{eZaal} (DAZO LLC, Монгол) нь Монгол улсын спорт заал, фитнес төв, хөлбөмбөгийн талбай, бүжгийн студи зэрэг олон спортын байгууламжийг нэгтгэсэн агрегатор платформ юм \cite{ezaal_app}. Google Play дээр \textbf{10,000+} удаа татагдсан, хэрэглэгчийн үнэлгээ \textbf{4.0/5.0} бөгөөд хамгийн сүүлийн шинэчлэлт 2025 оны 6 дугаар сард хийгдсэн (хувилбар 2.2.1). Байгууламжийн зураг, үнэ тариф, цагийн хуваарь, байршлын мэдээлэл харуулах, QPay интеграцаар онлайн төлбөр хийх, нэмэлт шимтгэлгүйгээр захиалга хийх боломжтой. Гэхдээ зөвхөн Android платформд зориулагдсан (iOS хувилбар байхгүй), AI чатбот болон CI/CD автоматжуулалт байхгүй, Улаанбаатар болон томоохон хотуудад чиглэсэн тул Даланзадгад зэрэг орон нутгийн хотуудад үйлчилгээ хүрдэггүй. Байгуулагын тогтмол захиалгын тусгай удирдлага болон гурван давхаргат үүлэн архитектур хэрэгжүүлээгүй.
+
+\subsection{Судалгааны дүгнэлт}
+
+eZaal платформ нь Монголын хэмжээнд спортын байгууламжийн захиалгыг нэгтгэсэн томоохон шийдэл боловч орон нутгийн тодорхой хэрэгцээ, cross-platform дэмжлэг, AI чатбот болон CI/CD автоматжуулалтын хувьд хязгаарлагдмал байна. Энэхүү ажил нь тэдгээр дутагдлыг нөхөж, Даланзадгад хотын таван спорт заалд тохирсон, Монгол хэлтэй, AI чатботтой, үүлэн орчинд CI/CD-ээр автоматаар байршуулагддаг шийдлийг санал болгодгоороо ялгаатай.
 
 \begin{table}[h]
 \centering
-\caption{Цаг захиалгын системүүдийн харьцуулалт}
-\begin{tabular}{|p{3cm}|c|c|c|c|}
-\hline
-\textbf{Систем} & \textbf{Cross-platform} & \textbf{AI чат} & \textbf{CI/CD} & \textbf{Монгол хэл} \\ \hline
-Mindbody & Тийм & Үгүй & -- & Үгүй \\ \hline
-Booksy & Тийм & Үгүй & -- & Үгүй \\ \hline
-Орон нутгийн апп & Заримдаа & Үгүй & Үгүй & Тийм \\ \hline
-Энэ ажил & Тийм & Тийм & Тийм & Тийм \\ \hline
-\end{tabular}
+\caption{Цаг захиалгын системүүдийн харьцуулсан шинжилгээ}
 \label{tab:compare}
+\begin{tabular}{|p{2.8cm}|c|c|c|c|c|c|}
+\hline
+\textbf{Систем} & \textbf{\shortstack{Cross-\\platform}} & \textbf{\shortstack{AI\\чат}} & \textbf{\shortstack{CI/CD\\Cloud}} & \textbf{\shortstack{Монгол\\хэл}} & \textbf{\shortstack{Олон\\заал}} & \textbf{\shortstack{Орон\\нутаг}} \\ \hline
+eZaal (МН) & Хэсэгчлэн & Үгүй & Үгүй & Тийм & Тийм & Үгүй \\ \hline
+\textbf{Энэ ажил} & \textbf{Тийм} & \textbf{Тийм} & \textbf{Тийм} & \textbf{Тийм} & \textbf{Тийм} & \textbf{Тийм} \\ \hline
+\end{tabular}
 \end{table}
+
+Хүснэгтээс харахад энэхүү ажил нь eZaal-аас ялгарч, iOS болон Android хоёуланг дэмжсэн cross-platform шийдэл, AI чатботтой, үүлэн орчинд CI/CD-ээр автоматаар байршуулагддаг, байгуулагын тогтмол захиалгын удирдлагатай, орон нутгийн Даланзадгад хотын хэрэгцээнд тохирсон бүрэн шинэлэг шийдэл болохоороо онцлог гэж дүгнэж байна.

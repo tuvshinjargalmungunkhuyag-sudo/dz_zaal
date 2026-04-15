@@ -19,6 +19,102 @@
 
 \refsection{0}
   \datalist[entry]{none/global//global/global/global}
+    \entry{statista_market}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=31aa3dadd16b69b42330885c87cdbd67}{%
+           family={{Statista Research Department}},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{31aa3dadd16b69b42330885c87cdbd67}
+      \strng{fullhash}{31aa3dadd16b69b42330885c87cdbd67}
+      \strng{fullhashraw}{31aa3dadd16b69b42330885c87cdbd67}
+      \strng{bibnamehash}{31aa3dadd16b69b42330885c87cdbd67}
+      \strng{authorbibnamehash}{31aa3dadd16b69b42330885c87cdbd67}
+      \strng{authornamehash}{31aa3dadd16b69b42330885c87cdbd67}
+      \strng{authorfullhash}{31aa3dadd16b69b42330885c87cdbd67}
+      \strng{authorfullhashraw}{31aa3dadd16b69b42330885c87cdbd67}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Mobile Applications — Worldwide Revenue Forecast 2024--2028}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://www.statista.com/outlook/amo/app/worldwide
+      \endverb
+      \verb{url}
+      \verb https://www.statista.com/outlook/amo/app/worldwide
+      \endverb
+    \endentry
+    \entry{ezaal_app}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=53b1493c2d0abe2d01f013dc1b0d43c6}{%
+           family={{DAZO LLC}},
+           familyi={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{53b1493c2d0abe2d01f013dc1b0d43c6}
+      \strng{fullhash}{53b1493c2d0abe2d01f013dc1b0d43c6}
+      \strng{fullhashraw}{53b1493c2d0abe2d01f013dc1b0d43c6}
+      \strng{bibnamehash}{53b1493c2d0abe2d01f013dc1b0d43c6}
+      \strng{authorbibnamehash}{53b1493c2d0abe2d01f013dc1b0d43c6}
+      \strng{authornamehash}{53b1493c2d0abe2d01f013dc1b0d43c6}
+      \strng{authorfullhash}{53b1493c2d0abe2d01f013dc1b0d43c6}
+      \strng{authorfullhashraw}{53b1493c2d0abe2d01f013dc1b0d43c6}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Google Play, 10,000+ татагдсан, хувилбар 2.2.1, 2025-06-01}
+      \field{title}{eZaal --- Спортын байгууламжийн захиалгын платформ}
+      \field{year}{2025}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://play.google.com/store/apps/details?id=mn.e.zaal
+      \endverb
+      \verb{url}
+      \verb https://play.google.com/store/apps/details?id=mn.e.zaal
+      \endverb
+    \endentry
+    \entry{flutter_booking}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=91d4b4db370025d68fb790aa10a629bc}{%
+           family={Kassim},
+           familyi={K\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+        {{hash=7f4d4de3640c56f6bb20fb1e0f2782f1}{%
+           family={Rahman},
+           familyi={R\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=df93605289b6f9d0d193dfd2100dc6f0}{%
+           family={Hasan},
+           familyi={H\bibinitperiod},
+           given={Z.},
+           giveni={Z\bibinitperiod}}}%
+      }
+      \strng{namehash}{63299a91706dc48f92a46dd3a0aaf8af}
+      \strng{fullhash}{63299a91706dc48f92a46dd3a0aaf8af}
+      \strng{fullhashraw}{63299a91706dc48f92a46dd3a0aaf8af}
+      \strng{bibnamehash}{63299a91706dc48f92a46dd3a0aaf8af}
+      \strng{authorbibnamehash}{63299a91706dc48f92a46dd3a0aaf8af}
+      \strng{authornamehash}{63299a91706dc48f92a46dd3a0aaf8af}
+      \strng{authorfullhash}{63299a91706dc48f92a46dd3a0aaf8af}
+      \strng{authorfullhashraw}{63299a91706dc48f92a46dd3a0aaf8af}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{International Journal of Advanced Computer Science and Applications}
+      \field{number}{4}
+      \field{title}{Development of Sports Facility Booking Mobile Application Using Flutter and Firebase}
+      \field{volume}{13}
+      \field{year}{2022}
+      \field{dateera}{ce}
+      \field{pages}{412\bibrangedash 420}
+      \range{pages}{9}
+    \endentry
     \entry{thesis_mobile}{thesis}{}{}
       \name{author}{1}{}{%
         {{hash=70609d42f22dacc9cef054d436dfbd79}{%
@@ -38,8 +134,8 @@
       \strng{authornamehash}{70609d42f22dacc9cef054d436dfbd79}
       \strng{authorfullhash}{70609d42f22dacc9cef054d436dfbd79}
       \strng{authorfullhashraw}{70609d42f22dacc9cef054d436dfbd79}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Ухаалаг гар утасны аппликейшн хөгжүүлэлт}
@@ -70,8 +166,8 @@
       \strng{authornamehash}{325f0e9671f42d15a559c9befbe8d716}
       \strng{authorfullhash}{325f0e9671f42d15a559c9befbe8d716}
       \strng{authorfullhashraw}{325f0e9671f42d15a559c9befbe8d716}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Мобайл аппликейшн хөгжүүлэлт}
@@ -95,8 +191,8 @@
       \strng{authorfullhash}{11bb1d2fc83a61c4b40b81c2f83149db}
       \strng{authorfullhashraw}{11bb1d2fc83a61c4b40b81c2f83149db}
       \field{extraname}{1}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Flutter — Build apps for any screen}
@@ -126,8 +222,8 @@
       \strng{authorfullhash}{11bb1d2fc83a61c4b40b81c2f83149db}
       \strng{authorfullhashraw}{11bb1d2fc83a61c4b40b81c2f83149db}
       \field{extraname}{2}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Material Design 3}
@@ -157,8 +253,8 @@
       \strng{authorfullhash}{11bb1d2fc83a61c4b40b81c2f83149db}
       \strng{authorfullhashraw}{11bb1d2fc83a61c4b40b81c2f83149db}
       \field{extraname}{3}
-      \field{sortinit}{5}
-      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Dart Programming Language}
@@ -188,8 +284,8 @@
       \strng{authorfullhash}{11bb1d2fc83a61c4b40b81c2f83149db}
       \strng{authorfullhashraw}{11bb1d2fc83a61c4b40b81c2f83149db}
       \field{extraname}{4}
-      \field{sortinit}{6}
-      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Firebase — App Development Platform}
@@ -219,8 +315,8 @@
       \strng{authorfullhash}{11bb1d2fc83a61c4b40b81c2f83149db}
       \strng{authorfullhashraw}{11bb1d2fc83a61c4b40b81c2f83149db}
       \field{extraname}{5}
-      \field{sortinit}{7}
-      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Cloud Firestore — Firebase}
@@ -250,8 +346,8 @@
       \strng{authorfullhash}{11bb1d2fc83a61c4b40b81c2f83149db}
       \strng{authorfullhashraw}{11bb1d2fc83a61c4b40b81c2f83149db}
       \field{extraname}{6}
-      \field{sortinit}{8}
-      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Authenticate Users — Firebase Authentication}
@@ -279,8 +375,8 @@
       \strng{authorfullhash}{263642944f6c498301458458c276f5f3}
       \strng{authorfullhashraw}{263642944f6c498301458458c276f5f3}
       \field{extraname}{1}
-      \field{sortinit}{9}
-      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Node.js — JavaScript runtime built on Chrome's V8 engine}
@@ -320,6 +416,36 @@
       \endverb
       \verb{url}
       \verb https://expressjs.com
+      \endverb
+    \endentry
+    \entry{rest_fielding}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=87dbbd44b3977c28b71d826a931add3e}{%
+           family={Fielding},
+           familyi={F\bibinitperiod},
+           given={Roy\bibnamedelima Thomas},
+           giveni={R\bibinitperiod\bibinitdelim T\bibinitperiod}}}%
+      }
+      \strng{namehash}{87dbbd44b3977c28b71d826a931add3e}
+      \strng{fullhash}{87dbbd44b3977c28b71d826a931add3e}
+      \strng{fullhashraw}{87dbbd44b3977c28b71d826a931add3e}
+      \strng{bibnamehash}{87dbbd44b3977c28b71d826a931add3e}
+      \strng{authorbibnamehash}{87dbbd44b3977c28b71d826a931add3e}
+      \strng{authornamehash}{87dbbd44b3977c28b71d826a931add3e}
+      \strng{authorfullhash}{87dbbd44b3977c28b71d826a931add3e}
+      \strng{authorfullhashraw}{87dbbd44b3977c28b71d826a931add3e}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Architectural Styles and the Design of Network-based Software Architectures}
+      \field{year}{2000}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm
+      \endverb
+      \verb{url}
+      \verb https://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm
       \endverb
     \endentry
     \entry{docker_doc}{online}{}{}
@@ -478,8 +604,8 @@
       \strng{authornamehash}{e5435a111a13df2de27a12f988b73383}
       \strng{authorfullhash}{e5435a111a13df2de27a12f988b73383}
       \strng{authorfullhashraw}{e5435a111a13df2de27a12f988b73383}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Groq API Documentation — Fast AI Inference}
@@ -508,8 +634,8 @@
       \strng{authornamehash}{61fc51379d66a124cdc99815f1cd6bcc}
       \strng{authorfullhash}{61fc51379d66a124cdc99815f1cd6bcc}
       \strng{authorfullhashraw}{61fc51379d66a124cdc99815f1cd6bcc}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{flutter\_local\_notifications — A cross platform plugin for displaying local notifications}
@@ -521,6 +647,35 @@
       \verb{url}
       \verb https://pub.dev/packages/flutter_local_notifications
       \endverb
+    \endentry
+    \entry{software_engineering}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=70341b3bfcce7026902f4eb1e4111b58}{%
+           family={Sommerville},
+           familyi={S\bibinitperiod},
+           given={Ian},
+           giveni={I\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Pearson}%
+      }
+      \strng{namehash}{70341b3bfcce7026902f4eb1e4111b58}
+      \strng{fullhash}{70341b3bfcce7026902f4eb1e4111b58}
+      \strng{fullhashraw}{70341b3bfcce7026902f4eb1e4111b58}
+      \strng{bibnamehash}{70341b3bfcce7026902f4eb1e4111b58}
+      \strng{authorbibnamehash}{70341b3bfcce7026902f4eb1e4111b58}
+      \strng{authornamehash}{70341b3bfcce7026902f4eb1e4111b58}
+      \strng{authorfullhash}{70341b3bfcce7026902f4eb1e4111b58}
+      \strng{authorfullhashraw}{70341b3bfcce7026902f4eb1e4111b58}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{10th Edition}
+      \field{isbn}{978-0135957059}
+      \field{title}{Software Engineering}
+      \field{year}{2019}
+      \field{dateera}{ce}
     \endentry
   \enddatalist
 \endrefsection

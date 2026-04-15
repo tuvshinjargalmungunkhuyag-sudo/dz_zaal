@@ -5,7 +5,11 @@
       "Bash(flutter analyze:*)",
       "Bash(flutter build:*)",
       "Bash(flutter test:*)",
-      "Skill(claude-api)"
+      "Skill(claude-api)",
+      "WebFetch(domain:play.google.com)",
+      "WebFetch(domain:apkpure.com)",
+      "WebFetch(domain:apkcombo.com)",
+      "WebFetch(domain:ezaal.mn)"
     ]
   }
 }

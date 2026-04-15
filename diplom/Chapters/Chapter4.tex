@@ -13,7 +13,7 @@
 
 \begin{itemize}
     \item Android 13 (Samsung Galaxy A54) болон iOS 16 (iPhone 13) гар утас;
-    \item AWS EC2 t3.micro сервер, Docker контейнер (ap-northeast-1 бүс);
+    \item AWS EC2 t3.micro сервер, Docker контейнер (ap-southeast-1 бүс, Сингапур);
     \item Firebase Cloud Firestore (us-central1);
     \item 4G LTE болон Wi-Fi сүлжээ.
 \end{itemize}
@@ -80,13 +80,13 @@ Flutter клиент, Node.js бэкэнд, Firebase гурвын хооронд
 \hline
 \textbf{\#} & \textbf{Тайлбар} & \textbf{Холбоос} & \textbf{Үр дүн} \\
 \hline
-1 & Захиалга үүсгэхэд API дуудаж, Firestore-д хадгалагдах & Flutter → EC2 → Firestore & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
+1 & Захиалга үүсгэхэд API дуудаж, Firestore-д хадгалагдах & Flutter $\rightarrow$ EC2 $\rightarrow$ Firestore & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
 \hline
-2 & Email бүртгэлийн дараа Firebase Auth UID үүсгэж, EC2 auth endpoint-оор баталгаажуулах код илгээгдэх & Flutter → Firebase Auth → EC2 → Gmail SMTP & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
+2 & Email бүртгэлийн дараа Firebase Auth UID үүсгэж, EC2 auth endpoint-оор баталгаажуулах код илгээгдэх & Flutter $\rightarrow$ Firebase Auth $\rightarrow$ EC2 $\rightarrow$ Gmail SMTP & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
 \hline
-3 & \code{backend/} хавтаст push хийхэд Docker build, ECR push, EC2 deploy автоматаар явагдах & GitHub → ECR → EC2 & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
+3 & \code{backend/} хавтаст push хийхэд Docker build, ECR push, EC2 deploy автоматаар явагдах & GitHub $\rightarrow$ ECR $\rightarrow$ EC2 & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
 \hline
-4 & AI чатботын хүсэлт EC2 дамжин Groq API-д хүрч хариулт ирэх & Flutter → EC2 → Groq & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
+4 & AI чатботын хүсэлт EC2 дамжин Groq API-д хүрч хариулт ирэх & Flutter $\rightarrow$ EC2 $\rightarrow$ Groq & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
 \hline
 \end{tabularx}
 \end{table}
@@ -138,7 +138,7 @@ Groq болон Claude хоёрын хариу цагийг харьцуулах
 
 \subsection{Хэрэглэгчийн туршилт}
 
-ШУТИС-ийн 5 оюутан болон Даланзадгад хотын 3 иргэн — нийт 8 хүнд аппыг танилцуулж, 5 даалгавар гүйцэтгүүлсэн:
+ӨТДС-ийн 5 оюутан болон Даланзадгад хотын 3 иргэн — нийт 8 хүнд аппыг танилцуулж, 5 даалгавар гүйцэтгүүлсэн:
 
 \begin{enumerate}
     \item Email хаяг болон нууц үгээр бүртгүүлж, баталгаажуулах кодоо оруулан нэвтрэх;
@@ -206,17 +206,32 @@ AI чатботын ашигтай байдал & 4.2 / 5.0 \\
 
 \section{Аюулгүй байдлын шалгалт}
 
-Системийн гол аюулгүй байдлын тохиргоонуудыг шалгасан:
+Системийн аюулгүй байдлын тохиргоонуудыг OWASP Mobile Security Testing Guide-ийн үндсэн заалтуудыг лавлан шалгасан.
 
-\begin{itemize}
-    \item \textbf{Email/нууц үгийн нэвтрэлт} — Firebase Authentication нь нэг email хаягаас хэт олон нэвтрэх оролдлого ирэхэд автоматаар хааж хамгаалдаг; 6 оронтой баталгаажуулах код 10 минутын дараа хүчингүй болдог тул нэвтрэлтийн аюулгүй байдлыг нэмэгдүүлнэ;
+\begin{table}[h]
+\centering
+\caption{Аюулгүй байдлын шалгалтын үр дүн}
+\label{tab:security}
+\begin{tabularx}{\textwidth}{|p{3.5cm}|X|p{2.5cm}|}
+\hline
+\textbf{Шалгуур} & \textbf{Хэрэгжилт ба үр дүн} & \textbf{Дүгнэлт} \\
+\hline
+Firebase Auth хамгаалалт & Нэг email-д хэт олон оролдлогыг автоматаар хориглодог; 6 оронтой код 10 минутын дараа хүчингүй болно & \textcolor{green!60!black}{\textbf{Хангасан}} \\
+\hline
+API түлхүүрийн нууцлал & AWS, Groq, Anthropic-ийн API нууцлалыг GitHub Secrets + EC2 \code{.env}-д хадгалж, Flutter кодод нэг ч газар задраагүй & \textcolor{green!60!black}{\textbf{Хангасан}} \\
+\hline
+Firestore Security Rules & \code{bookings} collection-д зөвхөн нэвтэрсэн хэрэглэгч бичих эрхтэй; Firebase Emulator-оор шалгасан & \textcolor{green!60!black}{\textbf{Хангасан}} \\
+\hline
+Өгөгдлийн тусгаарлалт & Хэрэглэгч зөвхөн өөрийн UID-тэй захиалгыг харах боломжтой (Firestore Rules дүрмээр) & \textcolor{green!60!black}{\textbf{Хангасан}} \\
+\hline
+HTTP/HTTPS & Flutter апп $\leftrightarrow$ EC2 холболт HTTP дээр явагддаг; \code{usesCleartextTraffic} тохиргоотой. Цаашид SSL нэмэх шаардлагатай & \textcolor{orange!80!black}{\textbf{Хэсэгчлэн}} \\
+\hline
+Email verification rollback & Nodemailer алдаагаа гарсан тохиолдолд Firebase Auth хэрэглэгчийг устгаж, дахин оролдох боломж олгодог & \textcolor{green!60!black}{\textbf{Хангасан}} \\
+\hline
+\end{tabularx}
+\end{table}
 
-    \item \textbf{API түлхүүрүүдийн хадгалалт} — AWS болон Groq-ийн нэвтрэлтийн түлхүүрүүд GitHub Secrets болон \code{.env} файлд хадгалагдаж, апп-ын кодонд нэг ч газар задраагүй болохыг шалгасан;
-
-    \item \textbf{Firestore дүрэм} — \code{bookings} цуглуулгад бичих хүсэлт нь зөвхөн нэвтэрсэн хэрэглэгчдэд зөвшөөрөгдөхөөр тохируулагдсан болохыг \code{firebase emulator}-оор шалгасан;
-
-    \item \textbf{HTTP cleartext traffic} — Flutter апп болон EC2 хоорондын холболт HTTP дээр явагдах тул Android 9+-д \code{android:usesCleartextTraffic="true"} тохиргоог \code{AndroidManifest.xml}-д нэмж шийдвэрлэсэн. Цаашид SSL/HTTPS тохируулах нь аюулгүй байдлын оновчтой шийдэл болно.
-\end{itemize}
+Аюулгүй байдлын 5 шалгуурын 4 нь бүрэн хангасан. HTTP-ийн асуудал нь цаашдын хөгжүүлэлтэд SSL/HTTPS нэмэх замаар шийдвэрлэгдэх боломжтой бөгөөд энэ нь продакшн орчинд заавал хэрэгжүүлэх шаардлагатай.
 
 %-------------------------------------------------------------------------------
 
