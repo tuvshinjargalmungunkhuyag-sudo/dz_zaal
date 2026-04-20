@@ -3,94 +3,32 @@
 \contentsline {chapter}{Хураангуй}{ii}{section*.2}%
 \contentsline {chapter}{Талархал}{iii}{section*.3}%
 \contentsline {chapter}{Товчилсон үгс}{iv}{table.0.1}%
-\contentsline {chapter}{Удиртгал}{x}{chapter*.7}%
-\contentsline {chapter}{\numberline {1}ОНОЛЫН ҮНДЭС БА ТЕХНОЛОГИЙН СУДАЛГАА}{1}{chapter.21}%
-\contentsline {section}{\numberline {1.1}Мобайл апп хөгжүүлэлтийн орчин үеийн арга хандлага}{1}{section.22}%
-\contentsline {section}{\numberline {1.2}Flutter фреймворк ба Dart хэл}{1}{section.24}%
-\contentsline {subsection}{\numberline {1.2.1}Flutter-ийг сонгосон үндэслэл}{1}{subsection.25}%
-\contentsline {subsection}{\numberline {1.2.2}Flutter-ийн тухай}{2}{subsection.27}%
-\contentsline {subsection}{\numberline {1.2.3}Dart програмчлалын хэл}{2}{subsection.28}%
-\contentsline {subsection}{\numberline {1.2.4}StatefulWidget ба setState-д суурилсан төлвийн удирдлага}{2}{subsection.29}%
-\contentsline {section}{\numberline {1.3}Firebase бэкэнд үйлчилгээ}{3}{section.48}%
-\contentsline {subsection}{\numberline {1.3.1}Cloud Firestore}{3}{subsection.49}%
-\contentsline {subsection}{\numberline {1.3.2}Firebase Authentication}{4}{subsection.50}%
-\contentsline {subsection}{\numberline {1.3.3}Firebase Cloud Functions}{4}{subsection.51}%
-\contentsline {section}{\numberline {1.4}Node.js болон Express.js бэкэнд}{4}{section.52}%
-\contentsline {subsection}{\numberline {1.4.1}Node.js}{4}{subsection.53}%
-\contentsline {subsection}{\numberline {1.4.2}Express.js фреймворк}{4}{subsection.54}%
-\contentsline {subsection}{\numberline {1.4.3}REST API архитектур}{5}{subsection.56}%
-\contentsline {section}{\numberline {1.5}Docker контейнержуулалт}{5}{section.57}%
-\contentsline {section}{\numberline {1.6}AWS дэд бүтэц}{6}{section.66}%
-\contentsline {subsection}{\numberline {1.6.1}Amazon EC2}{6}{subsection.67}%
-\contentsline {subsection}{\numberline {1.6.2}Amazon ECR}{6}{subsection.68}%
-\contentsline {section}{\numberline {1.7}GitHub Actions CI/CD}{6}{section.69}%
-\contentsline {section}{\numberline {1.8}AI үйлчилгээнүүд}{6}{section.76}%
-\contentsline {subsection}{\numberline {1.8.1}Anthropic Claude Haiku}{6}{subsection.77}%
-\contentsline {subsection}{\numberline {1.8.2}Groq Llama 3.1-8b}{7}{subsection.78}%
-\contentsline {section}{\numberline {1.9}flutter\_local\_notifications}{7}{section.79}%
-\contentsline {section}{\numberline {1.10}Технологийн стекийн нэгтгэсэн дүгнэлт}{7}{section.80}%
-\contentsline {section}{\numberline {1.11}Ижил төстэй системүүдийн дүн шинжилгээ}{7}{section.82}%
-\contentsline {subsection}{\numberline {1.11.1}Монгол улсын цаг захиалгын системүүд}{7}{subsection.83}%
-\contentsline {subsection}{\numberline {1.11.2}Судалгааны дүгнэлт}{8}{subsection.84}%
-\contentsline {chapter}{\numberline {2}СИСТЕМИЙН ЗОХИОН БАЙГУУЛАЛТ БА ХЭРЭГЖҮҮЛЭЛТ}{9}{chapter.86}%
-\contentsline {section}{\numberline {2.1}Системийн шаардлагын дүн шинжилгээ}{9}{section.87}%
-\contentsline {subsection}{\numberline {2.1.1}Функциональ шаардлага}{9}{subsection.88}%
-\contentsline {subsection}{\numberline {2.1.2}Функциональ бус шаардлага}{9}{subsection.101}%
-\contentsline {section}{\numberline {2.2}Системийн UML диаграммууд}{9}{section.103}%
-\contentsline {subsection}{\numberline {2.2.1}Use Case Diagram (Хэрэглэгчийн тохиолдлын диаграмм)}{9}{subsection.104}%
-\contentsline {subsection}{\numberline {2.2.2}Цаг захиалах үйл ажиллагааны диаграмм (Activity Diagram)}{10}{subsection.106}%
-\contentsline {subsection}{\numberline {2.2.3}Захиалга үүсгэх дарааллын диаграмм (Sequence Diagram)}{10}{subsection.108}%
-\contentsline {subsection}{\numberline {2.2.4}Email баталгаажуулалтын дарааллын диаграмм}{10}{subsection.110}%
-\contentsline {subsection}{\numberline {2.2.5}Firestore өгөгдлийн сангийн схем (ER Диаграмм)}{10}{subsection.112}%
-\contentsline {section}{\numberline {2.3}Системийн архитектур}{10}{section.114}%
-\contentsline {subsection}{\numberline {2.3.1}Ерөнхий архитектур}{10}{subsection.115}%
-\contentsline {subsection}{\numberline {2.3.2}Үүлэн байршуулалтын (Cloud Deployment) архитектур}{11}{subsection.117}%
-\contentsline {subsection}{\numberline {2.3.3}CI/CD Хоолойн архитектур (GitHub Actions)}{11}{subsection.119}%
-\contentsline {subsection}{\numberline {2.3.4}Flutter апп-ын бүтэн архитектур}{11}{subsection.121}%
-\contentsline {subsection}{\numberline {2.3.5}API URL-ийн нэг эх сурвалж (lib/config.dart)}{12}{subsection.123}%
-\contentsline {section}{\numberline {2.4}Өгөгдлийн сангийн зохион байгуулалт}{13}{section.137}%
-\contentsline {subsection}{\numberline {2.4.1}\texttt {users} collection}{13}{subsection.138}%
-\contentsline {subsection}{\numberline {2.4.2}\texttt {bookings} collection}{14}{subsection.139}%
-\contentsline {subsection}{\numberline {2.4.3}\texttt {fixed\_bookings} collection}{15}{subsection.140}%
-\contentsline {subsection}{\numberline {2.4.4}\texttt {email\_verifications} collection}{16}{subsection.141}%
-\contentsline {subsection}{\numberline {2.4.5}Hardcoded спорт заалнуудын жагсаалт}{16}{subsection.142}%
-\contentsline {section}{\numberline {2.5}Flutter апп-ын хэрэгжүүлэлт}{17}{section.151}%
-\contentsline {subsection}{\numberline {2.5.1}Дулаан говийн дизайн (Warm Desert Theme)}{17}{subsection.152}%
-\contentsline {subsection}{\numberline {2.5.2}4 tab-тай доод навигаци}{18}{subsection.173}%
-\contentsline {subsection}{\numberline {2.5.3}Email/нууц үгийн нэвтрэлт ба баталгаажуулалт}{20}{subsection.212}%
-\contentsline {subsection}{\numberline {2.5.4}Нүүр дэлгэц — Спорт заалнуудын жагсаалт}{22}{subsection.263}%
-\contentsline {subsection}{\numberline {2.5.5}Цагийн хуваарь ба захиалгын дэлгэц}{22}{subsection.265}%
-\contentsline {subsection}{\numberline {2.5.6}Локал мэдэгдлийн хэрэгжүүлэлт}{24}{subsection.330}%
-\contentsline {section}{\numberline {2.6}Node.js/Express бэкэндийн хэрэгжүүлэлт}{26}{section.359}%
-\contentsline {subsection}{\numberline {2.6.1}Бэкэндийн бүтэц}{26}{subsection.360}%
-\contentsline {subsection}{\numberline {2.6.2}Үндсэн API endpoint-ууд}{26}{subsection.361}%
-\contentsline {subsection}{\numberline {2.6.3}Cron ажил — Дуусгавар болсон захиалгыг автоматаар шинэчлэх}{26}{subsection.376}%
-\contentsline {section}{\numberline {2.7}AI чатботын хэрэгжүүлэлт}{27}{section.405}%
-\contentsline {subsection}{\numberline {2.7.1}Архитектур — Үндсэн болон нөөц горим}{27}{subsection.406}%
-\contentsline {subsection}{\numberline {2.7.2}Firebase Cloud Functions — Claude Haiku}{27}{subsection.409}%
-\contentsline {subsection}{\numberline {2.7.3}Express бэкэнд — Groq Llama нөөц горим}{28}{subsection.433}%
-\contentsline {section}{\numberline {2.8}Docker контейнержуулалт ба AWS байршуулалт}{28}{section.460}%
-\contentsline {subsection}{\numberline {2.8.1}Docker Image}{28}{subsection.461}%
-\contentsline {subsection}{\numberline {2.8.2}GitHub Actions CI/CD Workflow}{29}{subsection.470}%
-\contentsline {section}{\numberline {2.9}Туршилт ба үр дүнгийн үнэлгээ}{30}{section.527}%
-\contentsline {subsection}{\numberline {2.9.1}Функциональ туршилт}{30}{subsection.528}%
-\contentsline {subsection}{\numberline {2.9.2}Гүйцэтгэлийн хэмжилт}{31}{subsection.530}%
-\contentsline {subsection}{\numberline {2.9.3}CI/CD хоолойн туршилт}{31}{subsection.531}%
-\contentsline {chapter}{\numberline {3}СИСТЕМИЙН ТУРШИЛТ БА ҮНЭЛГЭЭ}{33}{chapter.532}%
-\contentsline {section}{\numberline {3.1}Туршилтын орчин, аргачлал}{33}{section.533}%
-\contentsline {section}{\numberline {3.2}Функциональ туршилт}{33}{section.534}%
-\contentsline {subsection}{\numberline {3.2.1}Туршилтын тохиолдлууд}{33}{subsection.535}%
-\contentsline {subsection}{\numberline {3.2.2}Байгууллагын тогтмол захиалгын туршилт}{34}{subsection.536}%
-\contentsline {section}{\numberline {3.3}Нэгтгэлийн туршилт}{34}{section.537}%
-\contentsline {section}{\numberline {3.4}Гүйцэтгэлийн туршилт}{35}{section.539}%
-\contentsline {subsection}{\numberline {3.4.1}Хариу цагийн хэмжилт}{35}{subsection.540}%
-\contentsline {subsection}{\numberline {3.4.2}Cron ажлын туршилт}{35}{subsection.542}%
-\contentsline {section}{\numberline {3.5}Хэрэглэхэд хялбар байдлын үнэлгээ}{35}{section.543}%
-\contentsline {subsection}{\numberline {3.5.1}Хэрэглэгчийн туршилт}{35}{subsection.544}%
-\contentsline {subsection}{\numberline {3.5.2}UI/UX үнэлгээ}{36}{subsection.551}%
-\contentsline {section}{\numberline {3.6}Аюулгүй байдлын шалгалт}{36}{section.553}%
-\contentsline {section}{\numberline {3.7}Туршилтын нэгтгэсэн дүн}{37}{section.555}%
-\contentsline {chapter}{Дүгнэлт}{38}{table.caption.556}%
-\contentsline {chapter}{\numberline {A}Аппликейшний дэлгэцийн зураглал}{40}{appendix.566}%
-\contentsline {chapter}{\numberline {B}Үндсэн тохиргооны файлууд}{43}{appendix.571}%
-\contentsline {chapter}{Ном зүй}{46}{lstnumber.662}%
+\contentsline {chapter}{Удиртгал}{viii}{chapter*.7}%
+\contentsline {chapter}{\numberline {1}ОНОЛ БА ТЕХНОЛОГИЙН СУДАЛГАА}{1}{chapter.9}%
+\contentsline {section}{\numberline {1.1}Мобайл хөгжүүлэлтийн технологи}{1}{section.10}%
+\contentsline {section}{\numberline {1.2}Бэкэнд хөгжүүлэлтийн технологи}{2}{section.12}%
+\contentsline {section}{\numberline {1.3}Үүлэн орчин ба автоматжуулалт}{3}{section.14}%
+\contentsline {chapter}{\numberline {2}СИСТЕМИЙН ЗАГВАРЧЛАЛ БА ХӨГЖҮҮЛЭЛТ}{6}{chapter.16}%
+\contentsline {section}{\numberline {2.1}Системийн шаардлага ба загварчлал}{6}{section.17}%
+\contentsline {subsection}{\numberline {2.1.1}Функциональ болон функциональ бус шаардлага}{6}{subsection.18}%
+\contentsline {subsection}{\numberline {2.1.2}UML Диаграммууд}{6}{subsection.20}%
+\contentsline {subsection}{\numberline {2.1.3}Системийн архитектур}{7}{subsection.25}%
+\contentsline {section}{\numberline {2.2}Frontend хөгжүүлэлт}{7}{section.27}%
+\contentsline {subsection}{\numberline {2.2.1}Дизайн систем ба навигаци}{7}{subsection.28}%
+\contentsline {subsection}{\numberline {2.2.2}Нэвтрэлт болон цаг захиалгын хэрэгжүүлэлт}{11}{subsection.73}%
+\contentsline {section}{\numberline {2.3}Backend хөгжүүлэлт}{13}{section.114}%
+\contentsline {subsection}{\numberline {2.3.1}Express.js API ба email баталгаажуулалт}{13}{subsection.115}%
+\contentsline {subsection}{\numberline {2.3.2}AI чатбот болон cron ажил}{15}{subsection.148}%
+\contentsline {section}{\numberline {2.4}Өгөгдлийн сан}{16}{section.181}%
+\contentsline {chapter}{\numberline {3}ХЭРЭГЖҮҮЛЭЛТ}{18}{chapter.183}%
+\contentsline {section}{\numberline {3.1}Үүлэн байршуулалт}{18}{section.184}%
+\contentsline {subsection}{\numberline {3.1.1}Docker контейнержуулалт ба AWS EC2}{18}{subsection.185}%
+\contentsline {subsection}{\numberline {3.1.2}GitHub Actions CI/CD хоолой}{19}{subsection.195}%
+\contentsline {section}{\numberline {3.2}Туршилт ба үнэлгээ}{20}{section.241}%
+\contentsline {subsection}{\numberline {3.2.1}Функциональ туршилт}{20}{subsection.242}%
+\contentsline {subsection}{\numberline {3.2.2}Гүйцэтгэлийн хэмжилт ба хэрэглэхэд хялбар байдал}{21}{subsection.244}%
+\contentsline {subsection}{\numberline {3.2.3}Туршилтын нийт дүн}{22}{subsection.247}%
+\contentsline {chapter}{Дүгнэлт}{24}{table.caption.248}%
+\contentsline {chapter}{\numberline {A}Аппликейшний дэлгэцийн зураглал}{26}{appendix.258}%
+\contentsline {chapter}{\numberline {B}Үндсэн тохиргооны файлууд}{29}{appendix.263}%
+\contentsline {chapter}{Ном зүй}{32}{lstnumber.354}%

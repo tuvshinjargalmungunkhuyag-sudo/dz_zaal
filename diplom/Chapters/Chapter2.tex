@@ -1,15 +1,16 @@
-% Бүлэг 2
+% Бүлэг 1 — Онол ба технологийн судалгаа
 
-\chapter{ОНОЛЫН ҮНДЭС БА ТЕХНОЛОГИЙН СУДАЛГАА}
-
+\chapter{ОНОЛ БА ТЕХНОЛОГИЙН СУДАЛГАА}
 \label{Chapter2}
 \pagecolor{white}
 
+Даланзадгад хотын спорт заалны цаг захиалгын системийг хэрэгжүүлэхийн тулд технологийн сонголт нь дараах гурван шаардлагыг хангахад чиглэсэн: иргэдэд хаанаас ч нэвтрэх боломж олгох мобайл технологи; аюулгүй байдал болон бизнесийн логикийг тусад нь боловсруулах бэкэнд технологи; системийг тасралтгүй ажиллуулах, автоматаар шинэчлэх үүлэн дэд бүтэц. Энэ бүлэгт уг гурван шаардлагт нийцэх технологи бүрийн онолын үндэс, зориулалт болон яагаад тэр технологийг сонгосон шалтгааныг тайлбарлана.
+
 %-------------------------------------------------------------------------------
 
-\section{Мобайл апп хөгжүүлэлтийн орчин үеийн арга хандлага}
+\section{Мобайл хөгжүүлэлтийн технологи}
 
-Мобайл аппликейшн хөгжүүлэлтэд өнөөдөр гурван үндсэн арга хандлага байдаг: \keyword{Native}, \keyword{Hybrid}, \keyword{Cross-platform}. Эдгээрийг харьцуулбал:
+Спорт заал захиалах үйлчилгээг иргэдэд хялбар болгохын тулд мобайл аппликейшн зайлшгүй шаардлагатай болсон. Өнөөдөр хүн бүр ухаалаг гар утас ашиглаж байгаа тул апп нь аль ч цагт, аль ч газраас захиалга хийх боломж олгодог. Мобайл аппликейшн хөгжүүлэхэд гурван үндсэн арга хандлага байдаг: Native хандлагаар Android болон iOS-д тус тусад нь тусдаа хэлээр хоёр апп бичдэг; Hybrid хандлагаар вэб технологид тулгуурлан WebView-д ажиллуулдаг; Cross-platform хандлагаар нэг кодын баазаас хоёр платформд нэгэн зэрэг гаргадаг. Native хандлагыг сонгоход хоёр баг, хоёр дахин илүү хугацаа шаарддаг. Hybrid хандлагаар хийсэн апп нь гүйцэтгэлийн хувьд сул байдаг. Cross-platform хандлага нь нэг кодоос хоёр платформд хүрдэг тул цаг, зардлын хувьд хамгийн үр дүнтэй болохыг дараах харьцуулалт харуулна.
 
 \begin{table}[h]
 \centering
@@ -19,171 +20,45 @@
 \hline
 \textbf{Шалгуур} & \textbf{Native} & \textbf{Hybrid} & \textbf{Cross-platform} \\
 \hline
-Хэл/хэрэгсэл & Swift, Kotlin/Java & HTML, JS, CSS & Flutter, React Native \\
+Хэл/хэрэгсэл & Swift, Kotlin & HTML, JS & Flutter, React Native \\
 \hline
 Гүйцэтгэл & Хамгийн өндөр & Доогуур & Native-д ойр \\
 \hline
 Нэг кодын бааз & Үгүй & Тийм & Тийм \\
 \hline
-UI нийцтэй байдал & Платформ бүрт ялгаатай & WebView хязгаарлагдмал & Бүрэн нийцтэй \\
+UI нийцтэй байдал & Ялгаатай & WebView хязгаарлагдмал & Бүрэн нийцтэй \\
 \hline
 Хөгжүүлэлтийн зардал & Өндөр (×2 баг) & Бага & Дунд \\
 \hline
 \textbf{Энэ ажилд} & — & — & \textbf{Flutter} \\
 \hline
-\end{tabularx}
+\end{tabularx}\\[4pt]
+{\footnotesize Эх: Зохиогчийн боловсруулалт}
 \end{table}
 
-Энэхүү ажилд cross-platform хандлагыг сонгосон бөгөөд үүний тулд \keyword{Flutter} фреймворкийг ашигласан. Flutter нь Google-ийн боловсруулсан, Dart хэл дээр суурилсан, Android болон iOS платформд нэгэн зэрэг ажиллах чадвартай, гүйцэтгэлийн хувьд native-д ойр шийдэл юм \cite{flutter_doc}. Cross-platform хандлагыг сонгосноор нэг кодын баазаас хоёр платформ дэмжих боломжтой бөгөөд хөгжүүлэлтийн нийт хугацаа, зардлыг мэдэгдэхүйц бууруулдаг.
+\keyword{Flutter} нь Google компанийн 2018 онд гаргасан нээлттэй эхийн UI фреймворк юм \cite{flutter_doc}. Flutter нь Dart хэл дээр бичигдсэн бөгөөд Skia/Impeller дүрслэлийн хөдөлгүүр ашиглан бүх UI-г платформаас үл хамааран өөрөө зурдаг. Энэ нь Android болон iOS-д яг ижил харагдах баталгаа олгодгийн зэрэгцээ нэмэлт platform-specific код бичих шаардлагыг арилгадаг. Хөгжүүлэлтийн явцад Hot Reload функц нь кодын өөрчлөлтийг апп-г дахин эхлүүлэхгүйгээр шууд харуулдаг тул хөгжүүлэлтийн хурдыг мэдэгдэхүйц нэмэгдүүлдэг. Flutter 3.x хувилбар нь Material Design 3 стандартыг бүрэн дэмждэг бөгөөд \code{ThemeData} классаар дамжуулан дизайн системийг нэгтгэн удирдах боломж олгодог \cite{material3}. Уг ажилд Flutter 3.x хувилбарыг ашигласан.
+
+\keyword{Dart} нь Google-ийн боловсруулсан, объект хандлагат, хатуу төрлийн хэл юм \cite{dart_doc}. Dart нь AOT (Ahead-of-Time) болон JIT (Just-in-Time) хоёуланг дэмждэг тул хөгжүүлэлтийн үед Hot Reload-ийн хурд, продакшн дээр AOT-ийн хурдан гүйцэтгэл хоёуланг хангадаг. \code{async/await} синтакс нь Firebase Firestore-ийн болон API дуудлагуудыг уншихад хялбар байдлаар бичих боломж олгодог. Null Safety механизм нь null pointer алдааг compile цагт илрүүлдэг. Апп-ын дэлгэцийн төлвийг удирдахад StatefulWidget болон setState хослолыг ашиглав. Энэ нь нэмэлт dependency байхгүй, шинэ хөгжүүлэгчдэд ойлгомжтой, апп-ын хэмжээг жижиг байлгах давуу талтай.
+
+\keyword{Firebase} нь Google компанийн санал болгодог BaaS (Backend as a Service) платформ бөгөөд мобайл апп хөгжүүлэгчдэд бэкэнд дэд бүтцийг өөрөө тохируулахгүйгээр бэлэн үйлчилгээнүүдийг ашиглах боломж олгодог \cite{firebase_doc}. Энэ ажилд Firebase-ийн гурван үндсэн үйлчилгээг ашигласан.
+
+\keyword{Cloud Firestore} нь NoSQL, баримт жишгийн өгөгдлийн сан юм \cite{firestore_doc}. Бодит цагийн шинэчлэлт (real-time listeners), офлайн хадгалалт, автомат масштабчлал зэрэг онцлогтой бөгөөд collection-document бүтэц нь JSON форматтай ойролцоо тул Flutter SDK-аар шууд хандахад хялбар. Firestore-ийн security rules нь хэрэглэгч бүрийн хандах эрхийг нарийн тодорхойлдог тул аюулгүй байдлыг мобайл апп талаас хангаж чаддаг. Тухайн захиалагдсан цагийн хуваарийг бодит цагаар харуулах шаардлага байгаа тул real-time listener-ийг ашиглав.
+
+\keyword{Firebase Authentication} нь хэрэглэгчийн нэвтрэлтийг удирдах бэлэн үйлчилгээ юм \cite{firebase_auth}. Email/нууц үгийн нэвтрэлт ашиглахад хэрэглэгч бүрт өвөрмөц UID үүсгэж, нэвтрэлтийн токен удирддаг. Энэ ажилд Node.js бэкэнд болон Nodemailer (Gmail SMTP)-ийн 6 оронтой баталгаажуулах кодтой хосолсон бөгөөд хэрэглэгчийн email хаягийн үнэн зөвийг баталгаажуулдаг.
+
+\keyword{Firebase Cloud Functions} нь серверлэс тооцооллын үйлчилгээ бөгөөд AI чатботын үндсэн endpoint болгон ашигласан. Cloud Functions нь Anthropic-ийн API түлхүүрийг Flutter кодод задруулахгүйгээр аюулгүй хадгалах боломж олгодог. Хэрэглэгч чат илгээх бүрт Cloud Function дуудагдаж, Claude Haiku API-аас хариулт авч буцаана.
+
+Захиалгын сануулгыг хэрэгжүүлэхэд \keyword{flutter\_local\_notifications} багцыг ашигласан \cite{local_notifications_doc}. Энэ багц нь Firebase Cloud Messaging (FCM) серверийн тусламжгүйгээр хэрэглэгчийн төхөөрөмжид мэдэгдлийг schedule хийх боломжтой бөгөөд интернет холболтгүй тохиолдолд ч ажилладаг. Захиалга хийх бүрт тухайн захиалгаас 1 цагийн өмнөх цагт сануулга schedule хийгддэг.
 
 %-------------------------------------------------------------------------------
 
-\section{Flutter фреймворк ба Dart хэл}
+\section{Бэкэнд хөгжүүлэлтийн технологи}
 
-\subsection{Flutter-ийг сонгосон үндэслэл}
+Мобайл апп дан ганцаар бүх логикийг агуулбал API түлхүүр болон нэвтрэлтийн нууцлал клиент кодод задарч аюулгүй байдал эмзэг болно. Мөн email илгээх, AI чатбот, захиалгын давхардал шалгах зэрэг серверийн талын логикийг Flutter-т хийх боломжгүй. Иймд Node.js/Express-д суурилсан тусдаа бэкэнд сервер шаардлагатай болсон. Бэкэнд нь Flutter апп болон Firebase хоорондын зуучлагчийн үүрэг гүйцэтгэж, email баталгаажуулалт, AI чат, захиалгын менежмент зэрэг функцийг нэгтгэн хангадаг.
 
-Cross-platform хандлагад \keyword{Flutter} болон \keyword{React Native} хоёр нь гол өрсөлдөгчид юм. Энэхүү ажилд Flutter-ийг сонгосон шалтгааныг дараах харьцуулалтаар тодорхойлж болно:
+\keyword{Node.js} нь Chrome V8 JavaScript хөдөлгүүр дээр суурилсан серверийн тал JavaScript ажиллуулах орчин юм \cite{nodejs_doc}. Node.js-ийн event-driven, non-blocking I/O загвар нь олон нэгэн зэрэг холболтыг цөөн нөөцөөр боловсруулах чадвартай. npm экосистем нь Nodemailer (email), node-cron (scheduled jobs), Groq SDK зэрэг шаардлагатай бүх багцыг хурдан суулгах боломж олгодог. \keyword{Express.js} нь Node.js дээр суурилсан хөнгөн, уян хатан веб фреймворк юм \cite{expressjs_doc}. Middleware систем нь хүсэлт боловсруулах дамжлагыг зохион байгуулах боломж олгодог бөгөөд Router нь URL чиглүүлэлтийг модуль болгон хуваана. Node.js болон Express хосолсноор JSON боловсруулалт, REST API хурдан бариход маш тохиромжтой болдог.
 
-\begin{table}[h]
-\centering
-\caption{Flutter болон React Native харьцуулалт}
-\label{tab:flutter_rn}
-\begin{tabularx}{\textwidth}{|X|p{4cm}|p{4cm}|}
-\hline
-\textbf{Шалгуур} & \textbf{Flutter} & \textbf{React Native} \\
-\hline
-Render engine & Skia/Impeller (өөрийн) & Native bridge (платформын) \\
-\hline
-Хэл & Dart & JavaScript/TypeScript \\
-\hline
-UI нийцтэй байдал & Платформ бүрт яг ижил & Зарим UI ялгаатай \\
-\hline
-Гүйцэтгэл & Өндөр (AOT compile) & Бага зэрэг доогуур \\
-\hline
-Material Design 3 & Бүрэн дэмжлэгтэй & Гуравдагч талын багц хэрэгтэй \\
-\hline
-Widget сан & Баялаг, суурилагдсан & Нэмэлт багц хэрэгтэй \\
-\hline
-\textbf{Дүгнэлт} & \textbf{Энэ ажилд сонгосон} & — \\
-\hline
-\end{tabularx}
-\end{table}
-
-Flutter-ийн \textbf{Skia/Impeller} дүрслэлийн хөдөлгүүр нь бүх UI-г платформаас үл хамааран өөрөө зурдаг тул Android болон iOS-д яг ижил харагдах баталгаа олгодог нь энэ ажлын хувьд чухал давуу тал юм.
-
-\subsection{Flutter-ийн тухай}
-
-\keyword{Flutter} нь Google компанийн 2018 онд гаргасан нээлттэй эхийн UI фреймворк юм. Flutter-ийн гол давуу талд дараахи зүйлс орно:
-
-\begin{itemize}
-    \item \textbf{Hot Reload} — Кодын өөрчлөлтийг апп-г дахин эхлүүлэхгүйгээр шууд харах боломж;
-    \item \textbf{Widget-д суурилсан архитектур} — UI бүрэлдэхүүн хэсэг болгоныг widget хэлбэрээр тодорхойлно;
-    \item \textbf{Skia/Impeller render engine} — Бүх UI-г платформаас үл хамааран өөрөө зурдаг тул платформ бүрт ижил харагдах баталгаа олгодог;
-    \item \textbf{Нэг кодын бааз} — Android, iOS, Web, Desktop платформд нэгэн зэрэг гаргах боломж.
-\end{itemize}
-
-Flutter нь version 3.x хүрэхдээ Material Design 3 (Material You) стандартыг бүрэн дэмждэг болж, \code{ThemeData} классаар дамжуулан дүрс, өнгө, хэлбэр бүх зүйлийг системтэй тохируулах боломж нээгдсэн \cite{material3}. Энэхүү ажилд Flutter 3.x хувилбарыг ашигласан.
-
-\subsection{Dart програмчлалын хэл}
-
-\keyword{Dart} нь Google-ийн боловсруулсан, object-oriented, strongly typed хэл юм. Flutter хөгжүүлэлтэд Dart ашигладаг бөгөөд дараахи онцлогтой \cite{dart_doc}:
-
-\begin{itemize}
-    \item \textbf{Async/Await} — Асинхрон үйлдлийг хялбараар бичих, Future болон Stream дэмждэг;
-    \item \textbf{Null Safety} — Null pointer алдааг compile time-д илрүүлэх;
-    \item \textbf{AOT ба JIT compile} — Хурдан хөгжүүлэлт (JIT) болон хурдан гүйцэтгэл (AOT) нэгэн зэрэг хангах;
-    \item \textbf{Stream} — Бодит цагийн өгөгдөл боловсруулах, Firebase Firestore-ийн real-time listener-тэй холбоход тохиромжтой.
-\end{itemize}
-
-Dart хэлний \code{class} бүтэц нь Flutter-ийн widget системтэй нягт уялддаг. \code{StatelessWidget} нь өөрчлөлтгүй UI-г илэрхийлж, \code{StatefulWidget} нь дотоод \code{State} объектоор дамжуулан өөрчлөгддөг UI-г удирддаг.
-
-\subsection{StatefulWidget ба setState-д суурилсан төлвийн удирдлага}
-
-Flutter апп-д төлвийн удирдлагыг (state management) зөв хийх нь апп-ын найдвартай байдал, гүйцэтгэлд шууд нөлөөлнө. Энэ ажилд \keyword{StatefulWidget} болон \keyword{setState} хослолыг ашигласан. Энэ нь Flutter-ийн бүтэц дэх хамгийн анхдагч, ойлгомжтой механизм бөгөөд нэмэлт багц шаарддаггүй.
-
-Provider, Riverpod зэрэг өндөр түвшний төлвийн удирдлагын хэрэгслүүдтэй харьцуулахад \code{setState} нь дараахи тохиолдолд тохиромжтой:
-
-\begin{itemize}
-    \item Апп-ын нарийн төвөгтэй байдал тодорхой хэмжээнд байх;
-    \item Шинэ хөгжүүлэгчдэд ойлгомжтой, уншиж болохуйц байх шаардлагатай;
-    \item Нэмэлт dependency нэмэхгүйгээр апп-ын хэмжээг жижиг байлгах.
-\end{itemize}
-
-\begin{lstlisting}[language={}, caption={StatefulWidget ба setState жишээ}]
-class BookingScreen extends StatefulWidget {
-  const BookingScreen({super.key});
-  @override
-  State<BookingScreen> createState() => _BookingScreenState();
-}
-
-class _BookingScreenState extends State<BookingScreen> {
-  String? selectedTimeSlot;
-  bool isLoading = false;
-
-  void _selectSlot(String slot) {
-    setState(() {
-      selectedTimeSlot = slot;
-    });
-  }
-  // ...
-}
-\end{lstlisting}
-
-Апп-ын ерөнхий навигацийг \code{BottomNavigationBar} widget дамжуулан 4 tab-тай хэрэгжүүлсэн: Нүүр (Home), Захиалгууд (Bookings), Чат (Chat), Профайл (Profile). Идэвхтэй tab-ийн индексийг root StatefulWidget-ийн \code{setState}-д хадгалдаг.
-
-%-------------------------------------------------------------------------------
-
-\section{Firebase бэкэнд үйлчилгээ}
-
-\keyword{Firebase} нь Google-ийн санал болгодог BaaS (Backend as a Service) платформ юм. Уг платформ нь мобайл апп хөгжүүлэгчдэд бэкэнд дэд бүтэц тохируулах шаардлагагүйгээр өгөгдлийн сан, нэвтрэлт зэрэг үйлчилгээг ашиглах боломж олгодог \cite{firebase_doc}.
-
-\subsection{Cloud Firestore}
-
-\keyword{Cloud Firestore} нь NoSQL, баримт жишгийн (document-oriented) өгөгдлийн сан юм \cite{firestore_doc}. Бодит цагийн шинэчлэлт (real-time listeners), өгөгдлийг offline хадгалах, автомат масштабчлал зэрэг онцлогтой. Firestore нь \textbf{Collection} болон \textbf{Document} бүтэцтэй:
-
-\begin{itemize}
-    \item \textbf{Collection} — Баримтуудын цуглуулга (энэ ажилд: \code{users}, \code{bookings}, \code{fixed\_bookings});
-    \item \textbf{Document} — Талбаруудын цуглуулга, JSON форматтай төстэй.
-\end{itemize}
-
-Firestore-ийн security rules нь collection бүрт хэрэглэгч хандах эрхийг нарийн тохируулах боломж олгодог. Энэ ажилд нэвтрэлт хийсэн хэрэглэгч зөвхөн өөрийн захиалгыг унших, шинэ захиалга бичих эрхтэй.
-
-\subsection{Firebase Authentication}
-
-\keyword{Firebase Authentication} нь хэрэглэгчийн нэвтрэлтийг аюулгүй удирдах үйлчилгээ юм \cite{firebase_auth}. Энэ ажилд \textbf{email хаяг болон нууц үгийн} нэвтрэлтийг ашигласан. Хэрэглэгч анх бүртгүүлэх үед Firebase нь \code{createUserWithEmailAndPassword} функцээр UID үүсгэж, дараа нь Node.js бэкэнд Nodemailer-ийн тусламжтайгаар тухайн email хаягт \textbf{6 оронтой баталгаажуулах код} илгээнэ. Хэрэглэгч кодоо амжилттай оруулсны дараа \code{emailVerified: true} болж нэвтрэх эрх нээгддэг.
-
-Нэвтрэх үед Firebase-ийн \code{signInWithEmailAndPassword} функцийг ашигладаг бөгөөд Firestore-д хадгалсан \code{emailVerified} талбарыг шалгаж, баталгаажаагүй хэрэглэгчийн нэвтрэлтийг хориглодог. Энэ нь email хаягийн үнэн зөвийг баталгаажуулахын зэрэгцээ аюулгүй байдлыг нэмэгдүүлдэг.
-
-\subsection{Firebase Cloud Functions}
-
-\keyword{Firebase Cloud Functions} нь серверлэс (serverless) тооцооллын үйлчилгээ юм. Энэ ажилд Cloud Functions-ийг AI чатботын үндсэн endpoint болгон ашигласан: Flutter апп Cloud Function руу хүсэлт илгээхэд уг функц Anthropic-ийн API руу дамжуулан Claude Haiku хариулт авч буцаана. Cloud Functions нь серверийн дэд бүтцийг өөрөө удирддаг тул хөгжүүлэгч апп-ын логикт төвлөрөх боломжтой болдог.
-
-%-------------------------------------------------------------------------------
-
-\section{Node.js болон Express.js бэкэнд}
-
-\subsection{Node.js}
-
-\keyword{Node.js} нь Chrome V8 JavaScript engine дээр суурилсан серверийн талын JavaScript ажиллуулах орчин юм \cite{nodejs_doc}. Node.js-ийн гол давуу талууд:
-
-\begin{itemize}
-    \item \textbf{Event-driven, non-blocking I/O} — Олон нэгэн зэрэг холболтыг цөөн нөөцөөр боловсруулах чадвартай;
-    \item \textbf{npm экосистем} — Дэлхийн хамгийн том нээлттэй эхийн багцын сан;
-    \item \textbf{JavaScript нэгдсэн байдал} — Клиент болон серверийн талд нэг хэл ашиглах боломж;
-    \item \textbf{Хурдан хөгжүүлэлт} — JSON боловсруулалт, REST API бүтээхэд маш тохиромжтой.
-\end{itemize}
-
-\subsection{Express.js фреймворк}
-
-\keyword{Express.js} нь Node.js дээр суурилсан хөнгөн, уян хатан веб фреймворк юм \cite{expressjs_doc}. RESTful API барихад хамгийн өргөн хэрэглэгддэг Node.js фреймворк бөгөөд дараахи онцлогтой:
-
-\begin{itemize}
-    \item \textbf{Middleware систем} — Хүсэлт боловсруулах дамжлагуудыг зохион байгуулах;
-    \item \textbf{Router} — URL хаягийн чиглүүлэлтийг модуль болгон хуваах;
-    \item \textbf{Хөнгөн бүтэц} — Шаардлагатай зүйлийг л ачаалдаг.
-\end{itemize}
-
-Энэ ажлын бэкэнд нь Express.js ашиглан дараахи REST API endpoint-уудыг хангадаг:
+\keyword{REST API} (Representational State Transfer) нь Roy Fielding (2000) \cite{rest_fielding} боловсруулсан веб үйлчилгээний архитектурын хэв маяг юм. HTTP протоколын GET, POST, PUT, DELETE аргуудыг ашиглан нөөцийг удирддаг. Сервер хүсэлт бүрийг бие даасан гэж үздэг (stateless) бөгөөд нөөц бүрийг URL-ээр илэрхийлнэ. Энэ ажилд Flutter апп болон Node.js бэкэнд хоорондын бүх харилцааг RESTful API-аар, JSON форматаар гүйцэтгэдэг. Системд нийт 8 API endpoint байдаг бөгөөд тэдгээрийг доорх хүснэгтэд нэгтгэн харуулав.
 
 \begin{table}[h]
 \centering
@@ -193,123 +68,43 @@ Firestore-ийн security rules нь collection бүрт хэрэглэгч ха
 \hline
 \textbf{Арга} & \textbf{Endpoint} & \textbf{Тайлбар} \\
 \hline
-POST & \code{/api/auth/send-code} & Бүртгэлийн баталгаажуулах код илгээх (Nodemailer) \\
+POST & \code{/api/auth/send-code} & 6 оронтой баталгаажуулах код email-р илгээх \\
 \hline
-POST & \code{/api/auth/verify-code} & 6 оронтой кодыг шалгаж, email баталгаажуулах \\
+POST & \code{/api/auth/verify-code} & Оруулсан кодыг шалгаж, email баталгаажуулах \\
 \hline
 POST & \code{/api/users/create} & Шинэ хэрэглэгч Firestore-д бүртгэх \\
 \hline
-GET  & \code{/api/bookings/:venueId} & Тухайн заалны захиалгуудын жагсаалт авах \\
+GET  & \code{/api/bookings/:venueId} & Заалны захиалгуудын жагсаалт авах \\
 \hline
-POST & \code{/api/bookings/create} & Шинэ захиалга үүсгэх (давхардал шалгах) \\
+POST & \code{/api/bookings/create} & Шинэ захиалга үүсгэх \\
 \hline
 PUT  & \code{/api/bookings/:id/cancel} & Захиалга цуцлах \\
 \hline
-GET  & \code{/api/schedule/:venueId} & Цагийн хуваарь + fixed\_bookings авах \\
+GET  & \code{/api/schedule/:venueId} & Цагийн хуваарь болон тогтмол захиалга авах \\
 \hline
-POST & \code{/api/chat} & Groq Llama 3.1-8b AI хариулт авах \\
+POST & \code{/api/chat} & Groq Llama AI чатбот хариулт авах (нөөц горим) \\
 \hline
-\end{tabularx}
+\end{tabularx}\\[4pt]
+{\footnotesize Эх: Зохиогчийн боловсруулалт}
 \end{table}
 
-\subsection{REST API архитектур}
-
-\keyword{REST} (Representational State Transfer) нь Roy Fielding (2000) \cite{rest_fielding} боловсруулсан веб үйлчилгээний архитектурын хэв маяг юм. REST API нь HTTP протоколын GET, POST, PUT, DELETE арга ашиглан нөөцийг удирддаг. REST-ийн гол шинж чанарууд: \textit{Stateless} (сервер хүсэлт бүрийг бие даасан гэж үздэг), \textit{Uniform Interface} (стандарт URL + HTTP арга), \textit{Resource-based} (нөөц бүрийг URL-ээр илэрхийлнэ). Энэ ажилд Flutter апп болон Node.js бэкэнд хоорондын харилцааг RESTful API-аар гүйцэтгэдэг бөгөөд өгөгдлийн солилцоог JSON форматаар хийдэг.
+\keyword{Docker} нь аппликейшн болон түүний бүх хамаарлыг тусгаарлагдсан контейнерт багцалдаг платформ юм \cite{docker_doc}. Docker ашиглахын гол давуу тал нь хөгжүүлэлтийн болон продакшн орчин яг ижил байх баталгаа юм: хөгжүүлэгчийн компьютерт ажиллаж байгаа бэкэнд яг л AWS EC2-д ажилладагтай ижил байдаг. Dockerfile нь Node.js 18 Alpine суурь дүрс дээр package.json суулгаж, эх кодыг хуулан, 3000 портоор сервер эхлүүлдэг тохиргооны файл юм. Alpine суурь дүрс сонгосноор эцсийн дүрсний хэмжээ жижиг байж, татах, байршуулах хугацаа хурдан болдог. Docker контейнер хэдхэн секундэд эхлэх бөгөөд нэмэлт тохиргоо шаарддаггүй тул EC2-д байршуулалтыг хялбарчилдаг.
 
 %-------------------------------------------------------------------------------
 
-\section{Docker контейнержуулалт}
+\section{Үүлэн орчин ба автоматжуулалт}
 
-\keyword{Docker} нь аппликейшн болон түүний бүх хамаарлыг тусгаарлагдсан контейнерт багцалдаг платформ юм \cite{docker_doc}. Docker ашиглахын давуу тал:
+Тусдаа бэкэнд сервер хэрэгтэй болсон тул тэрийгээ ямар дэд бүтцэд байршуулах вэ гэсэн шийдвэр гаргах шаардлагатай болсон. Локал сервер ашиглах нь тасралтгүй ажиллагаа болон дэлхийн аль ч газраас хандах боломжийг хязгаарладаг. AWS (Amazon Web Services) үүлэн үйлчилгээ нь дэлхийн дэд бүтцэд суурилсан, найдвартай uptime баталгаатай, Docker контейнер ажиллуулах бүрэн дэмжлэгтэй шийдэл тул энэ ажилд сонгосон.
 
-\begin{itemize}
-    \item \textbf{Тогтвортой орчин} — Хөгжүүлэлтийн болон продакшн орчин яг ижил байх баталгаа;
-    \item \textbf{Хурдан байршуулалт} — Контейнер хэдхэн секундэд эхлэнэ;
-    \item \textbf{Тусгаарлалт} — Системийн бусад хэсгийг нөлөөлөхгүй;
-    \item \textbf{Хэмжээс (Scale)} — Хэрэгцээ нэмэгдэхэд хялбар масштабчлал.
-\end{itemize}
+\keyword{Amazon EC2} (Elastic Compute Cloud) нь AWS-ийн виртуал сервер үйлчилгээ бөгөөд Node.js/Express бэкэнд ap-southeast-1 (Сингапур) бүсийн EC2 t3.micro instance дээр ажиллана \cite{aws_ec2_doc}. Сингапур бүсийг Монголоос харьцангуй ойр байгаа AWS бүс тул сонгосон бөгөөд энэ нь API-ийн хариу цагийг бууруулна. EC2 нь серверийн тохиргоог бүрэн хянах, security group-ийн тусламжтай сүлжээний хандалтыг нарийн удирдах боломж олгодог.
 
-\textbf{Dockerfile} нь апп-ын дүрсийг (image) тодорхойлдог тохиргооны файл юм. Express бэкэндийн Dockerfile нь Node.js суурь дүрс дээр \code{package.json}-г суулгаж, эх кодыг хуулан, 3000 портоор сервер эхлүүлдэг.
+\keyword{Amazon ECR} (Elastic Container Registry) нь AWS-ийн Docker дүрсний хадгалалтын үйлчилгээ юм \cite{aws_ecr_doc}. GitHub Actions-аар build хийсэн Docker дүрсийг ECR-д push хийж, EC2 instance тэр дүрсийг татан ажиллуулдаг. ECR нь AWS IAM эрхийн удирдлагатай нэгдсэн тул дүрсний нууцлал баталгаатай, EC2-тэй нэгдмэл ажилладаг.
 
-\begin{lstlisting}[language={}, caption={Node.js бэкэндийн Dockerfile}]
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-EXPOSE 3000
-CMD ["node", "server.js"]
-\end{lstlisting}
+\keyword{GitHub Actions} нь GitHub платформд суурилагдсан CI/CD (Continuous Integration / Continuous Deployment) автоматжуулалтын хэрэгсэл юм \cite{github_actions_doc}. YAML файлаар тодорхойлсон workflow нь тодорхой нөхцөл биелэхэд автоматаар ажилладаг. Энэ ажилд \code{backend/} хавтасны файл өөрчлөгдөх бүрт CI/CD хоолой автоматаар ажиллаж, Docker image build хийж AWS ECR-д push хийж, EC2-д шинэ хувилбарыг 3--4 минутын дотор байршуулдаг. Хөгжүүлэгч зөвхөн \code{git push} хийхэд л бэкэнд автоматаар шинэчлэгддэг тул хүний гараар сервер дээр нэвтрэх шаардлага байхгүй болдог. GitHub Secrets нь AWS, Groq, Anthropic-ийн API нууцлал болон EC2-ийн SSH түлхүүрийг аюулгүй хадгалдаг.
 
-%-------------------------------------------------------------------------------
+AI чатботын хувьд хоёр загвар хосолсон нөөцлөлтийн архитектурыг ашигласан. \keyword{Anthropic Claude Haiku 4.5} нь Firebase Cloud Functions-д суурилсан үндсэн горимын загвар юм \cite{anthropic_doc}. Хурдан, хэмнэлттэй хариулт өгдөг бөгөөд API түлхүүр Flutter кодод задрахгүй Cloud Functions-д аюулгүй хадгалагддаг. \keyword{Groq Llama 3.1-8b} нь Node.js бэкэнд дамжуулан ажиллах нөөц горимын загвар юм \cite{groq_doc}. Groq-ийн LPU (Language Processing Unit) дэд бүтэц нь маш хурдан хариулт өгдөг давуу талтай. Хэрэв Claude Haiku удаан буюу алдаа гарвал Flutter апп автоматаар Groq руу шилжих тул AI чатботын найдвартай байдал нэмэгдэнэ.
 
-\section{AWS дэд бүтэц}
-
-\subsection{Amazon EC2}
-
-\keyword{Amazon EC2} (Elastic Compute Cloud) нь AWS-ийн виртуал сервер (instance) үйлчилгээ юм \cite{aws_ec2_doc}. Энэ ажилд Node.js/Express бэкэнд сервер нь \textbf{ap-southeast-1} (Сингапур) бүсийн EC2 instance дээр ажилладаг. EC2 нь дараахи давуу талтай:
-
-\begin{itemize}
-    \item Серверийн тохиргоог бүрэн хянах боломж;
-    \item Docker контейнер ажиллуулах дэмжлэг;
-    \item Security Group-ийн тусламжтай сүлжээний хандалтыг нарийн удирдах.
-\end{itemize}
-
-\subsection{Amazon ECR}
-
-\keyword{Amazon ECR} (Elastic Container Registry) нь AWS-ийн Docker дүрсний бүртгэлийн үйлчилгээ юм \cite{aws_ecr_doc}. GitHub Actions-аар build хийсэн Docker дүрсийг ECR-д push хийж, EC2 instance тэр дүрсийг татан ажиллуулдаг. Энэ нь дүрсний нийцтэй удирдлага, нууцлалыг хангадаг.
-
-%-------------------------------------------------------------------------------
-
-\section{GitHub Actions CI/CD}
-
-\keyword{GitHub Actions} нь GitHub платформ дахь CI/CD (Continuous Integration / Continuous Deployment) автоматжуулалтын хэрэгсэл юм \cite{github_actions_doc}. Workflow нь YAML файлаар тодорхойлогддог бөгөөд тодорхой нөхцөл (жишээ: \code{backend/} хавтасны файл өөрчлөгдөх) биелэхэд автоматаар ажилладаг.
-
-Энэ ажлын CI/CD хоолой нь дараахи алхмуудтай:
-
-\begin{enumerate}
-    \item Хөгжүүлэгч \code{backend/} хавтаст өөрчлөлт хийж GitHub-д push хийнэ;
-    \item GitHub Actions trigger ажиллана;
-    \item Node.js бэкэнд кодоос Docker дүрс build хийнэ;
-    \item Build хийсэн дүрсийг AWS ECR-д push хийнэ;
-    \item SSH-аар AWS EC2 instance-д холбогдож ECR-аас шинэ дүрсийг pull хийнэ;
-    \item Хуучин контейнерийг зогсоож, шинэ контейнерийг ажиллуулна.
-\end{enumerate}
-
-GitHub Actions нь AWS-ийн нэвтрэлтийн нууцлал (access key, secret), EC2-ийн SSH түлхүүр зэргийг GitHub Secrets-д хадгалан аюулгүй ашигладаг.
-
-%-------------------------------------------------------------------------------
-
-\section{AI үйлчилгээнүүд}
-
-\subsection{Anthropic Claude Haiku}
-
-\keyword{Anthropic Claude Haiku 4.5} нь Anthropic компанийн хурдан, хэмнэлттэй LLM загвар юм \cite{anthropic_doc}. Claude Haiku нь богино хариулт өгдөг асуудлуудад маш хурдан ажиллах бөгөөд API дамжуулан ашиглах боломжтой. Энэ ажилд Firebase Cloud Functions дотор Anthropic-ийн SDK-г ашиглан спорт заалтай холбоотой асуултуудад хариулдаг AI чатбот хэрэгжүүлсэн. Cloud Functions нь API түлхүүрийг Flutter кодод задруулахгүйгээр аюулгүй хадгалах боломж олгодог.
-
-\subsection{Groq Llama 3.1-8b}
-
-\keyword{Groq} нь LPU (Language Processing Unit) процессор ашиглан LLM загваруудыг асаар хурдан ажиллуулдаг платформ юм \cite{groq_doc}. Groq дээрх \textbf{Llama 3.1-8b} загварыг Node.js/Express бэкэнд дамжуулан нөөц горим болгон ашигласан. Хэрэв Firebase Cloud Functions-ийн Claude хариулт удаан болох буюу алдаа гарвал Flutter апп \code{lib/config.dart}-д тодорхойлсон бэкэнд URL-аар Groq API-руу хандана.
-
-%-------------------------------------------------------------------------------
-
-\section{flutter\_local\_notifications}
-
-\keyword{flutter\_local\_notifications} нь Firebase Cloud Messaging (FCM) ашиглахгүйгээр төхөөрөмж дотор мэдэгдэл (local notification) харуулах Flutter багц юм \cite{local_notifications_doc}. Мобайл аппликейшнд push notification хэрэгжүүлэхэд ихэвчлэн FCM сервер шаарддаг боловч энэ багц нь сервергүйгээр хэрэглэгчийн төхөөрөмж дотор мэдэгдэл шедуль хийх боломжтой.
-
-Энэ ажилд \code{flutter\_local\_notifications}-ийг дараах зорилгоор ашигласан:
-
-\begin{itemize}
-    \item \textbf{1 цагийн өмнөх сануулга} — Хэрэглэгч цаг захиалах үед Flutter апп тухайн цагаас 1 цаг хасаж (\code{scheduledDate = bookingTime.subtract(Duration(hours: 1))}) сануулгын мэдэгдлийг schedule хийнэ;
-    \item \textbf{Offline найдвартай байдал} — Интернет холболт байхгүй тохиолдолд ч гэсэн төхөөрөмж дотор хадгалагдсан мэдэгдэл ажилладаг;
-    \item \textbf{Хоёр платформ} — Android болон iOS аль алинд дэмжлэгтэй, тохиргоо нэг кодоор хийгддэг;
-    \item \textbf{Нэмэлт зардалгүй} — FCM сервер байхгүй тул серверийн нэмэлт зардал шаарддаггүй.
-\end{itemize}
-
-%-------------------------------------------------------------------------------
-
-\section{Технологийн стекийн нэгтгэсэн дүгнэлт}
-
-Энэхүү ажилд ашигласан технологиудыг үүрэг, сонгосон шалтгааны хамт дараах хүснэгтэд нэгтгэн харуулав:
+Ашигласан технологиудын бүрэн жагсаалт, тус бүрийн үүрэг болон сонгосон шалтгааныг доорх хүснэгтэд нэгтгэн харуулав. Энэхүү технологийн стек нь системийн шаардлагад нийцсэн, найдвартай, масштабчлах боломжтой шийдлийг бүрдүүлнэ.
 
 \begin{table}[h]
 \centering
@@ -321,59 +116,28 @@ GitHub Actions нь AWS-ийн нэвтрэлтийн нууцлал (access key
 \hline
 Flutter 3.x & Мобайл клиент (Android/iOS) & Нэг кодоос хоёр платформ, Material Design 3 \\
 \hline
-Dart & Flutter-ийн програмчлалын хэл & AOT compile, Null Safety, Stream дэмжлэг \\
+Dart & Flutter хэл & AOT compile, Null Safety, async/await \\
 \hline
 Firebase Auth & Нэвтрэлтийн систем & Аюулгүй, Google-ийн үүлэн дэмжлэгтэй \\
 \hline
-Cloud Firestore & NoSQL өгөгдлийн сан & Real-time listener, автомат масштабчлал \\
+Cloud Firestore & NoSQL өгөгдлийн сан & Real-time listener, офлайн дэмжлэг \\
 \hline
-Firebase Cloud Functions & Serverless AI endpoint & API түлхүүрийг аюулгүй хадгалах \\
+Cloud Functions & Serverless AI endpoint & API түлхүүрийг аюулгүй хадгалах \\
 \hline
 Node.js/Express & REST API бэкэнд & Event-driven, JSON API бариход тохиромжтой \\
 \hline
-Nodemailer & Email илгээлт & Gmail SMTP-ээр баталгаажуулах код \\
+Docker & Контейнержуулалт & Орчны тогтвортой байдал \\
 \hline
-Docker & Контейнержуулалт & Орчны тогтвортой байдал, хурдан байршуулалт \\
+AWS EC2/ECR & Үүлэн сервер ба registry & Бүрэн хяналт, Docker дэмжлэг \\
 \hline
-AWS EC2 & Үүлэн сервер & Бүрэн хяналт, Docker дэмжлэг \\
-\hline
-AWS ECR & Docker image registry & EC2-тэй хамт ашиглахад оновчтой \\
-\hline
-GitHub Actions & CI/CD хоолой & Git workflow-той нэгдмэл \\
+GitHub Actions & CI/CD хоолой & Git workflow-той нэгдмэл, автомат байршуулалт \\
 \hline
 Claude Haiku 4.5 & AI чатбот (үндсэн) & Хурдан, хэмнэлттэй LLM \\
 \hline
-Groq Llama 3.1-8b & AI чатбот (нөөц) & LPU-д суурилсан, асаар хурдан хариулт \\
+Groq Llama 3.1-8b & AI чатбот (нөөц) & LPU дэд бүтэц, маш хурдан хариулт \\
 \hline
 flutter\_local\_notifications & Локал мэдэгдэл & FCM сервергүйгээр мэдэгдэл \\
 \hline
-\end{tabularx}
+\end{tabularx}\\[4pt]
+{\footnotesize Эх: Зохиогчийн боловсруулалт}
 \end{table}
-
-%-------------------------------------------------------------------------------
-
-\section{Ижил төстэй системүүдийн дүн шинжилгээ}
-
-\subsection{Монгол улсын цаг захиалгын системүүд}
-
-Монгол улсын Google Play дээрх судалгаанаас спортын байгууламжийн захиалгатай холбоотой дараах системийг илрүүлж, дүн шинжилгээ хийсэн:
-
-\textbf{eZaal} (DAZO LLC, Монгол) нь Монгол улсын спорт заал, фитнес төв, хөлбөмбөгийн талбай, бүжгийн студи зэрэг олон спортын байгууламжийг нэгтгэсэн агрегатор платформ юм \cite{ezaal_app}. Google Play дээр \textbf{10,000+} удаа татагдсан, хэрэглэгчийн үнэлгээ \textbf{4.0/5.0} бөгөөд хамгийн сүүлийн шинэчлэлт 2025 оны 6 дугаар сард хийгдсэн (хувилбар 2.2.1). Байгууламжийн зураг, үнэ тариф, цагийн хуваарь, байршлын мэдээлэл харуулах, QPay интеграцаар онлайн төлбөр хийх, нэмэлт шимтгэлгүйгээр захиалга хийх боломжтой. Гэхдээ зөвхөн Android платформд зориулагдсан (iOS хувилбар байхгүй), AI чатбот болон CI/CD автоматжуулалт байхгүй, Улаанбаатар болон томоохон хотуудад чиглэсэн тул Даланзадгад зэрэг орон нутгийн хотуудад үйлчилгээ хүрдэггүй. Байгуулагын тогтмол захиалгын тусгай удирдлага болон гурван давхаргат үүлэн архитектур хэрэгжүүлээгүй.
-
-\subsection{Судалгааны дүгнэлт}
-
-eZaal платформ нь Монголын хэмжээнд спортын байгууламжийн захиалгыг нэгтгэсэн томоохон шийдэл боловч орон нутгийн тодорхой хэрэгцээ, cross-platform дэмжлэг, AI чатбот болон CI/CD автоматжуулалтын хувьд хязгаарлагдмал байна. Энэхүү ажил нь тэдгээр дутагдлыг нөхөж, Даланзадгад хотын таван спорт заалд тохирсон, Монгол хэлтэй, AI чатботтой, үүлэн орчинд CI/CD-ээр автоматаар байршуулагддаг шийдлийг санал болгодгоороо ялгаатай.
-
-\begin{table}[h]
-\centering
-\caption{Цаг захиалгын системүүдийн харьцуулсан шинжилгээ}
-\label{tab:compare}
-\begin{tabular}{|p{2.8cm}|c|c|c|c|c|c|}
-\hline
-\textbf{Систем} & \textbf{\shortstack{Cross-\\platform}} & \textbf{\shortstack{AI\\чат}} & \textbf{\shortstack{CI/CD\\Cloud}} & \textbf{\shortstack{Монгол\\хэл}} & \textbf{\shortstack{Олон\\заал}} & \textbf{\shortstack{Орон\\нутаг}} \\ \hline
-eZaal (МН) & Хэсэгчлэн & Үгүй & Үгүй & Тийм & Тийм & Үгүй \\ \hline
-\textbf{Энэ ажил} & \textbf{Тийм} & \textbf{Тийм} & \textbf{Тийм} & \textbf{Тийм} & \textbf{Тийм} & \textbf{Тийм} \\ \hline
-\end{tabular}
-\end{table}
-
-Хүснэгтээс харахад энэхүү ажил нь eZaal-аас ялгарч, iOS болон Android хоёуланг дэмжсэн cross-platform шийдэл, AI чатботтой, үүлэн орчинд CI/CD-ээр автоматаар байршуулагддаг, байгуулагын тогтмол захиалгын удирдлагатай, орон нутгийн Даланзадгад хотын хэрэгцээнд тохирсон бүрэн шинэлэг шийдэл болохоороо онцлог гэж дүгнэж байна.

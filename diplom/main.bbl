@@ -360,6 +360,36 @@
       \verb https://firebase.google.com/docs/auth
       \endverb
     \endentry
+    \entry{local_notifications_doc}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=61fc51379d66a124cdc99815f1cd6bcc}{%
+           family={Bui},
+           familyi={B\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{61fc51379d66a124cdc99815f1cd6bcc}
+      \strng{fullhash}{61fc51379d66a124cdc99815f1cd6bcc}
+      \strng{fullhashraw}{61fc51379d66a124cdc99815f1cd6bcc}
+      \strng{bibnamehash}{61fc51379d66a124cdc99815f1cd6bcc}
+      \strng{authorbibnamehash}{61fc51379d66a124cdc99815f1cd6bcc}
+      \strng{authornamehash}{61fc51379d66a124cdc99815f1cd6bcc}
+      \strng{authorfullhash}{61fc51379d66a124cdc99815f1cd6bcc}
+      \strng{authorfullhashraw}{61fc51379d66a124cdc99815f1cd6bcc}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{flutter\_local\_notifications — A cross platform plugin for displaying local notifications}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://pub.dev/packages/flutter_local_notifications
+      \endverb
+      \verb{url}
+      \verb https://pub.dev/packages/flutter_local_notifications
+      \endverb
+    \endentry
     \entry{nodejs_doc}{online}{}{}
       \name{author}{1}{}{%
         {{hash=263642944f6c498301458458c276f5f3}{%
@@ -576,8 +606,8 @@
       \strng{authornamehash}{f431db65cea024a5f19eab835afefee2}
       \strng{authorfullhash}{f431db65cea024a5f19eab835afefee2}
       \strng{authorfullhashraw}{f431db65cea024a5f19eab835afefee2}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Claude API Documentation — Anthropic}
@@ -617,65 +647,6 @@
       \verb{url}
       \verb https://console.groq.com/docs
       \endverb
-    \endentry
-    \entry{local_notifications_doc}{online}{}{}
-      \name{author}{1}{}{%
-        {{hash=61fc51379d66a124cdc99815f1cd6bcc}{%
-           family={Bui},
-           familyi={B\bibinitperiod},
-           given={Michael},
-           giveni={M\bibinitperiod}}}%
-      }
-      \strng{namehash}{61fc51379d66a124cdc99815f1cd6bcc}
-      \strng{fullhash}{61fc51379d66a124cdc99815f1cd6bcc}
-      \strng{fullhashraw}{61fc51379d66a124cdc99815f1cd6bcc}
-      \strng{bibnamehash}{61fc51379d66a124cdc99815f1cd6bcc}
-      \strng{authorbibnamehash}{61fc51379d66a124cdc99815f1cd6bcc}
-      \strng{authornamehash}{61fc51379d66a124cdc99815f1cd6bcc}
-      \strng{authorfullhash}{61fc51379d66a124cdc99815f1cd6bcc}
-      \strng{authorfullhashraw}{61fc51379d66a124cdc99815f1cd6bcc}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{title}{flutter\_local\_notifications — A cross platform plugin for displaying local notifications}
-      \field{year}{2024}
-      \field{dateera}{ce}
-      \verb{urlraw}
-      \verb https://pub.dev/packages/flutter_local_notifications
-      \endverb
-      \verb{url}
-      \verb https://pub.dev/packages/flutter_local_notifications
-      \endverb
-    \endentry
-    \entry{software_engineering}{book}{}{}
-      \name{author}{1}{}{%
-        {{hash=70341b3bfcce7026902f4eb1e4111b58}{%
-           family={Sommerville},
-           familyi={S\bibinitperiod},
-           given={Ian},
-           giveni={I\bibinitperiod}}}%
-      }
-      \list{publisher}{1}{%
-        {Pearson}%
-      }
-      \strng{namehash}{70341b3bfcce7026902f4eb1e4111b58}
-      \strng{fullhash}{70341b3bfcce7026902f4eb1e4111b58}
-      \strng{fullhashraw}{70341b3bfcce7026902f4eb1e4111b58}
-      \strng{bibnamehash}{70341b3bfcce7026902f4eb1e4111b58}
-      \strng{authorbibnamehash}{70341b3bfcce7026902f4eb1e4111b58}
-      \strng{authornamehash}{70341b3bfcce7026902f4eb1e4111b58}
-      \strng{authorfullhash}{70341b3bfcce7026902f4eb1e4111b58}
-      \strng{authorfullhashraw}{70341b3bfcce7026902f4eb1e4111b58}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{edition}{10th Edition}
-      \field{isbn}{978-0135957059}
-      \field{title}{Software Engineering}
-      \field{year}{2019}
-      \field{dateera}{ce}
     \endentry
   \enddatalist
 \endrefsection

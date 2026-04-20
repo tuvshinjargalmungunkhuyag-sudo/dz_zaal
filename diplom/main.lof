@@ -1,24 +1,22 @@
 \babel@toc {mongolian}{}\relax 
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces Use Case Diagram --- Хэрэглэгч болон Админы харилцаа}}{11}{figure.caption.105}%
-\contentsline {figure}{\numberline {2.2}{\ignorespaces Цаг захиалах үйл ажиллагааны диаграмм}}{12}{figure.caption.107}%
-\contentsline {figure}{\numberline {2.3}{\ignorespaces Захиалга үүсгэх дарааллын диаграмм}}{13}{figure.caption.109}%
-\contentsline {figure}{\numberline {2.4}{\ignorespaces Email баталгаажуулалтын дарааллын диаграмм (Firebase Auth + Nodemailer)}}{14}{figure.caption.111}%
-\contentsline {figure}{\numberline {2.5}{\ignorespaces Firestore өгөгдлийн сангийн схем}}{15}{figure.caption.113}%
-\contentsline {figure}{\numberline {2.6}{\ignorespaces Системийн гурван давхаргат үүлэн архитектурын ерөнхий диаграмм}}{16}{figure.caption.116}%
-\contentsline {figure}{\numberline {2.7}{\ignorespaces Үүлэн байршуулалтын архитектур --- AWS, Firebase, CI/CD}}{17}{figure.caption.118}%
-\contentsline {figure}{\numberline {2.8}{\ignorespaces GitHub Actions CI/CD хоолойн дэлгэрэнгүй диаграмм}}{18}{figure.caption.120}%
-\contentsline {figure}{\numberline {2.9}{\ignorespaces Flutter аппликейшний бүтэн давхаргат архитектур}}{19}{figure.caption.122}%
-\contentsline {figure}{\numberline {2.10}{\ignorespaces Email/нууц үгийн нэвтрэлт ба баталгаажуулалтын дэлгэцүүд}}{21}{figure.caption.262}%
-\contentsline {figure}{\numberline {2.11}{\ignorespaces Нүүр дэлгэц ба захиалгын жагсаалт}}{22}{figure.caption.264}%
-\contentsline {figure}{\numberline {2.12}{\ignorespaces Цагийн хуваарь ба захиалгын дэлгэцүүд}}{24}{figure.caption.329}%
-\contentsline {figure}{\numberline {2.13}{\ignorespaces Мэдэгдлүүдийн дэлгэц --- захиалгын сануулга}}{25}{figure.caption.358}%
-\contentsline {figure}{\numberline {2.14}{\ignorespaces AI Туслах дэлгэц --- спорт заалтай холбоотой асуулт асуух}}{29}{figure.caption.459}%
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Use Case Diagram --- хэрэглэгч болон Admin-ийн харилцаа {\footnotesize Эх: Зохиогчийн боловсруулалт}}}{7}{figure.caption.21}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Цаг захиалах үйл ажиллагааны диаграмм (Activity Diagram) {\footnotesize Эх: Зохиогчийн боловсруулалт}}}{8}{figure.caption.22}%
+\contentsline {figure}{\numberline {2.3}{\ignorespaces Захиалга үүсгэх дарааллын диаграмм (Sequence Diagram) {\footnotesize Эх: Зохиогчийн боловсруулалт}}}{9}{figure.caption.23}%
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Email баталгаажуулалтын дарааллын диаграмм {\footnotesize Эх: Зохиогчийн боловсруулалт}}}{10}{figure.caption.24}%
+\contentsline {figure}{\numberline {2.5}{\ignorespaces Системийн гурван давхаргат үүлэн архитектур {\footnotesize Эх: Зохиогчийн боловсруулалт}}}{11}{figure.caption.26}%
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Flutter аппликейшний давхаргат архитектур {\footnotesize Эх: Зохиогчийн боловсруулалт}}}{12}{figure.caption.72}%
+\contentsline {figure}{\numberline {2.7}{\ignorespaces Email/нууц үгийн нэвтрэлт болон баталгаажуулалтын дэлгэцүүд {\footnotesize Эх: Зохиогчийн зураг авалт}}}{13}{figure.caption.88}%
+\contentsline {figure}{\numberline {2.8}{\ignorespaces Нүүр дэлгэц, цаг захиалах болон захиалгын жагсаалтын дэлгэцүүд {\footnotesize Эх: Зохиогчийн зураг авалт}}}{14}{figure.caption.112}%
+\contentsline {figure}{\numberline {2.9}{\ignorespaces Захиалгын сануулга болон AI туслахын дэлгэцүүд {\footnotesize Эх: Зохиогчийн зураг авалт}}}{15}{figure.caption.113}%
+\contentsline {figure}{\numberline {2.10}{\ignorespaces Firestore collection-уудын схем диаграмм {\footnotesize Эх: Зохиогчийн боловсруулалт}}}{17}{figure.caption.182}%
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Үүлэн байршуулалтын архитектур --- AWS EC2, Firebase, CI/CD {\footnotesize Эх: Зохиогчийн боловсруулалт}}}{18}{figure.caption.194}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces GitHub Actions CI/CD хоолойн дэлгэрэнгүй дарааллын диаграмм {\footnotesize Эх: Зохиогчийн боловсруулалт}}}{20}{figure.caption.240}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {A.1}{\ignorespaces Нэвтрэх дэлгэц (зүүн) ба бүртгэлийн дэлгэц (баруун)}}{40}{figure.caption.567}%
-\contentsline {figure}{\numberline {A.2}{\ignorespaces Нүүр дэлгэц — таван спорт заалны жагсаалт}}{41}{figure.caption.568}%
-\contentsline {figure}{\numberline {A.3}{\ignorespaces Цагийн хуваарийн дэлгэц (зүүн) ба захиалга баталгаажуулах дэлгэц (баруун)}}{42}{figure.caption.569}%
-\contentsline {figure}{\numberline {A.4}{\ignorespaces Захиалгын жагсаалтын дэлгэц (зүүн) ба AI чатботын дэлгэц (баруун)}}{42}{figure.caption.570}%
+\contentsline {figure}{\numberline {A.1}{\ignorespaces Нэвтрэх дэлгэц (зүүн) ба бүртгэлийн дэлгэц (баруун)}}{26}{figure.caption.259}%
+\contentsline {figure}{\numberline {A.2}{\ignorespaces Нүүр дэлгэц — таван спорт заалны жагсаалт}}{27}{figure.caption.260}%
+\contentsline {figure}{\numberline {A.3}{\ignorespaces Цагийн хуваарийн дэлгэц (зүүн) ба захиалга баталгаажуулах дэлгэц (баруун)}}{28}{figure.caption.261}%
+\contentsline {figure}{\numberline {A.4}{\ignorespaces Захиалгын жагсаалтын дэлгэц (зүүн) ба AI чатботын дэлгэц (баруун)}}{28}{figure.caption.262}%
 \addvspace {10\p@ }

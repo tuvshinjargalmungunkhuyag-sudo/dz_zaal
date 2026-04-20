@@ -1,76 +1,204 @@
-% Бүлэг 4
-\chapter{СИСТЕМИЙН ТУРШИЛТ БА ҮНЭЛГЭЭ}
+% Бүлэг 3 — Хэрэгжүүлэлт
+
+\chapter{ХЭРЭГЖҮҮЛЭЛТ}
 \label{Chapter4}
 \pagecolor{white}
 
 %-------------------------------------------------------------------------------
 
-\section{Туршилтын орчин, аргачлал}
+\section{Үүлэн байршуулалт}
 
-Системийг гүйцэд хөгжүүлсний дараа функциональ болон гүйцэтгэлийн туршилтыг гурван үе шаттайгаар явуулсан. Туршилт нь \textbf{функциональ}, \textbf{нэгтгэлийн} болон \textbf{хэрэглэхэд хялбар байдлын} гэсэн гурван хэсгээс бүрдсэн.
+\subsection{Docker контейнержуулалт ба AWS EC2}
 
-Туршилтад ашигласан техник хэрэгсэл:
+Node.js/Express бэкэнд сервер нь Docker контейнер хэлбэрээр AWS EC2 (ap-southeast-1, Сингапур) дээр ажиллана. Docker ашиглахын гол зорилго нь хөгжүүлэлтийн болон продакшн орчин яг ижил байлгах явдал юм. Бэкэнд нь \code{backend/Dockerfile}-аар тодорхойлогдсон дүрс ашиглана. Node.js 18 Alpine суурь дүрс сонгосноор эцсийн дүрсний хэмжээ жижиг байж, татах болон байршуулах хугацааг хурдасгана.
 
-\begin{itemize}
-    \item Android 13 (Samsung Galaxy A54) болон iOS 16 (iPhone 13) гар утас;
-    \item AWS EC2 t3.micro сервер, Docker контейнер (ap-southeast-1 бүс, Сингапур);
-    \item Firebase Cloud Firestore (us-central1);
-    \item 4G LTE болон Wi-Fi сүлжээ.
-\end{itemize}
+\begin{lstlisting}[language={}, caption={backend/Dockerfile --- Node.js 18 Alpine суурьтай бэкэндийн дүрс}]
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+EXPOSE 3000
+CMD ["node", "server.js"]
+\end{lstlisting}
 
-Туршилтын нийт тохиолдлын тоо: функциональ туршилт 10, нэгтгэлийн туршилт 4, гүйцэтгэлийн хэмжилт 6, нийт \textbf{20} тохиолдол.
+EC2 instance дээр Docker суулгасны дараа ECR-аас дүрс татан контейнер ажиллуулна. \code{--restart unless-stopped} тугаар контейнер дахин эхлүүлэгддэг тул EC2 дахин асах үед бэкэнд автоматаар ажиллана. \code{.env} файл нь GROQ\_API\_KEY, EMAIL\_USER, EMAIL\_PASS болон Firebase тохиргооны нууц мэдээллийг хадгалдаг бөгөөд Git-д оруулдаггүй. Дүрслэлийн архитектурыг доорх диаграммаар харуулав.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+  box/.style={draw, rounded corners=6pt, minimum width=3.5cm,
+              minimum height=1.1cm, align=center, font=\small, thick, fill=gray!12},
+  arr/.style={-latex', thick},
+  font=\small
+]
+
+\draw[dashed, rounded corners=8pt, fill=gray!5]
+  (-1.5,-0.2) rectangle (3.5,1.8);
+\node[font=\tiny\bfseries, above] at (1,1.8) {Клиент (Хэрэглэгчийн төхөөрөмж)};
+\node[box] (phone) at (1,0.8) {Flutter App\\Android / iOS};
+
+\draw[dashed, rounded corners=8pt, fill=gray!8]
+  (4.5,-0.2) rectangle (10.5,3.8);
+\node[font=\tiny\bfseries, above] at (7.5,3.8) {AWS Cloud (ap-southeast-1)};
+\node[box] (ec2box)  at (7.5,2.8) {AWS EC2 Instance\\t3.micro};
+\node[box] (docker)  at (7.5,1.5) {Docker Container\\Node.js/Express :3000};
+\node[box] (ecrbox)  at (7.5,0.2) {AWS ECR\\Docker Image Registry};
+
+\draw[dashed, rounded corners=8pt, fill=gray!5]
+  (-1.5,-4.8) rectangle (3.5,-2.2);
+\node[font=\tiny\bfseries, above] at (1,-2.2) {Google Firebase Cloud};
+\node[box] (auth)      at (1,-3.2) {Firebase Auth};
+\node[box] (firestore) at (1,-4.2) {Cloud Firestore};
+
+\draw[dashed, rounded corners=8pt, fill=gray!5]
+  (4.5,-4.8) rectangle (10.5,-2.2);
+\node[font=\tiny\bfseries, above] at (7.5,-2.2) {DevOps / CI-CD Pipeline};
+\node[box] (github)   at (7.5,-3.2) {GitHub Repository};
+\node[box] (actions)  at (7.5,-4.2) {GitHub Actions Workflow};
+
+\draw[arr] (phone.east) -- node[above,font=\tiny]{REST API} (docker.west |- phone.east);
+\draw[arr] (phone.south)-- node[left, font=\tiny]{SDK}      (auth.north);
+\draw[arr] (docker.south)--node[right,font=\tiny]{pull image}(ecrbox.north);
+\draw[arr] (actions.north)--node[right,font=\tiny]{docker push}(ecrbox.south);
+
+\end{tikzpicture}
+\caption{Үүлэн байршуулалтын архитектур --- AWS EC2, Firebase, CI/CD\\{\footnotesize Эх: Зохиогчийн боловсруулалт}}
+\label{fig:deployment}
+\end{figure}
+
+\subsection{GitHub Actions CI/CD хоолой}
+
+GitHub Actions-ийн CI/CD хоолой нь хөгжүүлэгч \code{backend/} хавтаст өөрчлөлт push хийх бүрт автоматаар ажилладаг. Нийт байршуулалт 3--4 минут болдог бөгөөд хүний гараар сервер дээр нэвтрэх шаардлага байхгүй болдог. Workflow нь 6 алхамтай: checkout, AWS нэвтрэлт тохируулах, ECR нэвтрэх, Docker build хийж ECR-д push хийх, EC2-д SSH-аар холбогдон шинэ дүрс татаж контейнер солих.
+
+\begin{lstlisting}[language={}, caption={GitHub Actions --- автомат байршуулалтын workflow (.github/workflows/deploy.yml)}]
+name: Deploy Backend
+on:
+  push:
+    paths: ['backend/**']
+    branches: [main]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-1
+      - name: Login and push to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Build and push Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker build -t $ECR_REGISTRY/dz-zaal-backend:latest ./backend
+          docker push $ECR_REGISTRY/dz-zaal-backend:latest
+      - name: Deploy to EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          printf '%s\n' "$EC2_SSH_KEY" | tr -d '\r' > /tmp/deploy_key
+          chmod 600 /tmp/deploy_key
+          ssh -i /tmp/deploy_key -o StrictHostKeyChecking=no \
+            ec2-user@$EC2_HOST "
+              docker pull $ECR_REGISTRY/dz-zaal-backend:latest
+              docker stop dz-zaal-backend || true
+              docker rm   dz-zaal-backend || true
+              docker run -d --name dz-zaal-backend \
+                --restart unless-stopped \
+                --env-file ~/backend/.env \
+                -p 3000:3000 \
+                $ECR_REGISTRY/dz-zaal-backend:latest"
+\end{lstlisting}
+
+CI/CD хоолойн дарааллыг доорх диаграммаар харуулав. Git push-ийн дараа Docker build амжилттай болсон тохиолдолд ECR push болж, EC2-д автоматаар байршуулагддаг.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+  cicdstep/.style={draw, rounded corners=5pt, minimum width=3cm,
+               minimum height=0.9cm, align=center, font=\small, thick, fill=gray!10},
+  dec/.style={draw, diamond, fill=gray!20, aspect=2.2,
+              align=center, font=\scriptsize, inner sep=2pt},
+  arr/.style={-latex', thick},
+  font=\small
+]
+
+\node[cicdstep] (push)    at (0,8)    {git push\\backend/};
+\node[cicdstep] (trigger) at (0,6.8)  {GH Actions\\Trigger};
+\node[cicdstep] (build)   at (0,5.6)  {Docker Build};
+\node[dec]      (ok)      at (0,4.2)  {Build\\амжилттай?};
+\node[cicdstep] (ecr)     at (0,3.0)  {ECR Push\\(AWS Registry)};
+\node[cicdstep] (ssh)     at (0,1.8)  {SSH to EC2};
+\node[cicdstep] (pull)    at (0,0.6)  {docker pull\\шинэ image};
+\node[cicdstep] (run)     at (0,-0.6) {docker stop old\\docker run new};
+\node[cicdstep, fill=gray!25] (fail) at (4,4.2) {Workflow fail\\мэдэгдэл};
+
+\draw[arr] (push)    -- (trigger);
+\draw[arr] (trigger) -- (build);
+\draw[arr] (build)   -- (ok);
+\draw[arr] (ok)      -- node[left,font=\scriptsize]{Тийм}  (ecr);
+\draw[arr] (ok)      -- node[above,font=\scriptsize]{Үгүй} (fail);
+\draw[arr] (ecr)     -- (ssh);
+\draw[arr] (ssh)     -- (pull);
+\draw[arr] (pull)    -- (run);
+
+\end{tikzpicture}
+\caption{GitHub Actions CI/CD хоолойн дэлгэрэнгүй дарааллын диаграмм\\{\footnotesize Эх: Зохиогчийн боловсруулалт}}
+\label{fig:cicd}
+\end{figure}
 
 %-------------------------------------------------------------------------------
 
-\section{Функциональ туршилт}
+\section{Туршилт ба үнэлгээ}
 
-\subsection{Туршилтын тохиолдлууд}
+\subsection{Функциональ туршилт}
 
-Апп-ын үндсэн функц болгоныг бодит хэрэглэгчийн нөхцөлд шалгасан. Email баталгаажуулах кодыг анх турших үед Nodemailer-ийн Gmail SMTP-ээр илгээх хугацаа орчин тойрноос хамааран 3–8 секунд хооронд хэлбэлзэж байсан нь ажиглагдсан. Захиалгын давхардал шалгах логикт анх хоёр хэрэглэгч яг нэгэн зэрэг ижил цагт захиалах нөхцөл байдлыг тусгайлан шалгаж, Firestore-ийн transaction механизм зөв ажилласныг баталгаажуулсан.
+Туршилт нь 2-р бүлгийн 2.1 хэсэгт тодорхойлсон функциональ шаардлага бүрийг баталгаажуулах зорилготой. Туршилтын орчин: Android 13 (Samsung Galaxy A54), iOS 16 (iPhone 13), AWS EC2 t3.micro (ap-southeast-1), Firebase Cloud Firestore (us-central1), 4G LTE болон Wi-Fi сүлжээ.
 
-\begin{longtable}{|p{0.4cm}|p{2.8cm}|p{3cm}|p{3cm}|p{1.5cm}|}
+Апп-ын үндсэн функц болгоныг бодит хэрэглэгчийн нөхцөлд шалгасан бөгөөд тест бүр нь шаардлагын аль хэсэгтэй холбогдохыг тусгав. Давхардсан захиалгыг шалгахдаа хоёр хэрэглэгч яг нэгэн зэрэг ижил цагт захиалах нөхцөлийг тусгайлан туршиж, Firestore-ийн transaction механизм зөв ажилласныг баталгаажуулсан.
+
+\begin{longtable}{|p{0.4cm}|p{2.5cm}|p{3cm}|p{3.2cm}|p{1.5cm}|}
 \caption{Функциональ туршилтын тохиолдлууд} \label{tab:functional_tests} \\
 \hline
-\textbf{\#} & \textbf{Туршилтын нэр} & \textbf{Үйлдэл} & \textbf{Хүлээгдэж буй үр дүн} & \textbf{Дүгнэлт} \\
+\textbf{\#} & \textbf{Шаардлага} & \textbf{Туршилтын үйлдэл} & \textbf{Хүлээгдэж буй үр дүн} & \textbf{Дүгнэлт} \\
 \hline
 \endfirsthead
 \hline
-\textbf{\#} & \textbf{Туршилтын нэр} & \textbf{Үйлдэл} & \textbf{Хүлээгдэж буй үр дүн} & \textbf{Дүгнэлт} \\
+\textbf{\#} & \textbf{Шаардлага} & \textbf{Туршилтын үйлдэл} & \textbf{Хүлээгдэж буй үр дүн} & \textbf{Дүгнэлт} \\
 \hline
 \endhead
-1 & Email бүртгэл & Нэр, email, нууц үг оруулж бүртгүүлэх & Баталгаажуулах код email-д ирэх & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
+1 & Email бүртгэл, баталгаажуулалт & Нэр, email, нууц үг оруулж бүртгүүлэх & Баталгаажуулах код email-д ирэх, \code{emailVerified:true} болох & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
 \hline
-2 & Код баталгаажуулалт & 6 оронтой кодоо оруулах & \code{emailVerified: true} болж нэвтрэх & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
+2 & Заалны жагсаалт харах & Нүүр дэлгэц нээх & 5 байгууламж, үнэ, байршил зөв гарах & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
 \hline
-3 & Заалны жагсаалт & Нүүр дэлгэц нээх & Таван заал, үнэ, байршил зөв гарах & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
+3 & Цагийн хуваарь харах & Заал, огноо сонгох & 16 цагийн үе (08:00--24:00) харагдах & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
 \hline
-4 & Цагийн хуваарь & Заал, огноо сонгох & 08:00–00:00 цагийн 16 слот харагдах & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
+4 & Цаг захиалах, DBK код авах & Заал, огноо, цаг сонгож баталгаажуулах & DBK-xxxxx кодтой захиалга үүсэх & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
 \hline
-5 & Захиалга үүсгэх & Заал, огноо, цаг сонгож баталгаажуулах & DBK-xxxxx кодтой захиалга үүсэх & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
+5 & Давхардал хориглох & Захиалагдсан цагт дахин захиалах & ``Уг цаг авагдсан байна'' алдаа гарах & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
 \hline
-6 & Давхардал & Захиалагдсан цагт дахин захиалах & ``Уг цаг авагдсан байна'' алдаа гарах & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
+6 & Захиалга цуцлах & Идэвхтэй захиалгыг цуцлах & Статус \code{cancelled} болж шинэчлэгдэх & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
 \hline
-7 & Цуцлах & Идэвхтэй захиалгыг цуцлах & Статус \code{cancelled} болж шинэчлэгдэх & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
+7 & Захиалгын түүх харах & Захиалгууд tab руу орох & Захиалга статусаар шүүгдэж харагдах & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
 \hline
-8 & Захиалгын түүх & Захиалгууд tab руу орох & Захиалга статусаар шүүгдэж харагдах & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
+8 & Локал мэдэгдэл авах & Захиалга хийж хүлээх & Захиалгаас 1 цагийн өмнө мэдэгдэл ирэх & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
 \hline
-9 & Локал мэдэгдэл & Захиалга хийж 1 цаг хүлээх & Захиалгын өмнө мэдэгдэл ирэх & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
+9 & AI чатбот & ``Ямар заалнууд байна вэ?'' асуух & Монгол хэлээр заалнуудын жагсаалт ирэх & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
 \hline
-10 & AI чатбот & ``Ямар заалнууд байна вэ?'' асуух & Монгол хэлээр заалнуудын жагсаалт ирэх & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
+10 & Тогтмол захиалга & fixed\_bookings цагийг шалгах & Тэр цагийн үе хаагдсан байдлаар харагдах & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
 \hline
 \end{longtable}
 
-\subsection{Байгууллагын тогтмол захиалгын туршилт}
+\noindent{\footnotesize Эх: Зохиогчийн боловсруулалт}
 
-Засгийн газрын байгууллагуудын долоо хоногт давтагдах захиалгыг \code{fixed\_bookings} цуглуулгаас уншиж цагийн хуваарьт тусгадаг. Энэ функцийг дараахи байдлаар шалгасан:
-
-Тогтмол захиалгатай цаг нь нил ягаан өнгөөр тэмдэглэгдэж ``Гэрээт'' гэсэн шошго харагдсан. Тэр цагт хэрэглэгч захиалга хийхийг оролдоход товч дарагдахгүй хаагддаг нь зөв ажилласан. Цаг хуваарийн дэлгэц нэг харагдахуйц байж байгаа нь туршилтын явцад сайн тал болж ажиглагдсан.
-
-%-------------------------------------------------------------------------------
-
-\section{Нэгтгэлийн туршилт}
-
-Flutter клиент, Node.js бэкэнд, Firebase гурвын хоорондын холбоосыг дөрвөн тохиолдлоор шалгасан.
+Системийн гурван бүрэлдэхүүн хэсгийн хоорондын нэгтгэлийн туршилтыг дараах хүснэгтэд харуулав.
 
 \begin{table}[h]
 \centering
@@ -80,182 +208,100 @@ Flutter клиент, Node.js бэкэнд, Firebase гурвын хооронд
 \hline
 \textbf{\#} & \textbf{Тайлбар} & \textbf{Холбоос} & \textbf{Үр дүн} \\
 \hline
-1 & Захиалга үүсгэхэд API дуудаж, Firestore-д хадгалагдах & Flutter $\rightarrow$ EC2 $\rightarrow$ Firestore & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
+1 & Захиалга үүсгэхэд API дуудаж Firestore-д хадгалагдах & Flutter→EC2→Firestore & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
 \hline
-2 & Email бүртгэлийн дараа Firebase Auth UID үүсгэж, EC2 auth endpoint-оор баталгаажуулах код илгээгдэх & Flutter $\rightarrow$ Firebase Auth $\rightarrow$ EC2 $\rightarrow$ Gmail SMTP & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
+2 & Email бүртгэлийн дараа баталгаажуулах код илгээгдэх & Flutter→Firebase Auth→EC2→Gmail & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
 \hline
-3 & \code{backend/} хавтаст push хийхэд Docker build, ECR push, EC2 deploy автоматаар явагдах & GitHub $\rightarrow$ ECR $\rightarrow$ EC2 & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
+3 & Backend-д push хийхэд Docker build, ECR push, EC2 deploy автоматаар явагдах & GitHub→ECR→EC2 & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
 \hline
-4 & AI чатботын хүсэлт EC2 дамжин Groq API-д хүрч хариулт ирэх & Flutter $\rightarrow$ EC2 $\rightarrow$ Groq & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
+4 & AI чатботын хүсэлт EC2 дамжин Groq API-д хүрч хариулт ирэх & Flutter→EC2→Groq & \textcolor{green!60!black}{\textbf{Тэнцсэн}} \\
 \hline
-\end{tabularx}
+\end{tabularx}\\[4pt]
+{\footnotesize Эх: Зохиогчийн боловсруулалт}
 \end{table}
 
-3 дугаар тохиолдолд GitHub Actions-ийн workflow дотор \code{ssh-action} нь CRLF мөрийн төгсгөлтэй SSH түлхүүрт алдаа гаргаж байсан тул \code{printf} командыг ашиглан засварлах шаардлага гарсан. Хожим CI/CD хоолой тасралтгүй ажиллаж байгааг 5 удаагийн дараалсан push-ээр баталгаажуулсан.
+3 дугаар тохиолдолд GitHub Actions-ийн \code{ssh-action} нь CRLF мөрийн төгсгөлтэй SSH түлхүүрт алдаа гаргаж байсан тул \code{printf} командыг ашиглан засварлав. Хожим CI/CD хоолой тасралтгүй ажиллаж байгааг 5 дараалсан push-ээр баталгаажуулсан.
 
-%-------------------------------------------------------------------------------
+\subsection{Гүйцэтгэлийн хэмжилт ба хэрэглэхэд хялбар байдал}
 
-\section{Гүйцэтгэлийн туршилт}
-
-\subsection{Хариу цагийн хэмжилт}
-
-Системийн үндсэн үйлдэл бүрийн хариу цагийг 10 удаа давтан хэмжиж дунджийг гаргасан. Туршилтыг 4G LTE сүлжээн дээр хийсэн.
+Системийн үндсэн үйлдэл бүрийн хариу цагийг 10 удаа давтан хэмжиж дунджийг гаргасан. Туршилтыг 4G LTE сүлжээн дээр хийсэн бөгөөд хэмжилтийн бүх үзүүлэлт 2.1 хэсэгт тавьсан функциональ бус шаардлагын хязгаарыг хангасан.
 
 \begin{table}[h]
 \centering
-\caption{Системийн хариу цагийн хэмжилт (секунд)}
+\caption{Системийн хариу цагийн хэмжилт (секунд) болон шаардлагатай харьцуулалт}
 \label{tab:performance}
 \begin{tabularx}{\textwidth}{|X|p{2cm}|p{2cm}|p{2cm}|p{2cm}|}
 \hline
 \textbf{Хэмжигдэхүүн} & \textbf{Дундаж} & \textbf{Бага} & \textbf{Их} & \textbf{Шаардлага} \\
 \hline
-Апп анх ачаалах & 2.3 & 2.1 & 2.8 & < 3.0 \\
+Апп анх ачаалах & 2.3 & 2.1 & 2.8 & < 3.0 с \\
 \hline
-Firestore хүсэлт & 0.6 & 0.4 & 0.9 & < 2.0 \\
+Firestore хүсэлт & 0.6 & 0.4 & 0.9 & < 2.0 с \\
 \hline
-EC2 API хариулт & 0.8 & 0.6 & 1.2 & < 2.0 \\
+EC2 API хариулт & 0.8 & 0.6 & 1.2 & < 2.0 с \\
 \hline
-Захиалга үүсгэх & 1.1 & 0.9 & 1.5 & < 2.0 \\
+Захиалга үүсгэх & 1.1 & 0.9 & 1.5 & < 2.0 с \\
 \hline
-Groq Llama хариулт & 0.9 & 0.7 & 1.3 & < 5.0 \\
+Groq Llama хариулт & 0.9 & 0.7 & 1.3 & < 5.0 с \\
 \hline
-Claude Haiku хариулт & 1.4 & 1.1 & 2.0 & < 5.0 \\
+Claude Haiku хариулт & 1.4 & 1.1 & 2.0 & < 5.0 с \\
 \hline
-\end{tabularx}
+\end{tabularx}\\[4pt]
+{\footnotesize Эх: Зохиогчийн боловсруулалт}
 \end{table}
 
-Апп анх ачаалах үед Firebase SDK болон локал мэдэгдлийн инициализаци давхар явагддаг тул 2.3 секунд зарцуулагдсан. Энэ нь шаардлагын 3.0 секундын доор байгаа боловч цаашид \code{lazy loading} хэрэглэвэл 1.5 секунд хүртэл буурах боломжтой гэж үзэж байна.
+Апп анх ачаалах үед Firebase SDK болон локал мэдэгдлийн инициализаци давхар явагддаг тул 2.3 секунд зарцуулагдсан. Энэ нь шаардлагын 3.0 секундын доор байна. 15 минут тутмын cron ажлыг шалгахын тулд дуусах цаг нь өнгөрсөн захиалга Firestore-д гараар бүртгэн, ажлын дараагийн гүйцэтгэлийг хүлээсэн. 15 минутын дараа захиалгын статус \code{upcoming}-аас \code{completed} болж шинэчлэгдсэн болохыг Firebase Console дээр баталгаажуулсан.
 
-Groq болон Claude хоёрын хариу цагийг харьцуулахад Groq-ын загвар 0.5 секунд хурдан байсан нь API-ийн дэд бүтцийн ялгаатай холбоотой.
-
-\subsection{Cron ажлын туршилт}
-
-Бэкэнд дэх 15 минут тутмын cron ажлыг шалгахын тулд дуусах цаг нь өнгөрсөн захиалга Firestore-д гараар бүртгэн, ажлын дараагийн гүйцэтгэлийг хүлээсэн. 15 минутын дараа тухайн захиалгын статус \code{upcoming} байснаас \code{completed} болж, \code{completedAt} талбарт Монголын UTC+8 цаг зөв бичигдсэн болохыг Firebase Console дээр шалгасан.
-
-%-------------------------------------------------------------------------------
-
-\section{Хэрэглэхэд хялбар байдлын үнэлгээ}
-
-\subsection{Хэрэглэгчийн туршилт}
-
-ӨТДС-ийн 5 оюутан болон Даланзадгад хотын 3 иргэн — нийт 8 хүнд аппыг танилцуулж, 5 даалгавар гүйцэтгүүлсэн:
-
-\begin{enumerate}
-    \item Email хаяг болон нууц үгээр бүртгүүлж, баталгаажуулах кодоо оруулан нэвтрэх;
-    \item Сагсан бөмбөгийн заал хайж олох;
-    \item Маргаашийн 14:00 цагт захиалга хийх;
-    \item Захиалгаа захиалгын дэлгэцэд харах;
-    \item AI чатботоос заалнуудын үнийг асуух.
-\end{enumerate}
+ӨТДС-ийн 5 оюутан болон Даланзадгад хотын 3 иргэн нийт 8 хүнд аппыг танилцуулж 5 даалгавар гүйцэтгүүлсэн: email бүртгүүлэх, заал хайх, захиалга хийх, захиалга харах, AI чатботоос асуух. Үр дүнг доорх хүснэгтэд харуулав.
 
 \begin{table}[h]
 \centering
-\caption{Хэрэглэхэд хялбар байдлын үнэлгээ}
+\caption{Хэрэглэхэд хялбар байдлын үнэлгээний үр дүн}
 \label{tab:usability}
 \begin{tabularx}{\textwidth}{|X|p{2.8cm}|p{2.5cm}|p{2.8cm}|}
 \hline
 \textbf{Даалгавар} & \textbf{Амжилттай} & \textbf{Дундаж хугацаа} & \textbf{Тэмдэглэл} \\
 \hline
-Email бүртгэл/нэвтрэх & 8/8 & 55 сек & Баталгаажуулах код email-д ирэх хугацаа 3–8 сек \\
+Email бүртгэл/нэвтрэх & 8/8 & 55 сек & Баталгаажуулах код 3--8 сек \\
 \hline
-Заал хайх & 8/8 & 20 сек & Хайлтын функц хурдан ажилласан \\
+Заал хайх & 8/8 & 20 сек & Нүүр дэлгэц шууд ачаалагдсан \\
 \hline
 Захиалга хийх & 7/8 & 1 мин 15 сек & 1 хүн ``Захиалах'' товчийг эхэнд олоогүй \\
 \hline
 Захиалга харах & 8/8 & 10 сек & Маш хялбар \\
 \hline
-AI чатбот & 8/8 & 35 сек & Монгол хэлээр асуух хялбар байсан \\
+AI чатбот & 8/8 & 35 сек & Монгол хэлээр асуух хялбар \\
 \hline
-\end{tabularx}
+\end{tabularx}\\[4pt]
+{\footnotesize Эх: Зохиогчийн боловсруулалт}
 \end{table}
 
-Захиалга хийх даалгаварт нэг оролцогч заалны картан дээрх ``Захиалах'' товчийг нүүр дэлгэцэд харахдаа анзаараагүй, шууд дэлгэцийг дарахыг оролдсон байна. Навигацийн логик ойлгомжтой боловч товчны байрлалыг арай тодруулах нь зүйтэй гэсэн дүгнэлтэд хүрсэн.
+Дизайн, навигаци, захиалгын процесс, мэдэгдэл, AI чатботын ашигтай байдлыг 1--5 оноогоор үнэлүүлсэн дүнд нийт дундаж оноо \textbf{4.3/5.0} гарсан. Захиалгын процессийн оноо 4.1 харьцангуй бага байсан нь ``Захиалах'' товчийг олоход бага зэрэг хугацаа зарцуулагдсантай холбоотой. Цаашид товчны харагдацыг тодруулах замаар сайжруулах боломжтой. Даланзадгад хотын иргэдийн бүгд захиалга хийх, цуцлах үйлдлийг хугацаандаа зөв хийсэн нь систем орон нутгийн хэрэглэгчдэд тохирсон болохыг харуулсан.
 
-Даланзадгад хотын иргэд апп-г анх удаа ашиглаж байгаа хэдий ч захиалга хийх, цуцлах үйлдлийг хугацаандаа зөв хийсэн нь систем орон нутгийн хэрэглэгчдэд тохирсон болохыг харуулсан.
+Аюулгүй байдлын шалгалтын хувьд Firebase Auth-ийн хамгаалалт (хэт олон оролдлого хориглох, 10 минутын код хугацаа), API түлхүүрийн нууцлал (GitHub Secrets + EC2 \code{.env}), Firestore Security Rules (\code{bookings}-д зөвхөн нэвтэрсэн хэрэглэгч), өгөгдлийн тусгаарлалт (хэрэглэгч зөвхөн өөрийн UID-тэй захиалгыг харах) зэрэг 5 шалгуурын 4 нь бүрэн хангасан. Нэг шалгуур (HTTP → HTTPS) хэсэгчлэн хангасан бөгөөд цаашдын хөгжлийн шатанд SSL нэмэх шаардлагатай.
 
-\subsection{UI/UX үнэлгээ}
+\subsection{Туршилтын нийт дүн}
 
-Туршигчдаас апп-ын дизайн, ашиглахад хялбар байдлыг 1–5 оноогоор дүгнүүлсэн:
+Нийт туршилтын тохиолдлын хамрах хүрээг доорх хүснэгтэд нэгтгэн харуулав.
 
 \begin{table}[h]
 \centering
-\caption{UI/UX үнэлгээ (1–5 шкал)}
-\label{tab:uiux}
-\begin{tabularx}{\textwidth}{|X|p{3cm}|}
-\hline
-\textbf{Шалгуур} & \textbf{Дундаж оноо} \\
-\hline
-Дизайн, өнгө, фонт & 4.5 / 5.0 \\
-\hline
-Навигацийн тодорхой байдал & 4.3 / 5.0 \\
-\hline
-Захиалгын процессийн энгийн байдал & 4.1 / 5.0 \\
-\hline
-Мэдэгдлийн хэрэгцээт байдал & 4.4 / 5.0 \\
-\hline
-AI чатботын ашигтай байдал & 4.2 / 5.0 \\
-\hline
-\textbf{Нийт дундаж} & \textbf{4.3 / 5.0} \\
-\hline
-\end{tabularx}
-\end{table}
-
-Захиалгын процессийн оноо харьцангуй бага (4.1) байсан нь ``Захиалах'' товчийг олоход бага зэрэг хугацаа зарцуулагдсантай холбоотой гэж үзэв. Цаашид товчны харагдац сайжруулах замаар энэ үзүүлэлтийг нэмэгдүүлэх боломжтой. AI чатботын тухайд хэрэглэгчид ``Ямар ч асуулт асууж болдог'' хэмээн эерэгээр хүлээж авсан.
-
-%-------------------------------------------------------------------------------
-
-\section{Аюулгүй байдлын шалгалт}
-
-Системийн аюулгүй байдлын тохиргоонуудыг OWASP Mobile Security Testing Guide-ийн үндсэн заалтуудыг лавлан шалгасан.
-
-\begin{table}[h]
-\centering
-\caption{Аюулгүй байдлын шалгалтын үр дүн}
-\label{tab:security}
-\begin{tabularx}{\textwidth}{|p{3.5cm}|X|p{2.5cm}|}
-\hline
-\textbf{Шалгуур} & \textbf{Хэрэгжилт ба үр дүн} & \textbf{Дүгнэлт} \\
-\hline
-Firebase Auth хамгаалалт & Нэг email-д хэт олон оролдлогыг автоматаар хориглодог; 6 оронтой код 10 минутын дараа хүчингүй болно & \textcolor{green!60!black}{\textbf{Хангасан}} \\
-\hline
-API түлхүүрийн нууцлал & AWS, Groq, Anthropic-ийн API нууцлалыг GitHub Secrets + EC2 \code{.env}-д хадгалж, Flutter кодод нэг ч газар задраагүй & \textcolor{green!60!black}{\textbf{Хангасан}} \\
-\hline
-Firestore Security Rules & \code{bookings} collection-д зөвхөн нэвтэрсэн хэрэглэгч бичих эрхтэй; Firebase Emulator-оор шалгасан & \textcolor{green!60!black}{\textbf{Хангасан}} \\
-\hline
-Өгөгдлийн тусгаарлалт & Хэрэглэгч зөвхөн өөрийн UID-тэй захиалгыг харах боломжтой (Firestore Rules дүрмээр) & \textcolor{green!60!black}{\textbf{Хангасан}} \\
-\hline
-HTTP/HTTPS & Flutter апп $\leftrightarrow$ EC2 холболт HTTP дээр явагддаг; \code{usesCleartextTraffic} тохиргоотой. Цаашид SSL нэмэх шаардлагатай & \textcolor{orange!80!black}{\textbf{Хэсэгчлэн}} \\
-\hline
-Email verification rollback & Nodemailer алдаагаа гарсан тохиолдолд Firebase Auth хэрэглэгчийг устгаж, дахин оролдох боломж олгодог & \textcolor{green!60!black}{\textbf{Хангасан}} \\
-\hline
-\end{tabularx}
-\end{table}
-
-Аюулгүй байдлын 5 шалгуурын 4 нь бүрэн хангасан. HTTP-ийн асуудал нь цаашдын хөгжүүлэлтэд SSL/HTTPS нэмэх замаар шийдвэрлэгдэх боломжтой бөгөөд энэ нь продакшн орчинд заавал хэрэгжүүлэх шаардлагатай.
-
-%-------------------------------------------------------------------------------
-
-\section{Туршилтын нэгтгэсэн дүн}
-
-Нийт 20 туршилтын тохиолдлыг гүйцэтгэсэн бөгөөд функциональ болон нэгтгэлийн туршилт бүрэн тэнцсэн. Гүйцэтгэлийн хэмжилтийн бүх үзүүлэлт тавьсан шаардлагын хязгаарыг хангасан.
-
-\begin{table}[h]
-\centering
-\caption{Туршилтын нийт үр дүн}
+\caption{Туршилтын нийт үр дүн --- шаардлагатай харьцуулалт}
 \label{tab:test_summary}
 \begin{tabularx}{\textwidth}{|X|p{2.5cm}|p{2.5cm}|p{2.5cm}|}
 \hline
 \textbf{Туршилтын төрөл} & \textbf{Нийт} & \textbf{Тэнцсэн} & \textbf{Хувь} \\
 \hline
-Функциональ & 10 & 10 & 100\% \\
+Функциональ (шаардлага бүрт нэг тохиолдол) & 10 & 10 & 100\% \\
 \hline
-Нэгтгэлийн & 4 & 4 & 100\% \\
+Нэгтгэлийн (бүрэлдэхүүн хоорондын) & 4 & 4 & 100\% \\
 \hline
-Гүйцэтгэлийн & 6 & 6 & 100\% \\
+Гүйцэтгэлийн (хариу цагийн хязгаар) & 6 & 6 & 100\% \\
 \hline
 \textbf{Нийт} & \textbf{20} & \textbf{20} & \textbf{100\%} \\
 \hline
-\end{tabularx}
+\end{tabularx}\\[4pt]
+{\footnotesize Эх: Зохиогчийн боловсруулалт}
 \end{table}
 
-Туршилтын явцад нэг функциональ алдаа байгаагүй хэдий ч хэрэглэгчийн туршилтаас гарч ирсэн хоёр сайжруулах саналыг цаашдын хөгжүүлэлтэд оруулах зорилтот болгосон: захиалгын товчны харагдацыг тодруулах, EC2-ийн холболтод SSL нэмэх. Хэрэглэхэд хялбар байдлын үнэлгээний нийт дундаж оноо \textbf{4.3/5.0} болж, систем нь Даланзадгад хотын иргэдэд ашиглахад тохиромжтой болохоо харуулсан.
+Функциональ туршилт нь 2.1 хэсэгт тодорхойлсон шаардлага бүрийг тусдаа тохиолдлоор шалгасан бөгөөд бүгд амжилттай давсан. Гүйцэтгэлийн хэмжилтийн бүх үзүүлэлт функциональ бус шаардлагын хязгаарыг хангасан. Хэрэглэхэд хялбар байдлын нийт дундаж оноо 4.3/5.0 нь систем нь орон нутгийн иргэдэд тохиромжтой болохоо харуулсан. Туршилтын явцад нэг функциональ алдаа байгаагүй хэдий ч хоёр сайжруулах санал гарсан: захиалгын товчны харагдацыг тодруулах, EC2-ийн холболтод SSL нэмэх. Эдгээрийг цаашдын хөгжлийн шатанд оруулах зорилтот болгосон.
