@@ -5,30 +5,18 @@
 \contentsline {chapter}{Товчилсон үгс}{iv}{table.0.1}%
 \contentsline {chapter}{Удиртгал}{viii}{chapter*.7}%
 \contentsline {chapter}{\numberline {1}ОНОЛ БА ТЕХНОЛОГИЙН СУДАЛГАА}{1}{chapter.9}%
-\contentsline {section}{\numberline {1.1}Мобайл хөгжүүлэлтийн технологи}{1}{section.10}%
-\contentsline {section}{\numberline {1.2}Бэкэнд хөгжүүлэлтийн технологи}{2}{section.12}%
-\contentsline {section}{\numberline {1.3}Үүлэн орчин ба автоматжуулалт}{3}{section.14}%
-\contentsline {chapter}{\numberline {2}СИСТЕМИЙН ЗАГВАРЧЛАЛ БА ХӨГЖҮҮЛЭЛТ}{6}{chapter.16}%
-\contentsline {section}{\numberline {2.1}Системийн шаардлага ба загварчлал}{6}{section.17}%
-\contentsline {subsection}{\numberline {2.1.1}Функциональ болон функциональ бус шаардлага}{6}{subsection.18}%
-\contentsline {subsection}{\numberline {2.1.2}UML Диаграммууд}{6}{subsection.20}%
-\contentsline {subsection}{\numberline {2.1.3}Системийн архитектур}{7}{subsection.25}%
-\contentsline {section}{\numberline {2.2}Frontend хөгжүүлэлт}{7}{section.27}%
-\contentsline {subsection}{\numberline {2.2.1}Дизайн систем ба навигаци}{7}{subsection.28}%
-\contentsline {subsection}{\numberline {2.2.2}Нэвтрэлт болон цаг захиалгын хэрэгжүүлэлт}{11}{subsection.73}%
-\contentsline {section}{\numberline {2.3}Backend хөгжүүлэлт}{13}{section.114}%
-\contentsline {subsection}{\numberline {2.3.1}Express.js API ба email баталгаажуулалт}{13}{subsection.115}%
-\contentsline {subsection}{\numberline {2.3.2}AI чатбот болон cron ажил}{15}{subsection.148}%
-\contentsline {section}{\numberline {2.4}Өгөгдлийн сан}{16}{section.181}%
-\contentsline {chapter}{\numberline {3}ХЭРЭГЖҮҮЛЭЛТ}{18}{chapter.183}%
-\contentsline {section}{\numberline {3.1}Үүлэн байршуулалт}{18}{section.184}%
-\contentsline {subsection}{\numberline {3.1.1}Docker контейнержуулалт ба AWS EC2}{18}{subsection.185}%
-\contentsline {subsection}{\numberline {3.1.2}GitHub Actions CI/CD хоолой}{19}{subsection.195}%
-\contentsline {section}{\numberline {3.2}Туршилт ба үнэлгээ}{20}{section.241}%
-\contentsline {subsection}{\numberline {3.2.1}Функциональ туршилт}{20}{subsection.242}%
-\contentsline {subsection}{\numberline {3.2.2}Гүйцэтгэлийн хэмжилт ба хэрэглэхэд хялбар байдал}{21}{subsection.244}%
-\contentsline {subsection}{\numberline {3.2.3}Туршилтын нийт дүн}{22}{subsection.247}%
-\contentsline {chapter}{Дүгнэлт}{24}{table.caption.248}%
-\contentsline {chapter}{\numberline {A}Аппликейшний дэлгэцийн зураглал}{26}{appendix.258}%
-\contentsline {chapter}{\numberline {B}Үндсэн тохиргооны файлууд}{29}{appendix.263}%
-\contentsline {chapter}{Ном зүй}{32}{lstnumber.354}%
+\contentsline {section}{\numberline {1.1}Мобайл технологи}{1}{section.10}%
+\contentsline {section}{\numberline {1.2}Бэкэнд технологи}{2}{section.12}%
+\contentsline {section}{\numberline {1.3}Үүлэн технологи}{3}{section.14}%
+\contentsline {chapter}{\numberline {2}ПРОГРАМ ХАНГАМЖИЙН ЗАГВАРЧЛАЛ БА ХӨГЖҮҮЛЭЛТ}{5}{chapter.16}%
+\contentsline {section}{\numberline {2.1}Програмын шаардлага ба загварчлал}{5}{section.17}%
+\contentsline {section}{\numberline {2.2}Frontend хөгжүүлэлт}{7}{section.24}%
+\contentsline {section}{\numberline {2.3}Backend хөгжүүлэлт}{13}{section.121}%
+\contentsline {section}{\numberline {2.4}Өгөгдлийн сан}{15}{section.174}%
+\contentsline {chapter}{\numberline {3}ХЭРЭГЖҮҮЛЭЛТ}{17}{chapter.176}%
+\contentsline {section}{\numberline {3.1}Үүлэн байршуулалт}{17}{section.177}%
+\contentsline {section}{\numberline {3.2}Туршилт ба үнэлгээ}{19}{section.232}%
+\contentsline {chapter}{Дүгнэлт}{22}{figure.caption.234}%
+\contentsline {chapter}{\numberline {A}Аппликейшний дэлгэцийн зураглал}{24}{appendix.244}%
+\contentsline {chapter}{\numberline {B}Үндсэн тохиргооны файлууд}{27}{appendix.249}%
+\contentsline {chapter}{Ном зүй}{30}{lstnumber.340}%

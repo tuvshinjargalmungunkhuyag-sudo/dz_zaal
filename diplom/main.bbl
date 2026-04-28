@@ -390,6 +390,62 @@
       \verb https://pub.dev/packages/flutter_local_notifications
       \endverb
     \endentry
+    \entry{anthropic_doc}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=f431db65cea024a5f19eab835afefee2}{%
+           family={{Anthropic}},
+           familyi={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{f431db65cea024a5f19eab835afefee2}
+      \strng{fullhash}{f431db65cea024a5f19eab835afefee2}
+      \strng{fullhashraw}{f431db65cea024a5f19eab835afefee2}
+      \strng{bibnamehash}{f431db65cea024a5f19eab835afefee2}
+      \strng{authorbibnamehash}{f431db65cea024a5f19eab835afefee2}
+      \strng{authornamehash}{f431db65cea024a5f19eab835afefee2}
+      \strng{authorfullhash}{f431db65cea024a5f19eab835afefee2}
+      \strng{authorfullhashraw}{f431db65cea024a5f19eab835afefee2}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Claude API Documentation — Anthropic}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://docs.anthropic.com
+      \endverb
+      \verb{url}
+      \verb https://docs.anthropic.com
+      \endverb
+    \endentry
+    \entry{groq_doc}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=e5435a111a13df2de27a12f988b73383}{%
+           family={{Groq Inc.}},
+           familyi={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{e5435a111a13df2de27a12f988b73383}
+      \strng{fullhash}{e5435a111a13df2de27a12f988b73383}
+      \strng{fullhashraw}{e5435a111a13df2de27a12f988b73383}
+      \strng{bibnamehash}{e5435a111a13df2de27a12f988b73383}
+      \strng{authorbibnamehash}{e5435a111a13df2de27a12f988b73383}
+      \strng{authornamehash}{e5435a111a13df2de27a12f988b73383}
+      \strng{authorfullhash}{e5435a111a13df2de27a12f988b73383}
+      \strng{authorfullhashraw}{e5435a111a13df2de27a12f988b73383}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Groq API Documentation — Fast AI Inference}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://console.groq.com/docs
+      \endverb
+      \verb{url}
+      \verb https://console.groq.com/docs
+      \endverb
+    \endentry
     \entry{nodejs_doc}{online}{}{}
       \name{author}{1}{}{%
         {{hash=263642944f6c498301458458c276f5f3}{%
@@ -550,8 +606,8 @@
       \strng{authorfullhash}{3eb2c1a57a8160029f036e3dcbf84bf1}
       \strng{authorfullhashraw}{3eb2c1a57a8160029f036e3dcbf84bf1}
       \field{extraname}{2}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Amazon Elastic Container Registry — Share and deploy container software}
@@ -578,8 +634,8 @@
       \strng{authornamehash}{b79b798b2812cfe1c1431894a617897d}
       \strng{authorfullhash}{b79b798b2812cfe1c1431894a617897d}
       \strng{authorfullhashraw}{b79b798b2812cfe1c1431894a617897d}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{GitHub Actions — Automate your workflow from idea to production}
@@ -590,62 +646,6 @@
       \endverb
       \verb{url}
       \verb https://docs.github.com/en/actions
-      \endverb
-    \endentry
-    \entry{anthropic_doc}{online}{}{}
-      \name{author}{1}{}{%
-        {{hash=f431db65cea024a5f19eab835afefee2}{%
-           family={{Anthropic}},
-           familyi={A\bibinitperiod}}}%
-      }
-      \strng{namehash}{f431db65cea024a5f19eab835afefee2}
-      \strng{fullhash}{f431db65cea024a5f19eab835afefee2}
-      \strng{fullhashraw}{f431db65cea024a5f19eab835afefee2}
-      \strng{bibnamehash}{f431db65cea024a5f19eab835afefee2}
-      \strng{authorbibnamehash}{f431db65cea024a5f19eab835afefee2}
-      \strng{authornamehash}{f431db65cea024a5f19eab835afefee2}
-      \strng{authorfullhash}{f431db65cea024a5f19eab835afefee2}
-      \strng{authorfullhashraw}{f431db65cea024a5f19eab835afefee2}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{title}{Claude API Documentation — Anthropic}
-      \field{year}{2024}
-      \field{dateera}{ce}
-      \verb{urlraw}
-      \verb https://docs.anthropic.com
-      \endverb
-      \verb{url}
-      \verb https://docs.anthropic.com
-      \endverb
-    \endentry
-    \entry{groq_doc}{online}{}{}
-      \name{author}{1}{}{%
-        {{hash=e5435a111a13df2de27a12f988b73383}{%
-           family={{Groq Inc.}},
-           familyi={G\bibinitperiod}}}%
-      }
-      \strng{namehash}{e5435a111a13df2de27a12f988b73383}
-      \strng{fullhash}{e5435a111a13df2de27a12f988b73383}
-      \strng{fullhashraw}{e5435a111a13df2de27a12f988b73383}
-      \strng{bibnamehash}{e5435a111a13df2de27a12f988b73383}
-      \strng{authorbibnamehash}{e5435a111a13df2de27a12f988b73383}
-      \strng{authornamehash}{e5435a111a13df2de27a12f988b73383}
-      \strng{authorfullhash}{e5435a111a13df2de27a12f988b73383}
-      \strng{authorfullhashraw}{e5435a111a13df2de27a12f988b73383}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{title}{Groq API Documentation — Fast AI Inference}
-      \field{year}{2024}
-      \field{dateera}{ce}
-      \verb{urlraw}
-      \verb https://console.groq.com/docs
-      \endverb
-      \verb{url}
-      \verb https://console.groq.com/docs
       \endverb
     \endentry
   \enddatalist
