@@ -65,7 +65,7 @@ export default function Users() {
                       <span>{u.name ?? '—'}</span>
                     </div>
                   </td>
-                  <td>{u.email}</td>
+                  <td>{u.email ?? '—'}</td>
                   <td>{u.phone ?? '—'}</td>
                   <td>{fmtDate(u.createdAt)}</td>
                 </tr>

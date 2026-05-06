@@ -50,20 +50,22 @@ router.get('/stats', async (req, res) => {
   }
 });
 
-// GET /api/admin/bookings?status=&venueId=&date=&limit=50
+// GET /api/admin/bookings?status=&venueId=&date=
+// orderBy+where on different fields requires composite index — sort in JS instead
 router.get('/bookings', async (req, res) => {
   try {
     const { status, venueId, date } = req.query;
-    let query = bookings.orderBy('createdAt', 'desc');
+    let query = bookings.limit(200);
 
-    if (status)  query = query.where('status', '==', status);
+    if (status)  query = query.where('status',  '==', status);
     if (venueId) query = query.where('venueId', '==', venueId);
     if (date)    query = query.where('dateKey', '==', date);
 
-    const snap = await query.limit(200).get();
+    const snap = await query.get();
     const result = snap.docs
       .map((d) => ({ id: d.id, ...d.data(), createdAt: d.data().createdAt?.toDate?.()?.toISOString() }))
-      .filter((b) => b.groupId == null || b.isGroupLeader === true);
+      .filter((b) => b.groupId == null || b.isGroupLeader === true)
+      .sort((a, b) => (b.createdAt ?? '') > (a.createdAt ?? '') ? 1 : -1);
 
     res.json(result);
   } catch (err) {
