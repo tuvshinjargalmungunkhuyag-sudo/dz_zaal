@@ -4,19 +4,22 @@
 \contentsline {chapter}{Талархал}{iii}{section*.3}%
 \contentsline {chapter}{Товчилсон үгс}{iv}{table.0.1}%
 \contentsline {chapter}{Удиртгал}{viii}{chapter*.7}%
-\contentsline {chapter}{\numberline {1}ОНОЛ БА ТЕХНОЛОГИЙН СУДАЛГАА}{1}{chapter.9}%
-\contentsline {section}{\numberline {1.1}Мобайл технологи}{1}{section.10}%
-\contentsline {section}{\numberline {1.2}Бэкэнд технологи}{2}{section.12}%
-\contentsline {section}{\numberline {1.3}Үүлэн технологи}{3}{section.14}%
-\contentsline {chapter}{\numberline {2}ПРОГРАМ ХАНГАМЖИЙН ЗАГВАРЧЛАЛ БА ХӨГЖҮҮЛЭЛТ}{5}{chapter.16}%
-\contentsline {section}{\numberline {2.1}Програмын шаардлага ба загварчлал}{5}{section.17}%
-\contentsline {section}{\numberline {2.2}Frontend хөгжүүлэлт}{7}{section.24}%
-\contentsline {section}{\numberline {2.3}Backend хөгжүүлэлт}{13}{section.121}%
-\contentsline {section}{\numberline {2.4}Өгөгдлийн сан}{15}{section.174}%
-\contentsline {chapter}{\numberline {3}ХЭРЭГЖҮҮЛЭЛТ}{17}{chapter.176}%
-\contentsline {section}{\numberline {3.1}Үүлэн байршуулалт}{17}{section.177}%
-\contentsline {section}{\numberline {3.2}Туршилт ба үнэлгээ}{19}{section.232}%
-\contentsline {chapter}{Дүгнэлт}{22}{figure.caption.234}%
-\contentsline {chapter}{\numberline {A}Аппликейшний дэлгэцийн зураглал}{24}{appendix.244}%
-\contentsline {chapter}{\numberline {B}Үндсэн тохиргооны файлууд}{27}{appendix.249}%
-\contentsline {chapter}{Ном зүй}{30}{lstnumber.340}%
+\contentsline {chapter}{\numberline {1}ОНОЛ БА ТЕХНОЛОГЫН СУДАЛГАА}{1}{chapter.9}%
+\contentsline {section}{\numberline {1.1}Мобайл аппликейшн хөгжүүлэлт}{1}{section.10}%
+\contentsline {section}{\numberline {1.2}Үүлэн технологи}{3}{section.12}%
+\contentsline {section}{\numberline {1.3}Backend (бэкэнд) технологи}{4}{section.13}%
+\contentsline {section}{Бүлгийн нэгтгэсэн технологийн стек}{6}{table.caption.14}%
+\contentsline {chapter}{\numberline {2}ПРОГРАМ ХАНГАМЖИЙН ЗАГВАРЧЛАЛ БА ХӨГЖҮҮЛЭЛТ}{7}{chapter.16}%
+\contentsline {section}{\numberline {2.1}Програмын шаардлага ба загварчлал}{7}{section.17}%
+\contentsline {section}{\numberline {2.2}Frontend хөгжүүлэлт}{9}{section.24}%
+\contentsline {section}{\numberline {2.3}Backend хөгжүүлэлт}{12}{section.29}%
+\contentsline {section}{\numberline {2.4}Өгөгдлийн сан}{13}{section.30}%
+\contentsline {chapter}{\numberline {3}ХЭРЭГЖҮҮЛЭЛТ}{17}{chapter.32}%
+\contentsline {section}{\numberline {3.1}Үүлэн байршуулалт}{17}{section.33}%
+\contentsline {section}{\numberline {3.2}Email баталгаажуулалтын хэрэгжүүлэлт}{19}{section.88}%
+\contentsline {section}{\numberline {3.3}Туршилт ба үнэлгээ}{21}{section.111}%
+\contentsline {chapter}{Дүгнэлт}{23}{figure.caption.113}%
+\contentsline {chapter}{\numberline {A}Аппликейшний дэлгэцийн зураглал}{25}{appendix.123}%
+\contentsline {chapter}{\numberline {B}Үндсэн тохиргооны файлууд}{28}{appendix.128}%
+\contentsline {chapter}{\numberline {C}Програмын үндсэн кодын блокууд}{31}{appendix.220}%
+\contentsline {chapter}{Ном зүй}{35}{lstnumber.342}%

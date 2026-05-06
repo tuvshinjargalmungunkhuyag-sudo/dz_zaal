@@ -4,6 +4,10 @@
 \label{Chapter4}
 \pagecolor{white}
 
+\noindent\textit{\textbf{Бүлгийн товч агуулга.} Энэ бүлэгт 2-р бүлэгт боловсруулсан системийг бодит үүлэн орчинд байршуулан, иргэдэд хүртээлтэй болгох хэрэгжүүлэлт болон туршилтын үр дүнг харуулна. 3.1 дэд бүлэгт Docker контейнержуулалт, AWS EC2 үүлэн байршуулалт, GitHub Actions CI/CD автоматжуулсан байршуулалтын ажиллагааг тайлбарлана. 3.2 дэд бүлэгт send-code болон verify-code endpoint-ууд, Nodemailer + Gmail SMTP-ийн бодит тохиргоо бүхий email баталгаажуулалтын хэрэгжүүлэлтийг харуулна. 3.3 дэд бүлэгт системийн функциональ туршилт, хариу цагийн гүйцэтгэлийн хэмжилт, давхардал хориглогчийн туршилтын үр дүнг нэгтгэн дүгнэнэ.}
+
+\bigskip
+
 %-------------------------------------------------------------------------------
 
 \section{Үүлэн байршуулалт}
@@ -153,6 +157,46 @@ CI/CD хоолойн дарааллыг доорх диаграммаар хар
 \caption{GitHub Actions CI/CD хоолойн дэлгэрэнгүй дарааллын диаграмм\\{\footnotesize Эх: Зохиогчийн боловсруулалт}}
 \label{fig:cicd}
 \end{figure}
+
+%-------------------------------------------------------------------------------
+
+\section{Email баталгаажуулалтын хэрэгжүүлэлт}
+
+Бүртгэлийн үе шатанд хэрэглэгчийн email хаягийн үнэн зөвийг баталгаажуулах нь системийн аюулгүй байдлыг хангах гол шалгуурын нэг юм. 2-р бүлэгт төлөвлөсөн \code{routes/auth.js} модулийн дотор send-code болон verify-code гэсэн хоёр endpoint-ыг бодит EC2 серверт байршуулсан. Энэ хэсэгт эдгээр endpoint-уудын бодит хэрэгжилт, Nodemailer ба Gmail SMTP-тэй холбогдсон байршуулалтын тохиргоо, баталгаажуулалтын төлөвийн өөрчлөлтийг тайлбарлана.
+
+\subsection*{Send-code endpoint --- Nodemailer + Gmail SMTP}
+
+Хэрэглэгч email болон нууц үгээр бүртгүүлсний дараа клиент апп \code{POST /api/auth/send-code} endpoint руу хүсэлт илгээдэг. Сервер 6 оронтой санамсаргүй тоон код үүсгэж, Firestore-ийн \code{email\_verifications} цуглуулгад \code{expiresAt} талбартайгаар 10 минутын хугацаатай хадгална. Дараа нь Nodemailer-ийн SMTP transporter-ээр Gmail-ийн \code{smtp.gmail.com:587} серверт холбогдож, тухайн код агуулсан HTML email-ийг хэрэглэгчийн хаяг руу илгээнэ. \code{EMAIL\_USER} болон \code{EMAIL\_PASS} (Google App Password) нь EC2 instance дээрх \code{.env} файлд хадгалагддаг тул кодын репозиторид задрахгүй.
+
+\begin{lstlisting}[language={}, caption={routes/auth.js --- Nodemailer ашиглан баталгаажуулах код илгээх}]
+router.post('/send-code', async (req, res) => {
+  const { email, uid } = req.body;
+  const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+  await db.collection('email_verifications').doc(uid).set({
+    code, email,
+    expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+  });
+
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com', port: 587,
+    auth: { user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS },
+  });
+  await transporter.sendMail({
+    from: `"Goviin Sport" <${process.env.EMAIL_USER}>`,
+    to: email, subject: 'Goviin Sport - Batalgaajuulakh kod',
+    html: `<h2>${code}</h2><p>10 minutiin dotoor huchintei</p>`,
+  });
+  res.json({ success: true });
+});
+\end{lstlisting}
+
+\subsection*{Verify-code endpoint ба бүртгэлийн төлөв}
+
+Хэрэглэгч хүлээн авсан 6 оронтой кодыг апп дотор оруулахад клиент \code{POST /api/auth/verify-code} endpoint руу uid болон код илгээнэ. Сервер \code{email\_verifications/\{uid\}} document-ийг уншиж, \code{expiresAt} цаг хүчинтэй эсэх, оруулсан кодын тохирох эсэхийг шалгана. Зөв тохиолдолд Firestore-ийн \code{users/\{uid\}} document-д \code{emailVerified: true} тэмдгийг тавьж, \code{email\_verifications} document-ийг устгана. Хугацаа хэтэрсэн эсвэл код буруу үед хэрэглэгч send-code-г дахин дуудаж шинэ код авах боломжтой.
+
+Бодит туршилтаар Gmail SMTP-ээр илгээгдсэн email хэрэглэгчийн inbox-д дунджаар 4--7 секундийн дотор хүрч ирсэн бөгөөд код шалгах хариу цаг 200~мс орчим байсан. Энэ үр дүн нь дараагийн \textit{Туршилт ба үнэлгээ} хэсэгт нэгтгэгдсэн API-ийн хариу цагийн хэмжилтэд тусгагдсан.
 
 %-------------------------------------------------------------------------------
 

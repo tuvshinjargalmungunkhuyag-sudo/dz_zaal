@@ -1,6 +1,169 @@
-\chapter{Хавсралтын нэр} % Main appendix title
-
-\label{AppendixC} % For referencing this appendix elsewhere, use \ref{AppendixA}
+\chapter{Програмын үндсэн кодын блокууд}
+\label{AppendixC}
 \pagecolor{white}
 
-Хавсралтыг эндээс эхэлж бичнэ. 
+Энэ хавсралтад 2-р бүлэгт тайлбарласан программ хангамжийн загварчлал ба хөгжүүлэлтэд ашигласан үндсэн кодын блокуудыг бүрэн эхээр нь нэгтгэн оруулав. Бүлэгт зөвхөн ишлэлээр хийсвэр зам нэмж тайлбарлан, бодит код энэ хавсралтад байрлана.
+
+%-------------------------------------------------------------------------------
+
+\section*{В.1 Flutter --- AppTheme класс (Material Design 3)}
+
+\begin{lstlisting}[language={}, caption={lib/theme/app\_theme.dart --- Дулаан говийн өнгөн схем}, label={lst:apptheme}]
+class AppTheme {
+  static const Color primary       = Color(0xFFEDE7DA);
+  static const Color secondary     = Color(0xFFD4700F);
+  static const Color accent        = Color(0xFFB85C08);
+  static const Color textPrimary   = Color(0xFF1A1208);
+
+  static ThemeData get lightTheme => ThemeData(
+    useMaterial3: true,
+    fontFamily: 'Montserrat',
+    brightness: Brightness.light,
+    scaffoldBackgroundColor: primary,
+    colorScheme: const ColorScheme.light(
+      primary:   secondary,
+      secondary: accent,
+    ),
+  );
+}
+\end{lstlisting}
+
+%-------------------------------------------------------------------------------
+
+\section*{В.2 Flutter --- BottomNavigationBar (4 tab навигаци)}
+
+\begin{lstlisting}[language={}, caption={lib/screens/main\_screen.dart --- үндсэн навигаци}, label={lst:bottomnav}]
+class _MainScreenState extends State<MainScreen> {
+  int _selectedIndex = 0;
+  final List<Widget> _screens = const [
+    HomeScreen(), BookingsScreen(),
+    ChatScreen(), ProfileScreen(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _screens[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) => setState(() => _selectedIndex = index),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: 'Bookings'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chat'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+        ],
+      ),
+    );
+  }
+}
+\end{lstlisting}
+
+%-------------------------------------------------------------------------------
+
+\section*{В.3 Flutter --- Firebase Email Authentication}
+
+\begin{lstlisting}[language={}, caption={lib/services/auth\_service.dart --- бүртгэлийн логик}, label={lst:auth}]
+Future<void> registerWithEmail(
+    String email, String password, String name) async {
+  final credential = await FirebaseAuth.instance
+      .createUserWithEmailAndPassword(
+        email: email, password: password);
+  final uid = credential.user!.uid;
+
+  await http.post(
+    Uri.parse(AppConfig.authEndpoint + '/send-code'),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({'email': email, 'uid': uid}),
+  );
+}
+\end{lstlisting}
+
+%-------------------------------------------------------------------------------
+
+\section*{В.4 Flutter --- Цагийн хуваарь ачаалах логик}
+
+\begin{lstlisting}[language={}, caption={lib/screens/booking\_screen.dart --- захиалагдсан цагийн үеийг тооцоолох}, label={lst:slots}]
+Future<void> _loadSlots(String venueId, String date) async {
+  final bookSnap = await FirebaseFirestore.instance
+      .collection('bookings')
+      .where('venueId', isEqualTo: venueId)
+      .where('date', isEqualTo: date)
+      .where('status', whereIn: ['upcoming', 'active'])
+      .get();
+
+  final weekday = DateTime.parse(date).weekday % 7;
+  final fixedSnap = await FirebaseFirestore.instance
+      .collection('fixed_bookings')
+      .where('venueId', isEqualTo: venueId)
+      .where('dayOfWeek', isEqualTo: weekday)
+      .where('isActive', isEqualTo: true)
+      .get();
+
+  final bookedSlots = {
+    ...bookSnap.docs.map((d) => d['timeSlot'] as String),
+    ...fixedSnap.docs.map((d) => d['timeSlot'] as String),
+  };
+  setState(() => _bookedSlots = bookedSlots);
+}
+\end{lstlisting}
+
+%-------------------------------------------------------------------------------
+
+\section*{В.5 Firebase Cloud Functions --- Claude Haiku AI chat endpoint}
+
+\begin{lstlisting}[language={}, caption={functions/index.js --- Anthropic Claude Haiku-тай холбогдох onCall функц}, label={lst:claude}]
+exports.chat = functions.https.onCall(async (data, context) => {
+  if (!context.auth) throw new functions.https.HttpsError(
+      'unauthenticated', 'Authentication required');
+  const client = new Anthropic({ apiKey: functions.config().anthropic.key });
+  const message = await client.messages.create({
+    model: 'claude-haiku-4-5', max_tokens: 512,
+    messages: [{ role: 'user', content: data.message }],
+    system: 'You are a sports hall booking assistant for Dalanzadgad city.',
+  });
+  return { reply: message.content[0].text };
+});
+\end{lstlisting}
+
+%-------------------------------------------------------------------------------
+
+\section*{В.6 Express.js --- үндсэн route тохиргоо (server.js)}
+
+\begin{lstlisting}[language={}, caption={backend/server.js --- Express middleware ба route модулиуд}, label={lst:server}]
+const express = require('express');
+const app     = express();
+app.use(express.json());
+app.use('/api/auth',     require('./routes/auth'));
+app.use('/api/chat',     require('./routes/chat'));
+app.use('/api/users',    require('./routes/users'));
+app.use('/api/bookings', require('./routes/bookings'));
+app.use('/api/schedule', require('./routes/schedule'));
+app.listen(3000, () => console.log('Server running on port 3000'));
+\end{lstlisting}
+
+%-------------------------------------------------------------------------------
+
+\section*{В.7 Backend --- Cron ажил (15 минут тутамд захиалга шинэчлэх)}
+
+\begin{lstlisting}[language={}, caption={backend/cron/update\_bookings.js --- node-cron schedule}, label={lst:cron}]
+cron.schedule('*/15 * * * *', async () => {
+  const now   = new Date();
+  const today = now.toISOString().split('T')[0];
+  const nowTime = now.getHours().toString().padStart(2,'0') + ':'
+                + now.getMinutes().toString().padStart(2,'0');
+  const snapshot = await admin.firestore()
+    .collection('bookings')
+    .where('status', '==', 'upcoming')
+    .where('dateKey', '<=', today).get();
+  const batch = admin.firestore().batch();
+  snapshot.docs.forEach(doc => {
+    const endTime = doc.data().timeSlotEnd;
+    if (doc.data().dateKey < today ||
+        (doc.data().dateKey === today && endTime <= nowTime)) {
+      batch.update(doc.ref, { status: 'completed' });
+    }
+  });
+  await batch.commit();
+});
+\end{lstlisting}
