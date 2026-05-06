@@ -1,7 +1,8 @@
 require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
-const OpenAI = require('openai');
+const cors    = require('cors');
+const path    = require('path');
+const OpenAI  = require('openai');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -86,6 +87,12 @@ app.post('/api/chat', async (req, res) => {
     res.status(500).json({ error: err.message || 'Серверийн алдаа гарлаа' });
   }
 });
+
+// ── Admin panel static files ───────────────────────────────────────────────
+app.use('/admin', express.static(path.join(__dirname, 'admin-dist')));
+app.get('/admin/*', (req, res) =>
+  res.sendFile(path.join(__dirname, 'admin-dist', 'index.html'))
+);
 
 // ── Health check ───────────────────────────────────────────────────────────
 app.get('/', (req, res) => {
