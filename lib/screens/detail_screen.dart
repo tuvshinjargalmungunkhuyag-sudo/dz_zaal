@@ -473,8 +473,7 @@ class _DetailScreenState extends State<DetailScreen> {
                               builder: (_) => ConfirmationScreen(
                                 venue: widget.venue,
                                 date: _selectedDate,
-                                startTime: _selectedSlot!.time,
-                                endTime: _selectedSlot!.endTime,
+                                selectedSlots: [_selectedSlot!],
                                 courtType: 'Бүтэн талбай',
                                 price: widget.venue.pricePerHour,
                               ),
