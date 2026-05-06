@@ -9,16 +9,27 @@ const STATUS_LABELS = {
   cancelled: { label: 'Цуцлагдсан',     color: '#ef4444' },
 };
 const VENUES = [
-  { id: '',                    name: 'Бүх заал',                          price: 0     },
-  { id: 'goviyn-arena',        name: 'Говийн Арена',                      price: 15000 },
-  { id: 'omnogovi-sport',      name: 'Өмнөговь Спорт Заал',               price: 12000 },
-  { id: 'goviyn-volleyball',   name: 'Говийн Волейбол Клуб',              price: 10000 },
-  { id: 'stadium-volleyball',  name: 'Стадионы Волейбол Заал',            price: 8000  },
-  { id: 'central-basketball',  name: 'Цэнтрийн Сагсан Бөмбөгийн Заал',   price: 18000 },
+  { id: '',  name: 'Бүх заал',              price: 0     },
+  { id: '1', name: 'Говийн Арена',          price: 15000 },
+  { id: '2', name: 'Өмнөговь Спорт Заал',  price: 12000 },
+  { id: '3', name: 'Стадионы Спорт Заал',  price: 8000  },
+  { id: '4', name: 'Цэнтрийн Спорт Заал',  price: 18000 },
 ];
 const TIMES = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00'];
 
 const EMPTY_FORM = { userEmail: '', userName: '', venueId: '', dateKey: '', startTime: '08:00', courtType: '' };
+
+// timeSlot нь зарим захиалгад зөвхөн "09:00" гэж хадгалагдсан тул нэг цаг нэмэн "09:00–10:00" болгоно
+function fmtSlot(b) {
+  if (b.startTime && b.endTime) return `${b.startTime}–${b.endTime}`;
+  const ts = b.timeSlot ?? '';
+  if (ts.includes('–') || ts.includes('-')) return ts;
+  if (/^\d{2}:\d{2}$/.test(ts)) {
+    const end = `${String(parseInt(ts) + 1).padStart(2, '0')}:00`;
+    return `${ts}–${end}`;
+  }
+  return ts || '—';
+}
 
 // ── CSV export ────────────────────────────────────────────────────────────────
 function exportCSV(bookings) {
@@ -29,7 +40,7 @@ function exportCSV(bookings) {
     b.userEmail ?? '',
     b.venueName ?? b.venueId ?? '',
     b.dateKey   ?? '',
-    b.timeSlot  ?? `${b.startTime}-${b.endTime}`,
+    fmtSlot(b),
     b.price     ?? '',
     STATUS_LABELS[b.status]?.label ?? b.status ?? '',
     b.createdAt ? b.createdAt.slice(0, 16) : '',
@@ -227,7 +238,7 @@ export default function Bookings() {
                     </td>
                     <td>{b.venueName ?? b.venueId}</td>
                     <td>{b.dateKey}</td>
-                    <td>{b.timeSlot ?? `${b.startTime}–${b.endTime}`}</td>
+                    <td>{fmtSlot(b)}</td>
                     <td>{b.price}</td>
                     <td>
                       <span className="badge" style={{ background: st.color + '22', color: st.color }}>

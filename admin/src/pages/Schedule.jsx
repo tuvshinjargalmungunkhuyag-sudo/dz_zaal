@@ -2,11 +2,10 @@ import { useEffect, useState } from 'react';
 import { getBookings } from '../api';
 
 const VENUES = [
-  { id: 'goviyn-arena',       name: 'Говийн Арена',       short: 'Говийн\nАрена'       },
-  { id: 'omnogovi-sport',     name: 'Өмнөговь Спорт',     short: 'Өмнөговь\nСпорт'     },
-  { id: 'goviyn-volleyball',  name: 'Говийн Волейбол',    short: 'Говийн\nВолейбол'    },
-  { id: 'stadium-volleyball', name: 'Стадионы Волейбол',  short: 'Стадионы\nВолейбол'  },
-  { id: 'central-basketball', name: 'Цэнтрийн Сагсан',   short: 'Цэнтрийн\nСагсан'   },
+  { id: '1', name: 'Говийн Арена'         },
+  { id: '2', name: 'Өмнөговь Спорт Заал' },
+  { id: '3', name: 'Стадионы Спорт Заал' },
+  { id: '4', name: 'Цэнтрийн Спорт Заал' },
 ];
 const TIMES = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00'];
 
