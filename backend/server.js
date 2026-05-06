@@ -33,11 +33,13 @@ const authRouter     = require('./routes/auth');
 const usersRouter    = require('./routes/users');
 const bookingsRouter = require('./routes/bookings');
 const scheduleRouter = require('./routes/schedule');
+const adminRouter    = require('./routes/admin');
 
 app.use('/api/auth',     authRouter);
 app.use('/api/users',    usersRouter);
 app.use('/api/bookings', bookingsRouter);
 app.use('/api/schedule', scheduleRouter);
+app.use('/api/admin',    adminRouter);
 
 // ── AI Chat ────────────────────────────────────────────────────────────────
 
