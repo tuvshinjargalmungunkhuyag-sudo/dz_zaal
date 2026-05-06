@@ -101,6 +101,59 @@ router.patch('/bookings/:id/status', async (req, res) => {
   }
 });
 
+// POST /api/admin/bookings  — гараар захиалга үүсгэх
+router.post('/bookings', async (req, res) => {
+  const { userEmail, userName, venueId, venueName, dateKey, startTime, endTime, price, courtType } = req.body;
+  if (!userEmail || !venueId || !dateKey || !startTime || !endTime) {
+    return res.status(400).json({ error: 'userEmail, venueId, dateKey, startTime, endTime шаардлагатай' });
+  }
+  try {
+    const ref = await bookings.add({
+      userEmail,
+      userName:  userName  || '',
+      venueId,
+      venueName: venueName || venueId,
+      dateKey,
+      startTime,
+      endTime,
+      timeSlot:  `${startTime}–${endTime}`,
+      price:     price     || '0₮',
+      courtType: courtType || '',
+      status:    'upcoming',
+      createdByAdmin: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    res.json({ id: ref.id, success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/admin/chart?days=14  — өдрийн захиалга/орлогын нэгдсэн өгөгдөл
+router.get('/chart', async (req, res) => {
+  const days = Math.min(parseInt(req.query.days) || 14, 90);
+  try {
+    const snap = await bookings.get();
+    const all  = snap.docs.map((d) => d.data());
+
+    const result = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dateKey = d.toISOString().slice(0, 10);
+      const dayBookings = all.filter((b) => b.dateKey === dateKey && b.isGroupLeader !== false);
+      const revenue = dayBookings
+        .filter((b) => b.status !== 'cancelled')
+        .reduce((s, b) => s + (parseInt((b.price || '').replace(/[^\d]/g, '')) || 0), 0);
+      result.push({ date: dateKey, count: dayBookings.length, revenue });
+    }
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET /api/admin/users
 router.get('/users', async (req, res) => {
   try {

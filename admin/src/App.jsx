@@ -1,32 +1,32 @@
 import { useState } from 'react';
 import Dashboard from './pages/Dashboard';
 import Bookings  from './pages/Bookings';
+import Schedule  from './pages/Schedule';
 import Users     from './pages/Users';
 import './App.css';
 
 const NAV = [
-  { id: 'dashboard', label: 'Самбар',      icon: '📊' },
-  { id: 'bookings',  label: 'Захиалгууд',  icon: '📋' },
-  { id: 'users',     label: 'Хэрэглэгчид', icon: '👥' },
+  { id: 'dashboard', label: 'Самбар',       icon: '📊' },
+  { id: 'bookings',  label: 'Захиалгууд',   icon: '📋' },
+  { id: 'schedule',  label: 'Хуваарь',      icon: '🗓️' },
+  { id: 'users',     label: 'Хэрэглэгчид',  icon: '👥' },
 ];
 
+const PAGES = { dashboard: Dashboard, bookings: Bookings, schedule: Schedule, users: Users };
+
 export default function App() {
-  const [page, setPage]       = useState('dashboard');
+  const [page,     setPage]     = useState('dashboard');
   const [sideOpen, setSideOpen] = useState(true);
 
-  const Page = page === 'dashboard' ? Dashboard
-             : page === 'bookings'  ? Bookings
-             : Users;
+  const Page = PAGES[page];
 
   return (
     <div className="shell">
-      {/* Sidebar */}
       <aside className={`sidebar ${sideOpen ? '' : 'collapsed'}`}>
         <div className="sidebar-brand">
           <span className="brand-icon">🏀</span>
           {sideOpen && <span className="brand-name">Говийн Спорт</span>}
         </div>
-
         <nav className="sidebar-nav">
           {NAV.map((item) => (
             <button
@@ -40,26 +40,21 @@ export default function App() {
             </button>
           ))}
         </nav>
-
         <div className="sidebar-footer">
           {sideOpen && <span className="admin-tag">Админ панел</span>}
         </div>
       </aside>
 
-      {/* Main */}
       <div className="main">
         <header className="topbar">
           <button className="toggle-btn" onClick={() => setSideOpen((v) => !v)}>
             {sideOpen ? '◀' : '▶'}
           </button>
-          <span className="topbar-title">
-            {NAV.find((n) => n.id === page)?.label}
-          </span>
+          <span className="topbar-title">{NAV.find((n) => n.id === page)?.label}</span>
           <div className="topbar-right">
             <span className="admin-badge">Админ</span>
           </div>
         </header>
-
         <main className="content">
           <Page />
         </main>
