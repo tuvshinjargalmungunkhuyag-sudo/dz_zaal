@@ -540,8 +540,7 @@ class _BookingSheetState extends State<_BookingSheet> {
                                       builder: (_) => ConfirmationScreen(
                                         venue: widget.venue,
                                         date: _selectedDate,
-                                        startTime: _selectedSlots.first.time,
-                                        endTime: _selectedSlots.last.endTime,
+                                        selectedSlots: List.unmodifiable(_selectedSlots),
                                         courtType: _isFullCourt
                                             ? 'Бүтэн талбай'
                                             : 'Хагас талбай',

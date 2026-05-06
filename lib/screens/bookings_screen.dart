@@ -61,6 +61,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
 
           final all = (snapshot.data?.docs
                   .map((d) => {'id': d.id, ...d.data() as Map<String, dynamic>})
+                  .where((b) => b['groupId'] == null || b['isGroupLeader'] == true)
                   .toList() ?? [])
             ..sort((a, b) {
               final statusCmp = _statusOrder(a['status'] as String?)
@@ -330,7 +331,7 @@ class _BookingCard extends StatelessWidget {
               const SizedBox(width: 6),
               Flexible(
                 child: Text(
-                  '${booking['timeSlot']}–${booking['timeSlotEnd']}',
+                  '${booking['displayTimeSlot'] ?? booking['timeSlot']}–${booking['displayTimeSlotEnd'] ?? booking['timeSlotEnd']}',
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                       color: AppTheme.textSecondary, fontSize: 13),
@@ -371,7 +372,7 @@ class _BookingCard extends StatelessWidget {
                             ),
                           ),
                           content: Text(
-                            '${booking['venueName'] ?? ''} — ${booking['timeSlot']}–${booking['timeSlotEnd']}',
+                            '${booking['venueName'] ?? ''} — ${booking['displayTimeSlot'] ?? booking['timeSlot']}–${booking['displayTimeSlotEnd'] ?? booking['timeSlotEnd']}',
                             style: const TextStyle(
                               color: AppTheme.textSecondary,
                               fontSize: 14,

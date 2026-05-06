@@ -33,10 +33,12 @@ async function updateExpiredBookings() {
 
     for (const doc of snap.docs) {
       const data = doc.data();
-      const { dateKey, timeSlotEnd } = data;
+      const { dateKey, timeSlotEnd, displayTimeSlotEnd } = data;
       if (!dateKey || !timeSlotEnd) continue;
 
-      const endUtcMs = bookingEndUtcMs(dateKey, timeSlotEnd);
+      // Group leader uses displayTimeSlotEnd (overall end) so the booking card
+      // stays "upcoming" until the last slot finishes, not just the first slot
+      const endUtcMs = bookingEndUtcMs(dateKey, displayTimeSlotEnd || timeSlotEnd);
       if (nowMs > endUtcMs) {
         batch.update(doc.ref, { status: 'completed', completedAt: new Date() });
         count++;

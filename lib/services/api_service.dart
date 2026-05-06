@@ -48,7 +48,7 @@ class ApiService {
     required String venueLocation,
     required int venueAccentColor,
     required DateTime date,
-    required String timeSlot,
+    required List<String> timeSlots,
     required String timeSlotEnd,
     required String courtType,
     required String price,
@@ -69,7 +69,7 @@ class ApiService {
             'venueLocation': venueLocation,
             'venueAccentColor': venueAccentColor,
             'date': dateKey,
-            'timeSlot': timeSlot,
+            'timeSlots': timeSlots,
             'timeSlotEnd': timeSlotEnd,
             'courtType': courtType,
             'price': price,
@@ -79,10 +79,7 @@ class ApiService {
         )
         .timeout(_timeout);
 
-    if (res.statusCode == 409) {
-      throw Exception('Тухайн цаг аль хэдийн захиалагдсан байна');
-    }
-    if (res.statusCode != 200 && res.statusCode != 201) {
+    if (res.statusCode == 409 || (res.statusCode != 200 && res.statusCode != 201)) {
       throw Exception(_error(res));
     }
 

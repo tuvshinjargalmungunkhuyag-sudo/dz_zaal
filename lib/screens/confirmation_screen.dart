@@ -9,8 +9,7 @@ import 'auth/login_screen.dart';
 class ConfirmationScreen extends StatefulWidget {
   final SportVenue venue;
   final DateTime date;
-  final String startTime;
-  final String endTime;
+  final List<TimeSlot> selectedSlots;
   final String courtType;
   final String price;
 
@@ -18,11 +17,13 @@ class ConfirmationScreen extends StatefulWidget {
     super.key,
     required this.venue,
     required this.date,
-    required this.startTime,
-    required this.endTime,
+    required this.selectedSlots,
     required this.courtType,
     required this.price,
   });
+
+  String get startTime => selectedSlots.first.time;
+  String get endTime => selectedSlots.last.endTime;
 
   @override
   State<ConfirmationScreen> createState() => _ConfirmationScreenState();
@@ -135,7 +136,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
         venueLocation: widget.venue.location,
         venueAccentColor: widget.venue.accentColor.toARGB32(),
         date: widget.date,
-        timeSlot: widget.startTime,
+        timeSlots: widget.selectedSlots.map((s) => s.time).toList(),
         timeSlotEnd: widget.endTime,
         courtType: widget.courtType,
         price: widget.price,
