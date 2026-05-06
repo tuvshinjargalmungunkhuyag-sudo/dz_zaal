@@ -4,6 +4,7 @@ import '../theme/app_theme.dart';
 import '../services/notification_store.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
+import '../services/tab_navigator.dart';
 import 'auth/login_screen.dart';
 
 class ConfirmationScreen extends StatefulWidget {
@@ -32,6 +33,7 @@ class ConfirmationScreen extends StatefulWidget {
 class _ConfirmationScreenState extends State<ConfirmationScreen>
     with SingleTickerProviderStateMixin {
   final _nameController = TextEditingController();
+  late final _emailController = TextEditingController(text: AuthService.currentEmail ?? '');
   bool _isLoading = false;
   bool _isConfirmed = false;
   int _selectedPayment = 0;
@@ -62,6 +64,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
   void dispose() {
     _animController.dispose();
     _nameController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -353,7 +356,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
             // Email — auth-аас автоматаар дүүргэгддэг (readonly)
             TextField(
               readOnly: true,
-              controller: TextEditingController(text: AuthService.currentEmail ?? ''),
+              controller: _emailController,
               style: const TextStyle(color: AppTheme.textPrimary),
               decoration: InputDecoration(
                 labelText: 'Email',
@@ -609,8 +612,8 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
                 width: double.infinity,
                 child: OutlinedButton(
                   onPressed: () {
+                    TabNavigator.switchToBookings();
                     Navigator.of(context).popUntil((route) => route.isFirst);
-                    // Navigate to bookings tab (index 1)
                   },
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(

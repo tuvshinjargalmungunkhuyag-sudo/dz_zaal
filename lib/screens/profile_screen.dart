@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../theme/app_theme.dart';
 import '../services/auth_service.dart';
+import 'notifications_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -52,6 +53,121 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } catch (_) {
       if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  void _showHelpDialog(BuildContext ctx) {
+    showDialog(
+      context: ctx,
+      builder: (_) => AlertDialog(
+        backgroundColor: AppTheme.cardColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Row(
+          children: [
+            Icon(Icons.help_rounded, color: AppTheme.secondary, size: 22),
+            SizedBox(width: 10),
+            Text('Тусламж',
+                style: TextStyle(
+                    color: AppTheme.textPrimary,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700)),
+          ],
+        ),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _HelpItem(
+              icon: Icons.search_rounded,
+              text: 'Нүүр хуудаснаас спорт заал хайж, шүүлтүүр ашиглана уу.',
+            ),
+            SizedBox(height: 12),
+            _HelpItem(
+              icon: Icons.calendar_today_rounded,
+              text: 'Заалд дарж өдөр, цаг, талбайн төрлөө сонгоод захиалга хийнэ үү.',
+            ),
+            SizedBox(height: 12),
+            _HelpItem(
+              icon: Icons.cancel_rounded,
+              text: '"Захиалга" хэсгээс хүлээгдэж буй захиалгаа цуцлах боломжтой.',
+            ),
+            SizedBox(height: 12),
+            _HelpItem(
+              icon: Icons.smart_toy_rounded,
+              text: 'AI туслахаас захиалга, үнэ, байршлын талаар асуулт тавьж болно.',
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Ойлголоо',
+                style: TextStyle(
+                    color: AppTheme.secondary, fontWeight: FontWeight.w700)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAboutDialog(BuildContext ctx) {
+    showDialog(
+      context: ctx,
+      builder: (_) => AlertDialog(
+        backgroundColor: AppTheme.cardColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [AppTheme.secondary, AppTheme.accent],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Center(
+                child: Text('🏀', style: TextStyle(fontSize: 36)),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Говийн Спорт',
+              style: TextStyle(
+                  color: AppTheme.textPrimary,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800),
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'Хувилбар 1.0.0',
+              style:
+                  TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+            ),
+            const SizedBox(height: 16),
+            const Divider(color: AppTheme.divider),
+            const SizedBox(height: 12),
+            const Text(
+              'Даланзадгадын спорт заалнуудыг онлайнаар захиалах систем.\n\nӨмнөговь Технологийн Дээд Сургууль\n© 2026',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: AppTheme.textSecondary, fontSize: 13, height: 1.6),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Хаах',
+                style: TextStyle(
+                    color: AppTheme.secondary, fontWeight: FontWeight.w700)),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _logout() async {
@@ -214,17 +330,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _MenuItem(
                       icon: Icons.notifications_rounded,
                       label: 'Мэдэгдэл',
-                      onTap: () {},
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const NotificationsScreen()),
+                      ),
                     ),
                     _MenuItem(
                       icon: Icons.help_rounded,
                       label: 'Тусламж',
-                      onTap: () {},
+                      onTap: () => _showHelpDialog(context),
                     ),
                     _MenuItem(
                       icon: Icons.info_rounded,
                       label: 'Апп тухай',
-                      onTap: () {},
+                      onTap: () => _showAboutDialog(context),
                     ),
                   ],
                 ),
@@ -335,6 +455,30 @@ class _MenuSection extends StatelessWidget {
                 ],
               );
             }).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _HelpItem extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  const _HelpItem({required this.icon, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, color: AppTheme.secondary, size: 18),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(
+                color: AppTheme.textSecondary, fontSize: 13, height: 1.5),
           ),
         ),
       ],

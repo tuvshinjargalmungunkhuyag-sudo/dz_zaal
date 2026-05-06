@@ -16,7 +16,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
 
   List<Map<String, dynamic>> _filter(List<Map<String, dynamic>> all) {
     if (_filterIndex == 0) return all;
-    const statusMap = {1: 'upcoming', 2: 'active', 3: 'completed', 4: 'cancelled'};
+    const statusMap = {1: 'active', 2: 'upcoming', 3: 'completed', 4: 'cancelled'};
     return all.where((b) => b['status'] == statusMap[_filterIndex]).toList();
   }
 

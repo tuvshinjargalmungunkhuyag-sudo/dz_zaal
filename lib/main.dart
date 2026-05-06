@@ -12,6 +12,7 @@ import 'screens/chat_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'widgets/widgets.dart';
 import 'services/notification_service.dart';
+import 'services/tab_navigator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -65,12 +66,23 @@ class _MainShellState extends State<MainShell> {
         setState(() => _currentIndex = 0);
       }
     });
+    TabNavigator.pendingTab.addListener(_handlePendingTab);
   }
 
   @override
   void dispose() {
     _authSub?.cancel();
+    TabNavigator.pendingTab.removeListener(_handlePendingTab);
     super.dispose();
+  }
+
+  void _handlePendingTab() {
+    final tab = TabNavigator.pendingTab.value;
+    if (tab == null || !mounted) return;
+    _onTabTap(tab);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      TabNavigator.pendingTab.value = null;
+    });
   }
 
   void _onTabTap(int i) {
