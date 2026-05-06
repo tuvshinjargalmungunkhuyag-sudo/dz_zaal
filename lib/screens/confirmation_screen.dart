@@ -92,39 +92,35 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
   }
 
   Future<void> _confirm() async {
-    FocusScope.of(context).unfocus();
-
-    if (AuthService.currentUser == null) {
-      await Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
-      );
-      if (!mounted || AuthService.currentUser == null) return;
-      await _prefillFromAuth();
-    }
-
-    String? error;
-    if (_nameController.text.trim().isEmpty) {
-      error = 'Нэрээ оруулна уу';
-    }
-    if (error != null) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error),
-          backgroundColor: AppTheme.accent,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      );
-      return;
-    }
-
+    // Давхар дарагдалаас сэргийлэх idempotency guard
+    if (_isLoading) return;
     setState(() => _isLoading = true);
 
     try {
+      FocusScope.of(context).unfocus();
+
+      if (AuthService.currentUser == null) {
+        await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+        );
+        if (!mounted || AuthService.currentUser == null) return;
+        await _prefillFromAuth();
+      }
+
+      if (_nameController.text.trim().isEmpty) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Нэрээ оруулна уу'),
+            backgroundColor: AppTheme.accent,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+        return;
+      }
+
       final name = _nameController.text.trim();
       final email = AuthService.currentEmail ?? '';
 
@@ -147,9 +143,31 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
         userEmail: email,
       );
       _bookingCode = result.code;
+
+      NotificationStore.instance.add(AppNotification(
+        id: 'booking_${DateTime.now().millisecondsSinceEpoch}',
+        type: AppNotificationType.booking,
+        title: 'Захиалга баталгаажлаа',
+        body:
+            '${widget.venue.name} — ${widget.courtType}, ${widget.date.month}-р сарын ${widget.date.day}, '
+            '${widget.startTime}–${widget.endTime}',
+        createdAt: DateTime.now(),
+      ));
+
+      NotificationStore.instance.add(AppNotification(
+        id: 'reminder_${DateTime.now().millisecondsSinceEpoch}',
+        type: AppNotificationType.reminder,
+        title: 'Сануулга тохируулагдлаа',
+        body:
+            '${widget.venue.name} заалд очихоос 1 цагийн өмнө сануулга ирнэ.',
+        createdAt: DateTime.now(),
+      ));
+
+      if (!mounted) return;
+      setState(() => _isConfirmed = true);
+      _animController.forward();
     } catch (e) {
       if (mounted) {
-        setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.toString().replaceFirst('Exception: ', '')),
@@ -159,33 +177,11 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
           ),
         );
       }
-      return;
+    } finally {
+      if (mounted && !_isConfirmed) {
+        setState(() => _isLoading = false);
+      }
     }
-
-    NotificationStore.instance.add(AppNotification(
-      id: 'booking_${DateTime.now().millisecondsSinceEpoch}',
-      type: AppNotificationType.booking,
-      title: 'Захиалга баталгаажлаа',
-      body:
-          '${widget.venue.name} — ${widget.courtType}, ${widget.date.month}-р сарын ${widget.date.day}, '
-          '${widget.startTime}–${widget.endTime}',
-      createdAt: DateTime.now(),
-    ));
-
-    NotificationStore.instance.add(AppNotification(
-      id: 'reminder_${DateTime.now().millisecondsSinceEpoch}',
-      type: AppNotificationType.reminder,
-      title: 'Сануулга тохируулагдлаа',
-      body:
-          '${widget.venue.name} заалд очихоос 1 цагийн өмнө сануулга ирнэ.',
-      createdAt: DateTime.now(),
-    ));
-
-    setState(() {
-      _isLoading = false;
-      _isConfirmed = true;
-    });
-    _animController.forward();
   }
 
   @override

@@ -8,9 +8,21 @@ class AuthService {
   static final _auth = FirebaseAuth.instance;
   static final _db = FirebaseFirestore.instance;
 
+  // Серверийн email_verifications document-ийн expiresAt-той ижил
+  static const _codeValidity = Duration(minutes: 10);
+  static DateTime? _codeSentAt;
+
   static User? get currentUser => _auth.currentUser;
   static String? get currentEmail => _auth.currentUser?.email;
   static Stream<User?> get authStateChanges => _auth.authStateChanges();
+
+  /// Илгээсэн кодын үлдэгдэх хугацаа (хэрэв код илгээгээгүй бол null)
+  static Duration? get remainingCodeTime {
+    final sent = _codeSentAt;
+    if (sent == null) return null;
+    final left = _codeValidity - DateTime.now().difference(sent);
+    return left.isNegative ? Duration.zero : left;
+  }
 
   // ── Бүртгүүлэх ────────────────────────────────────────────────────────────
 
@@ -70,6 +82,7 @@ class AuthService {
         } catch (_) {}
         throw Exception(errorMsg);
       }
+      _codeSentAt = DateTime.now();
     } on Exception catch (e) {
       final msg = e.toString();
       if (msg.contains('SocketException') ||
@@ -86,16 +99,24 @@ class AuthService {
     final user = _auth.currentUser;
     if (user == null) throw Exception('Нэвтрээгүй байна');
 
+    // Серверт хүсэлт явуулахаас өмнө хугацаа дууссан эсэхийг шалгаж,
+    // илүү тодорхой алдааны мессеж харуулна
+    final remaining = remainingCodeTime;
+    if (remaining != null && remaining == Duration.zero) {
+      throw Exception('Кодын хугацаа дууссан. "Дахин илгээх" товчийг дарна уу');
+    }
+
     final res = await http.post(
       Uri.parse('${AppConfig.authEndpoint}/verify-code'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'uid': user.uid, 'code': code}),
-    );
+    ).timeout(const Duration(seconds: 15));
 
     if (res.statusCode != 200) {
       final body = jsonDecode(res.body);
       throw Exception(body['error'] ?? 'Код буруу байна');
     }
+    _codeSentAt = null;
   }
 
   // ── Нэвтрэх ───────────────────────────────────────────────────────────────

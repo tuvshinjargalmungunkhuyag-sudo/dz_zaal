@@ -48,9 +48,14 @@ class _BookingsScreenState extends State<BookingsScreen> {
           }
 
           if (snapshot.hasError) {
-            return const Center(
-              child: Text('Мэдээлэл ачааллахад алдаа гарлаа',
-                  style: TextStyle(color: AppTheme.textSecondary)),
+            final err = snapshot.error;
+            final msg = (err is FirebaseException && err.code == 'permission-denied')
+                ? 'Дахин нэвтэрнэ үү. Эрх олгогдоогүй байна.'
+                : 'Мэдээлэл ачааллахад алдаа гарлаа';
+            return Center(
+              child: Text(msg,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: AppTheme.textSecondary)),
             );
           }
 
@@ -390,8 +395,33 @@ class _BookingCard extends StatelessWidget {
                           ],
                         ),
                       );
-                      if (ok == true) {
+                      if (ok != true || !context.mounted) return;
+                      try {
                         await ApiService.cancelBooking(booking['id']);
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text('Захиалга цуцлагдлаа'),
+                            backgroundColor: AppTheme.success,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        );
+                      } catch (e) {
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                e.toString().replaceFirst('Exception: ', '')),
+                            backgroundColor: AppTheme.accent,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        );
                       }
                     },
                     style: OutlinedButton.styleFrom(

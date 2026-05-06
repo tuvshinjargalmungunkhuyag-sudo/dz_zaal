@@ -191,19 +191,19 @@ class AppData {
       }
     }
 
-    const bookedPattern = [false, true, false, false, true, false, false, true, false, false, false, true];
     const startHour = 8;
+    const slotCount = 16; // 08:00–24:00 (backend-тэй ижил)
     final List<TimeSlot> slots = [];
 
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < slotCount; i++) {
       final hour = startHour + i;
       final isFixed = fixedHours.containsKey(hour);
       slots.add(
         TimeSlot(
           id: 'slot_$i',
           time: '${hour.toString().padLeft(2, '0')}:00',
-          endTime: '${(hour + 1).toString().padLeft(2, '0')}:00',
-          isBooked: isFixed ? true : bookedPattern[i],
+          endTime: '${((hour + 1) % 24).toString().padLeft(2, '0')}:00',
+          isBooked: isFixed,
           isFixed: isFixed,
           fixedBy: fixedHours[hour],
         ),

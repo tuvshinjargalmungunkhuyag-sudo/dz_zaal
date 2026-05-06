@@ -7,6 +7,9 @@ import 'auth_service.dart';
 class ApiService {
   static String? currentUserName;
 
+  // Сүлжээ удаашрах эсвэл тасрах үед UI хязгааргүй хүлээхээс сэргийлэх
+  static const _timeout = Duration(seconds: 15);
+
   static Map<String, String> get _headers => {
         'Content-Type': 'application/json',
       };
@@ -17,11 +20,13 @@ class ApiService {
     required String name,
     required String email,
   }) async {
-    final res = await http.post(
-      Uri.parse(AppConfig.usersEndpoint),
-      headers: _headers,
-      body: jsonEncode({'name': name, 'email': email, 'uid': _currentUid()}),
-    );
+    final res = await http
+        .post(
+          Uri.parse(AppConfig.usersEndpoint),
+          headers: _headers,
+          body: jsonEncode({'name': name, 'email': email, 'uid': _currentUid()}),
+        )
+        .timeout(_timeout);
     if (res.statusCode != 200 && res.statusCode != 201) {
       throw Exception(_error(res));
     }
@@ -53,24 +58,26 @@ class ApiService {
     final dateKey =
         '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
 
-    final res = await http.post(
-      Uri.parse(AppConfig.bookingsEndpoint),
-      headers: _headers,
-      body: jsonEncode({
-        'venueId': venueId,
-        'venueName': venueName,
-        'venueType': venueType,
-        'venueLocation': venueLocation,
-        'venueAccentColor': venueAccentColor,
-        'date': dateKey,
-        'timeSlot': timeSlot,
-        'timeSlotEnd': timeSlotEnd,
-        'courtType': courtType,
-        'price': price,
-        'userName': userName,
-        'userEmail': userEmail,
-      }),
-    );
+    final res = await http
+        .post(
+          Uri.parse(AppConfig.bookingsEndpoint),
+          headers: _headers,
+          body: jsonEncode({
+            'venueId': venueId,
+            'venueName': venueName,
+            'venueType': venueType,
+            'venueLocation': venueLocation,
+            'venueAccentColor': venueAccentColor,
+            'date': dateKey,
+            'timeSlot': timeSlot,
+            'timeSlotEnd': timeSlotEnd,
+            'courtType': courtType,
+            'price': price,
+            'userName': userName,
+            'userEmail': userEmail,
+          }),
+        )
+        .timeout(_timeout);
 
     if (res.statusCode == 409) {
       throw Exception('Тухайн цаг аль хэдийн захиалагдсан байна');
@@ -84,10 +91,12 @@ class ApiService {
   }
 
   static Future<void> cancelBooking(String bookingId) async {
-    final res = await http.delete(
-      Uri.parse('${AppConfig.bookingsEndpoint}/$bookingId'),
-      headers: _headers,
-    );
+    final res = await http
+        .delete(
+          Uri.parse('${AppConfig.bookingsEndpoint}/$bookingId'),
+          headers: _headers,
+        )
+        .timeout(_timeout);
     if (res.statusCode != 200) {
       throw Exception(_error(res));
     }
@@ -103,7 +112,7 @@ class ApiService {
     final uri = Uri.parse(AppConfig.scheduleEndpoint)
         .replace(queryParameters: {'venueId': venueId, 'date': dateKey});
 
-    final res = await http.get(uri, headers: _headers);
+    final res = await http.get(uri, headers: _headers).timeout(_timeout);
     if (res.statusCode != 200) {
       throw Exception(_error(res));
     }

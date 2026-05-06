@@ -40,7 +40,10 @@ class NotificationService {
     final hour = int.parse(parts[0]);
     final minute = int.parse(parts[1]);
 
-    final bookingDateTime = DateTime(
+    // Захиалгын цагийг шууд Asia/Ulaanbaatar бүсэд байгуулна, ингэснээр
+    // утасны системийн timezone-оос үл хамаарч зөв wall-clock цагт ирнэ
+    final bookingTzTime = tz.TZDateTime(
+      tz.local,
       date.year,
       date.month,
       date.day,
@@ -48,11 +51,9 @@ class NotificationService {
       minute,
     );
 
-    final reminderTime = bookingDateTime.subtract(const Duration(hours: 1));
+    final tzReminderTime = bookingTzTime.subtract(const Duration(hours: 1));
 
-    if (reminderTime.isBefore(DateTime.now())) return;
-
-    final tzReminderTime = tz.TZDateTime.from(reminderTime, tz.local);
+    if (tzReminderTime.isBefore(tz.TZDateTime.now(tz.local))) return;
 
     await _plugin.zonedSchedule(
       venue.id.hashCode & 0x7FFFFFFF,

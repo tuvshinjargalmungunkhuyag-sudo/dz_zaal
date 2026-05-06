@@ -1,15 +1,36 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /bookings/{bookingId} {
-      allow read, write: if true;
-    }
+
+    // Хэрэглэгчийн профайл — өөрийнхөө л document-д хандах эрхтэй
     match /users/{userId} {
-      allow read, write: if true;
+      allow read, write: if request.auth != null
+                         && request.auth.uid == userId;
     }
+
+    // Захиалгууд — нэвтэрсэн хэрэглэгч өөрийн захиалгыг харах,
+    // үүсгэх, цуцлах эрхтэй. Устгах боломжгүй (статусаар удирдана)
+    match /bookings/{bookingId} {
+      allow get: if request.auth != null
+                 && resource.data.userEmail == request.auth.token.email;
+      allow list: if request.auth != null;
+      allow create: if request.auth != null
+                    && request.resource.data.userEmail == request.auth.token.email;
+      allow update: if request.auth != null
+                    && resource.data.userEmail == request.auth.token.email;
+      allow delete: if false;
+    }
+
+    // Гэрээт захиалга — нэвтэрсэн хүн уншиж болно, бичих нь зөвхөн
+    // backend (firebase-admin SDK) дамжуулан
     match /fixed_bookings/{docId} {
-      allow read: if true;
-      allow write: if true;
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    // Email баталгаажуулалт — зөвхөн backend ашиглана, клиент хандахгүй
+    match /email_verifications/{docId} {
+      allow read, write: if false;
     }
   }
 }
