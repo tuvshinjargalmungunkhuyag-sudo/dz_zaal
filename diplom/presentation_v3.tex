@@ -1,0 +1,1081 @@
+%===============================================================================
+% БАКАЛАВРЫН ТӨГСӨЛТИЙН АЖЛЫН ИЛТГЭЛ — V3 (Element бүрийг засварлах боломжтой)
+% М.Түвшинжаргал (B221940619), Удирдагч: Доктор Д.Эрдэнэтуяа
+%
+% ЗАСВАРЛАХ ЗААВАР:
+%   • Element бүр өөрийн мөр, тайлбартай.
+%   • Position constants (\def-ээр) frame бүрийн дээр байрлана — координат
+%     өөрчлөхөд тэр макрог л солино.
+%   • Текстийг node-ын { ... } доторх хэсэгт засна.
+%   • Өнгийг \definecolor блокт өөрчилнө (preamble хэсэгт).
+%   • Шинэ element нэмэхдээ "% --- ШИНЭ ELEMENT ---" гэж тэмдэглэн нэмж болно.
+%===============================================================================
+
+\documentclass[12pt,aspectratio=169]{beamer}
+
+%--- Encoding & fonts ----------------------------------------------------------
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[mongolian,english]{babel}
+
+%--- Packages ------------------------------------------------------------------
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,shapes.geometric,shapes.symbols,positioning,calc,
+                decorations.pathmorphing,decorations.markings,fit,backgrounds}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{xcolor}
+\usepackage{array,colortbl}
+\usepackage{amsmath,amssymb}
+\usepackage{tabularx}
+\usepackage{multirow}
+
+%===============================================================================
+% ӨНГӨН СХЕМ — ӨӨРЧЛӨХДӨӨ ЭНД ЗАСНА
+%===============================================================================
+\definecolor{ink}{RGB}{30,30,40}            % бараг хар бэх
+\definecolor{paper}{RGB}{253,251,243}       % цайвар цаасны өнгө
+\definecolor{paper2}{RGB}{246,242,228}      % бага зэрэг хар цаас
+\definecolor{accent}{RGB}{200,80,40}        % улаан тэмдэглэгээ
+\definecolor{accent2}{RGB}{60,120,80}       % ногоон тэмдэглэгээ
+\definecolor{accent3}{RGB}{50,90,160}       % хөх тэмдэглэгээ
+\definecolor{rowgray}{RGB}{248,245,235}
+\definecolor{titlebg}{RGB}{40,55,90}
+\definecolor{titlefg}{RGB}{250,248,238}
+
+%===============================================================================
+% TIKZ STYLE-УУД — БҮХ ДИАГРАМЫН СУУРЬ СТИЛЬ
+% hd        — гар-зурсан төстэй (rounded, line cap)
+% hdbox=#1  — суурь box (#1 = өнгө)
+% hdarrow   — гар-зурсан сум
+% hddash    — тасархай шугам
+% hdellipse — Use Case оваль
+% hddiamond — шийдвэрийн diamond
+%===============================================================================
+\tikzset{every node/.style={align=center}}
+
+\tikzset{
+  hd/.style       = {line cap=round, line join=round, line width=0.7pt},
+  hdline/.style   = {decoration={random steps, segment length=6pt, amplitude=0.4pt},
+                     decorate, line cap=round, line join=round, line width=0.6pt},
+  hdbox/.style    = {hd, draw=ink, fill=#1, rounded corners=3pt, inner sep=4pt, font=\small},
+  hdbox/.default  = paper,
+  hdarrow/.style  = {hdline, -{Latex[length=2.2mm,width=2mm]}, draw=ink},
+  hddash/.style   = {hdline, draw=ink, dashed},
+  hdellipse/.style= {hd, draw=ink, fill=#1, ellipse, inner sep=3pt, font=\small},
+  hdellipse/.default = paper,
+  hddiamond/.style= {hd, draw=ink, fill=#1, diamond, aspect=2.4, inner sep=2pt, font=\scriptsize},
+  hddiamond/.default = paper2,
+}
+
+%--- Beamer theme --------------------------------------------------------------
+\usetheme{default}
+\setbeamercolor{frametitle}{bg=titlebg,fg=titlefg}
+\setbeamercolor{title}{fg=titlebg}
+\setbeamercolor{author}{fg=titlebg}
+\setbeamercolor{date}{fg=titlebg!70}
+\setbeamercolor{structure}{fg=titlebg}
+\setbeamercolor{itemize item}{fg=accent}
+\setbeamercolor{itemize subitem}{fg=accent3}
+\setbeamercolor{normal text}{fg=ink}
+\setbeamerfont{frametitle}{size=\large,series=\bfseries}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{frametitle}{%
+  \nointerlineskip
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.6ex,dp=0.8ex,leftskip=1em,rightskip=1em]{frametitle}
+    \usebeamerfont{frametitle}\insertframetitle
+  \end{beamercolorbox}%
+  \nointerlineskip
+  {\color{accent}\hrule height 1.2pt}%
+}
+%===============================================================================
+% FOOTER — явцын зурвас + бүлгийн дугаар + хуудасны дугаар
+%   ① Явцын зурвас (accent өнгө, бүрэн өргөн рүү ургана)
+%   ② Хуудасны дугаар  N / T
+%   ③ Бүлгийн цэгүүд  ● ● ○ ○ ○  (5 хэсэг)
+%   ④ Одоогийн бүлгийн нэр  § Бүлэг X
+%   ⑤ Зохиогч ба гарчиг
+%===============================================================================
+\newlength{\beamerprogress}
+\setbeamercolor{footprog}{bg=paper,fg=paper}
+\setbeamercolor{footinfo}{bg=paper,fg=ink}
+
+\setbeamertemplate{footline}{%
+  \leavevmode%
+  %── ① Явцын зурвас ──────────────────────────────────────────────
+  \pgfmathsetmacro{\fp}{\insertframenumber/\inserttotalframenumber}%
+  \setlength{\beamerprogress}{\fp\paperwidth}%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.2pt,dp=0pt]{footprog}%
+    {\color{ink!15}\rule{\paperwidth}{2.2pt}}%
+    \hskip-\paperwidth%
+    {\color{accent}\rule{\beamerprogress}{2.2pt}}%
+  \end{beamercolorbox}%
+  %── ②③④⑤ Хуудасны мэдээлэл ─────────────────────────────────────
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.6ex,dp=0.9ex,%
+                         leftskip=0.55em,rightskip=0.55em]{footinfo}%
+    \tiny%
+    % ② Хуудасны дугаар
+    \textbf{\color{accent}\insertframenumber}%
+    {\color{ink!55}\ /\ \inserttotalframenumber}%
+    \hspace*{0.5em}%
+    % ③ Бүлгийн дугаарын цэгүүд (бүх хэсэг = 5)
+    \foreach \si in {1,...,5}{%
+      \ifnum\si=\value{section}%
+        \textcolor{accent}{\textbullet}%          одоогийн бүлэг
+      \else\ifnum\si<\value{section}%
+        \textcolor{ink!62}{\textbullet}%          өнгөрсөн бүлэг
+      \else%
+        \textcolor{ink!20}{\textbullet}%          ирэх бүлэг
+      \fi\fi%
+      \hspace{0.1em}%
+    }%
+    % ④ Одоогийн бүлгийн нэр
+    \ifnum\value{section}>0%
+      \hspace*{0.38em}%
+      {\color{accent3}\bfseries\S\,\insertsectionhead}%
+    \fi%
+    \hfill%
+    % ⑤ Зохиогч
+    М.Түвшинжаргал --- Үүлэн орчинд суурилсан спорт заалны цаг захиалгын систем%
+  \end{beamercolorbox}%
+}
+
+\title{Үүлэн орчинд суурилсан спорт заалны цаг захиалгын\\3 давхаргат системийн загварчлал ба хэрэгжилт}
+\author{М.Түвшинжаргал (B221940619)}
+\institute{Өмнөговь Технологийн Дээд Сургууль}
+\date{2026}
+
+\begin{document}
+
+%###############################################################################
+% SLIDE 1 — НҮҮР
+%###############################################################################
+\begin{frame}[plain]
+  % --- Дэвсгэр ба хүрээ -----------------------------------------------------
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[paper] (current page.north west) rectangle (current page.south east);
+    \draw[draw=accent, line width=1.2pt, rounded corners=4pt]
+      ($(current page.north west)+(1.2,-0.8)$) rectangle ($(current page.south east)+(-1.2,1.2)$);
+  \end{tikzpicture}
+
+  \vspace{1.2cm}
+  \begin{center}
+    % --- Сургуулийн нэр -----------------------------------------------------
+    {\small\bfseries\color{titlebg} ӨМНӨГОВЬ ТЕХНОЛОГИЙН ДЭЭД СУРГУУЛЬ}\\[2pt]
+    {\footnotesize\color{ink} Мэдээллийн технологийн тэнхим}\\[2pt]
+    {\footnotesize\color{ink}\itshape Бакалаврын төгсөлтийн ажлын илтгэл}\\[1.2cm]
+
+    % --- Гарчгийн bлок ----------------------------------------------------
+    \begin{tikzpicture}
+      \node[hdbox=paper2, line width=1pt, text width=12cm,
+            font=\large\bfseries\color{titlebg}, inner sep=14pt] {
+        ҮҮЛЭН ОРЧИНД СУУРИЛСАН СПОРТ ЗААЛНЫ\\
+        ЦАГ ЗАХИАЛГЫН 3 ДАВХАРГАТ СИСТЕМИЙН\\
+        ЗАГВАРЧЛАЛ БА ХЭРЭГЖИЛТ
+      };
+    \end{tikzpicture}\\[1.2cm]
+
+    % --- Илтгэгч / Удирдагч --------------------------------------------------
+    \begin{tabular}{rl}
+      \textbf{Илтгэгч:}  & М.Түвшинжаргал (B221940619)\\[3pt]
+      \textbf{Удирдагч:} & Доктор (Ph.D) Д.Эрдэнэтуяа\\
+    \end{tabular}\\[1cm]
+    {\small\color{ink!70} Улаанбаатар хот, 2026 он}
+  \end{center}
+\end{frame}
+
+%###############################################################################
+% SLIDE 2 — АГУУЛГА
+% Element-ууд: 5 хэсгийн картууд (a1..a5)
+%###############################################################################
+\begin{frame}{Агуулга}
+  \vspace{0.1cm}
+  \centering
+  \begin{tikzpicture}
+    % Row 1 — Үндэслэл  (center y = 2.30)
+    \filldraw[fill=paper,  draw=ink!15, line width=0.3pt] (-5.3,1.80) rectangle (5.3,2.80);
+    \fill[ink]  (-5.3,1.80) rectangle (-4.70,2.80);
+    \node[font=\bfseries\small, text=paper]                   at (-5.00,2.30) {1};
+    \node[anchor=west, font=\bfseries\small,  text=ink]       at (-4.50,2.46) {Үндэслэл};
+    \node[anchor=west, font=\scriptsize\itshape, text=ink!60] at (-4.50,2.14) {Асуудал · зорилго · шийдэл};
+    % Row 2 — Бүлэг 1  (center y = 1.15)
+    \filldraw[fill=paper,  draw=ink!15, line width=0.3pt] (-5.3,0.65) rectangle (5.3,1.65);
+    \fill[ink]  (-5.3,0.65) rectangle (-4.70,1.65);
+    \node[font=\bfseries\small, text=paper]                   at (-5.00,1.15) {2};
+    \node[anchor=west, font=\bfseries\small,  text=ink]       at (-4.50,1.31) {Бүлэг 1: Онол};
+    \node[anchor=west, font=\scriptsize\itshape, text=ink!60] at (-4.50,0.99) {3 давхаргат архитектур · технологийн стек};
+    % Row 3 — Бүлэг 2  (center y = 0.00)
+    \filldraw[fill=paper,  draw=ink!15, line width=0.3pt] (-5.3,-0.50) rectangle (5.3,0.50);
+    \fill[ink]  (-5.3,-0.50) rectangle (-4.70,0.50);
+    \node[font=\bfseries\small, text=paper]                   at (-5.00,0.00) {3};
+    \node[anchor=west, font=\bfseries\small,  text=ink]       at (-4.50,0.16) {Бүлэг 2: Хөгжүүлэлт};
+    \node[anchor=west, font=\scriptsize\itshape, text=ink!60] at (-4.50,-0.16) {Use case · UI/UX · AI чатбот · өгөгдлийн бүтэц};
+    % Row 4 — Бүлэг 3  (center y = -1.15)
+    \filldraw[fill=paper,  draw=ink!15, line width=0.3pt] (-5.3,-1.65) rectangle (5.3,-0.65);
+    \fill[ink]  (-5.3,-1.65) rectangle (-4.70,-0.65);
+    \node[font=\bfseries\small, text=paper]                   at (-5.00,-1.15) {4};
+    \node[anchor=west, font=\bfseries\small,  text=ink]       at (-4.50,-0.99) {Бүлэг 3: Үүлэн орчин};
+    \node[anchor=west, font=\scriptsize\itshape, text=ink!60] at (-4.50,-1.31) {Docker · AWS EC2 · CI/CD · туршилт};
+    % Row 5 — Дүгнэлт  (center y = -2.30, paper2 bg)
+    \filldraw[fill=paper2, draw=ink!15, line width=0.3pt] (-5.3,-2.80) rectangle (5.3,-1.80);
+    \fill[ink!75](-5.3,-2.80) rectangle (-4.70,-1.80);
+    \node[font=\bfseries\small, text=paper]                   at (-5.00,-2.30) {5};
+    \node[anchor=west, font=\bfseries\small,  text=ink]       at (-4.50,-2.14) {Дүгнэлт};
+    \node[anchor=west, font=\scriptsize\itshape, text=ink!60] at (-4.50,-2.46) {Үр дүн · ач холбогдол · цаашдын хөгжил};
+  \end{tikzpicture}
+\end{frame}
+
+%###############################################################################
+% §1 — ҮНДЭСЛЭЛ (хэсэг 1)
+\section[Үндэслэл]{Үндэслэл}
+%###############################################################################
+% SLIDE 3 — ҮНДЭСЛЭЛ (Асуудал ↔ Шийдэл)
+% Element-ууд:
+%   h1, h2  — толгой headers
+%   p1, p2  — асуудал/шийдлийн жагсаалт
+%   k1..k3  — доод 3 ключевой box
+%   ar1..ar3— холбох сумнууд
+%###############################################################################
+\begin{frame}{Үндэслэл --- Асуудал ба шийдэл}
+  \vspace{0.2cm}
+  \centering
+  \begin{tikzpicture}[font=\small]
+    % --- Position constants -------------------------------------------------
+    \def\hLY{4}            % толгойн y
+    \def\pLY{3.4}          % paragraph-ийн y (north)
+    \def\kY{-2.2}          % доод box-ын y
+    \def\colLeftX{-4}      % зүүн баганын x
+    \def\colRightX{4}      % баруун баганын x
+
+    % --- Element: Асуудлууд толгой ------------------------------------------
+    \node[hdbox=paper2, font=\bfseries, minimum width=6cm] (h1)
+      at (\colLeftX,\hLY) {Тулгамдаж буй асуудлууд};
+    % --- Element: Асуудлуудын жагсаалт --------------------------------------
+    \node[hdbox=paper, text width=5.5cm, align=left, anchor=north] (p1)
+      at (\colLeftX,\pLY) {%
+        \textbullet\ Утсаар захиалахад шугам завгүй байх\\[2pt]
+        \textbullet\ Биечлэн очиж захиалах хүндрэл\\[2pt]
+        \textbullet\ Цагийн мэдээлэл ил тод бус\\[2pt]
+        \textbullet\ Захиалгаа цуцлах боломжгүй\\[2pt]
+        \textbullet\ Сануулга авах боломжгүй};
+
+    % --- Element: Шийдэл толгой ----------------------------------------------
+    \node[hdbox=paper2, font=\bfseries, minimum width=6cm] (h2)
+      at (\colRightX,\hLY) {Системийн шийдэл};
+    % --- Element: Шийдлийн жагсаалт ------------------------------------------
+    \node[hdbox=paper, text width=5.5cm, align=left, anchor=north] (p2)
+      at (\colRightX,\pLY) {%
+        \textbullet\ \textbf{Мобайл аппликейшн} (Flutter)\\[2pt]
+        \textbullet\ Бодит цагийн хуваарь (Firestore)\\[2pt]
+        \textbullet\ DBK-xxxxx захиалгын код\\[2pt]
+        \textbullet\ Локал мэдэгдэл (1 цагийн өмнө)\\[2pt]
+        \textbullet\ AI чатбот туслах};
+
+    % --- Element: Доод box 1 — Мобайл аппликейшн ---------------------------
+    \node[hdbox=paper2, font=\bfseries\color{accent3}, minimum width=4.2cm] (k1)
+      at (-4.5,\kY) {Мобайл аппликейшн};
+    % --- Element: Доод box 2 — Архитектур ---------------------------------
+    \node[hdbox=paper2, font=\bfseries\color{accent3}, minimum width=4.2cm] (k2)
+      at (0,\kY) {3 давхаргат архитектур};
+    % --- Element: Доод box 3 — Үүлэн дэд бүтэц -----------------------------
+    \node[hdbox=paper2, font=\bfseries\color{accent3}, minimum width=4.2cm] (k3)
+      at (4.5,\kY) {Үүлэн дэд бүтэц};
+
+    % --- Element: Сум 1 (асуудал → мобайл) -----------------------------------
+    \draw[hdarrow] (p1.south) to[bend right=20] (k1.north);
+    % --- Element: Сум 2 (шийдэл → үүлэн) -------------------------------------
+    \draw[hdarrow] (p2.south) to[bend left=20]  (k3.north);
+    % --- Element: Сум 3 (төв архитектур руу) ---------------------------------
+    \draw[hdarrow, draw=accent] ($(p1.south east)+(0.4,0)$) to[bend right=10] (k2.north);
+  \end{tikzpicture}
+\end{frame}
+
+%###############################################################################
+% SLIDE 4 — ЗОРИЛГО (6 sub-card)
+% Element-ууд:
+%   topBox       — дээд талын зорилгын тодорхойлолт
+%   badgeZorigo  — "ЗОРИЛГО" tag
+%   card-1..6    — 6 ширхэг карт (icon+title+desc)
+%###############################################################################
+\begin{frame}{Зорилго}
+  \vspace{-0.05cm}
+  % Icon ID-ний макро (\ifx харьцуулалтанд хэрэгтэй)
+  \def\iconlock{lock}\def\iconphone{phone}\def\iconai{ai}%
+  \def\iconclock{clock}\def\iconbell{bell}\def\iconcourt{court}%
+  \begin{tikzpicture}[font=\footnotesize]
+
+    % --- Element: Зорилгын топ-box -------------------------------------------
+    \node[draw=accent, line width=0.8pt, fill=paper2, rounded corners=4pt,
+          text width=14cm, font=\small\itshape, inner sep=8pt] (topBox)
+      at (0,3.0) {%
+        Даланзадгад хотын спортын заалны захиалгыг хялбар, хурдан, найдвартай болгох мобайл аппликейшн хөгжүүлж, хэрэглэгч болон заалны эздэд ашиглуулах.
+      };
+    % --- Element: ЗОРИЛГО тэмдэг ---------------------------------------------
+    \node[fill=accent, text=white, font=\tiny\bfseries, inner sep=3pt,
+          rounded corners=2pt] (badgeZorilgo) at (-5.7,3.7) {ЗОРИЛГО};
+
+    % --- 6 картын тохиргоо --------------------------------------------------
+    \def\cw{4.6}    % картын өргөн (см)
+    \def\ch{2.0}    % картын өндөр (см)
+    % iconID/i/j/colour/title/description гэсэн дарааллаар бичсэн.
+    \foreach \icon/\i/\j/\col/\ttl/\dsc in {%
+      lock/0/0/accent/{Аюулгүй, хялбар захиалга}/{Хэдхэн товшилтоор спорт заал захиалах},%
+      phone/1/0/accent3/{Мобайл аппликейшн}/{Flutter --- iOS \& Android},%
+      ai/2/0/accent2/{AI Chat туслах}/{Groq Llama 3.1, лавлагаа өгөх},%
+      clock/0/1/accent3/{Бодит цагийн мэдээлэл}/{Firebase Firestore real-time},%
+      bell/1/1/accent/{Мэдэгдлийн систем}/{flutter\_local\_notifications},%
+      court/2/1/accent2/{Хагас / бүтэн талбай}/{Нэг slot-д хоёр захиалга боломж}}{
+
+        \pgfmathsetmacro{\xpos}{-7.0+\i*4.85}
+        \pgfmathsetmacro{\ypos}{0.4-\j*2.25}
+
+        % Element: сүүдэр
+        \node[draw=ink!30, fill=ink!10, rounded corners=4pt,
+              minimum width=\cw cm, minimum height=\ch cm, anchor=north west]
+          at ({\xpos+0.08},{\ypos-0.08}) {};
+        % Element: үндсэн карт
+        \node[draw=\col, line width=0.9pt, fill=paper, rounded corners=4pt,
+              minimum width=\cw cm, minimum height=\ch cm, anchor=north west,
+              inner sep=0pt] (card\i\j) at (\xpos,\ypos) {};
+        % Element: зүүн талын өнгөт зурвас
+        \fill[\col] ($(card\i\j.north west)+(0,0)$) rectangle
+                    ($(card\i\j.south west)+(0.18,0)$);
+        % Element: дугаар бөмбөлөг (1-6)
+        \pgfmathtruncatemacro{\num}{\j*3+\i+1}
+        \node[draw=\col, fill=\col, text=white, line width=0.8pt,
+              circle, inner sep=0pt, minimum size=0.55cm,
+              font=\bfseries\scriptsize, anchor=center]
+          at ($(card\i\j.north east)+(-0.4,-0.4)$) {\num};
+        % Element: иконы (TikZ-ээр зурсан)
+        \coordinate (ic) at ($(card\i\j.north west)+(0.55,-0.55)$);
+        \begin{scope}[shift={(ic)}]
+          \ifx\icon\iconlock
+            \draw[\col, line width=0.6pt] (-0.2,-0.05) rectangle (0.2,-0.35);
+            \draw[\col, line width=0.6pt] (-0.13,-0.05) arc (180:0:0.13 and 0.18);
+          \else\ifx\icon\iconphone
+            \draw[\col, line width=0.6pt, rounded corners=1.5pt] (-0.13,-0.4) rectangle (0.13,0.0);
+            \draw[\col, line width=0.4pt] (-0.05,-0.36) -- (0.05,-0.36);
+            \draw[\col, line width=0.4pt] (-0.08,-0.04) -- (0.08,-0.04);
+          \else\ifx\icon\iconai
+            \draw[\col, line width=0.6pt, rounded corners=1pt] (-0.2,-0.35) rectangle (0.2,-0.05);
+            \draw[\col, line width=0.5pt] (0,-0.05) -- (0,0.05);
+            \fill[\col] (0,0.07) circle (0.04);
+            \fill[\col] (-0.1,-0.18) circle (0.03);
+            \fill[\col] (0.1,-0.18) circle (0.03);
+            \draw[\col, line width=0.4pt] (-0.07,-0.28) -- (0.07,-0.28);
+          \else\ifx\icon\iconclock
+            \draw[\col, line width=0.6pt] (0,-0.2) circle (0.2);
+            \draw[\col, line width=0.6pt] (0,-0.2) -- (0,-0.07);
+            \draw[\col, line width=0.6pt] (0,-0.2) -- (0.1,-0.2);
+            \draw[\col, line width=0.4pt] (0,-0.42) -- (0,-0.45);
+            \draw[\col, line width=0.4pt] (0.22,-0.2) -- (0.25,-0.2);
+          \else\ifx\icon\iconbell
+            \draw[\col, line width=0.6pt] (-0.2,-0.32) -- (-0.2,-0.18)
+              arc (180:0:0.2 and 0.22) -- (0.2,-0.32) -- cycle;
+            \draw[\col, line width=0.4pt] (-0.06,-0.4) arc (180:360:0.06);
+            \draw[\col, line width=0.4pt] (-0.05,0.04) -- (0.05,0.04);
+          \else\ifx\icon\iconcourt
+            \draw[\col, line width=0.6pt] (-0.25,-0.35) rectangle (0.25,-0.05);
+            \draw[\col, line width=0.5pt] (0,-0.35) -- (0,-0.05);
+            \draw[\col, line width=0.4pt] (0,-0.2) circle (0.06);
+          \fi\fi\fi\fi\fi\fi
+        \end{scope}
+        % Element: гарчиг
+        \node[font=\scriptsize\bfseries, text=\col, anchor=north west,
+              text width=\cw cm-2.0cm, align=left]
+          at ($(card\i\j.north west)+(0.95,-0.25)$) {\ttl};
+        % Element: тайлбар
+        \node[font=\tiny\color{ink!85}, anchor=south west,
+              text width=\cw cm-0.6cm, align=left]
+          at ($(card\i\j.south west)+(0.35,0.15)$) {\dsc};
+      }
+
+  \end{tikzpicture}
+\end{frame}
+
+%###############################################################################
+% §2 — БҮЛЭГ 1 (хэсэг 2)
+\section[Бүлэг 1]{Бүлэг 1: 3 давхаргат архитектур}
+%###############################################################################
+% SLIDE 5 — БҮЛЭГ 1: 3 ДАВХАРГАТ АРХИТЕКТУРЫН ОНОЛ
+% Element-ууд:
+%   pres, app, data — 3 давхар layer
+%   arrPA, arrAD     — давхрууд хооронд сум
+%   labelL, labelM, labelR — хажуугийн товч тэмдэг
+%###############################################################################
+\begin{frame}{Бүлэг 1: 3 давхаргат архитектурын онол}
+  \centering
+  \begin{tikzpicture}[font=\small]
+    % --- Position constants -------------------------------------------------
+    \def\layerW{12}     % давхрын өргөн (cm)
+    \def\layerH{1.4}    % давхрын өндөр (cm)
+    \def\presY{3}       % presentation tier y
+    \def\appY{0.4}      % application tier y
+    \def\dataY{-2.2}    % data tier y
+
+    % --- Element: Presentation Tier (Flutter клиент) ------------------------
+    \node[hdbox=paper, minimum width=\layerW cm, minimum height=\layerH cm,
+          text width=11.5cm, font=\bfseries\color{accent3}] (pres)
+      at (0,\presY) {Presentation Tier --- Flutter Мобайл клиент\\
+        {\footnotesize\mdseries\color{ink} (Android, iOS) UI/UX дэлгэц, навигаци, локал мэдэгдэл}};
+
+    % --- Element: Application Tier (Node.js бэкэнд) -------------------------
+    \node[hdbox=paper, minimum width=\layerW cm, minimum height=\layerH cm,
+          text width=11.5cm, font=\bfseries\color{accent2}] (app)
+      at (0,\appY) {Application Tier --- Node.js / Express REST API\\
+        {\footnotesize\mdseries\color{ink} (AWS EC2, Docker контейнер) бизнесийн логик, email баталгаажуулалт}};
+
+    % --- Element: Data Tier (Firebase) ---------------------------------------
+    \node[hdbox=paper, minimum width=\layerW cm, minimum height=\layerH cm,
+          text width=11.5cm, font=\bfseries\color{accent}] (data)
+      at (0,\dataY) {Data Tier --- Firebase \\
+        {\footnotesize\mdseries\color{ink} Cloud Firestore, Authentication, Cloud Functions}};
+
+    % --- Element: Сум 1 (pres → app) -----------------------------------------
+    \draw[hdarrow] (pres) -- node[right, font=\scriptsize] {REST API + Firebase SDK} (app);
+    % --- Element: Сум 2 (app → data) -----------------------------------------
+    \draw[hdarrow] (app)  -- node[right, font=\scriptsize] {Firestore Admin SDK} (data);
+
+    % --- Element: Хажуугийн тэмдэглэгээ — клиент -----------------------------
+    \node[font=\scriptsize\itshape\color{accent},  rotate=-8] (labelL) at (-6.5,\presY)  {клиент};
+    % --- Element: Хажуугийн тэмдэглэгээ — логик -------------------------------
+    \node[font=\scriptsize\itshape\color{accent2}, rotate=-8] (labelM) at (-6.5,\appY)   {логик};
+    % --- Element: Хажуугийн тэмдэглэгээ — өгөгдөл -----------------------------
+    \node[font=\scriptsize\itshape\color{accent3}, rotate=-8] (labelR) at (-6.5,\dataY)  {өгөгдөл};
+  \end{tikzpicture}
+\end{frame}
+
+%###############################################################################
+% SLIDE 6 — ТЕХНОЛОГИЙН СТЕК (хүснэгт)
+%###############################################################################
+\begin{frame}{Бүлэг 1: Технологийн стек}
+  \vspace{-0.1cm}
+  \centering
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tikzpicture}
+    \node[hdbox=paper, inner sep=8pt] {
+      \begin{tabular}{|>{\columncolor{paper2}}p{2.4cm}|p{4.4cm}|p{6.5cm}|}
+        \hline
+        \rowcolor{paper2}\bfseries Давхарга & \bfseries Технологи & \bfseries Сонгосон шалтгаан\\
+        \hline
+        % --- Row: Flutter --------------------------------------------------
+        Мобайл & Flutter 3.x + Dart & Нэг кодоос Android/iOS, Material Design 3\\
+        \hline
+        % --- Row: Firebase -------------------------------------------------
+        Мобайл & Firebase Auth + Firestore & Real-time, аюулгүй нэвтрэлт\\
+        \hline
+        % --- Row: Cloud Functions ------------------------------------------
+        Мобайл & Cloud Functions (Claude Haiku) & API key Flutter-т задрахгүй\\
+        \hline
+        % --- Row: Node.js --------------------------------------------------
+        Бэкэнд & Node.js / Express & Event-driven, JSON API-д тохиромжтой\\
+        \hline
+        % --- Row: Groq -----------------------------------------------------
+        Бэкэнд & Groq Llama 3.1-8b (нөөц AI) & LPU дэд бүтэц, маш хурдан\\
+        \hline
+        % --- Row: Docker ---------------------------------------------------
+        Үүлэн & Docker & Орчны тогтвор, нээлттэй эх\\
+        \hline
+        % --- Row: AWS EC2 --------------------------------------------------
+        Үүлэн & AWS EC2 (ap-southeast-1) & IaaS, бүрэн хяналт, Docker дэмжлэг\\
+        \hline
+        % --- Row: AWS ECR --------------------------------------------------
+        Үүлэн & AWS ECR & Контейнер registry, IAM аюулгүй\\
+        \hline
+        % --- Row: GitHub Actions -------------------------------------------
+        Үүлэн & GitHub Actions & CI/CD, git workflow-той нэгдмэл\\
+        \hline
+      \end{tabular}
+    };
+  \end{tikzpicture}
+\end{frame}
+
+%###############################################################################
+% §3 — БҮЛЭГ 2 (хэсэг 3)
+\section[Бүлэг 2]{Бүлэг 2: Програм хангамжийн хөгжүүлэлт}
+%###############################################################################
+% SLIDE 7 — БҮЛЭГ 2 НҮҮР
+%###############################################################################
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[paper] (current page.north west) rectangle (current page.south east);
+  \end{tikzpicture}
+  \vspace{2cm}
+  \centering
+  \begin{tikzpicture}
+    % --- Element: Гол гарчиг -----------------------------------------------
+    \node[font=\Huge\bfseries\color{titlebg}] (t) {Бүлэг 2};
+    % --- Element: Дэд гарчиг -----------------------------------------------
+    \node[font=\LARGE\color{accent}, below=0.3cm of t] (s) {Програм хангамжийн хөгжүүлэлт};
+    % --- Element: Доорх шугам ----------------------------------------------
+    \draw[hd, draw=accent, line width=1.5pt]
+      ($(s.south west)+(0.5,-0.2)$) -- ($(s.south east)+(-0.5,-0.2)$);
+    % --- Element: Жижиг тайлбар --------------------------------------------
+    \node[font=\small\itshape\color{ink!70}, below=1cm of s] (sub)
+      {шаардлага · загварчлал · UI/UX · өгөгдлийн сан};
+  \end{tikzpicture}
+\end{frame}
+
+%###############################################################################
+% SLIDE 8 — USE CASE DIAGRAM
+% Element-ууд:
+%   sysBox  — системийн хүрээ (rectangle)
+%   sysLbl  — системийн нэр
+%   userL/userR — хоёр актор (Хэрэглэгч, Admin)
+%   uc1..uc6 — use case-ууд
+%   actorLine-* — актороос UC рүү шугам
+%   includeRel — <<include>> dashed
+%###############################################################################
+\begin{frame}{Бүлэг 2.1: Use Case Diagram}
+  \centering
+  \begin{tikzpicture}[font=\scriptsize]
+    % --- Element: Системийн хүрээ -------------------------------------------
+    \draw[hd, draw=ink, line width=0.8pt, rounded corners=8pt]
+      (-2.5,-3.2) rectangle (5.5,3.2);
+    % --- Element: Системийн нэр ---------------------------------------------
+    \node[font=\scriptsize\bfseries] (sysLbl) at (1.5,3.0) {Цаг захиалгын систем};
+
+    % --- Element: Хэрэглэгч актор (зүүн) ------------------------------------
+    \draw[hd, draw=ink] (-4.5,1.5) circle (0.25cm);   % толгой
+    \draw[hd, draw=ink] (-4.5,1.25) -- (-4.5,0.5);    % бие
+    \draw[hd, draw=ink] (-4.9,0.95) -- (-4.5,1.1) -- (-4.1,0.95);  % гар
+    \draw[hd, draw=ink] (-4.5,0.5) -- (-4.8,-0.1);    % зүүн хөл
+    \draw[hd, draw=ink] (-4.5,0.5) -- (-4.2,-0.1);    % баруун хөл
+    \node[font=\scriptsize\bfseries, below] (userL) at (-4.5,-0.3) {Хэрэглэгч};
+
+    % --- Element: Admin актор (баруун) -------------------------------------
+    \draw[hd, draw=ink] (7,1.5) circle (0.25cm);
+    \draw[hd, draw=ink] (7,1.25) -- (7,0.5);
+    \draw[hd, draw=ink] (6.6,0.95) -- (7,1.1) -- (7.4,0.95);
+    \draw[hd, draw=ink] (7,0.5) -- (6.7,-0.1);
+    \draw[hd, draw=ink] (7,0.5) -- (7.3,-0.1);
+    \node[font=\scriptsize\bfseries, below] (userR) at (7,-0.3) {Admin};
+
+    % --- Element: Use Case 1 — Email бүртгэл --------------------------------
+    \node[hdellipse=paper, minimum width=3.5cm] (uc1) at (1.5, 2.2)  {Email бүртгэл / нэвтрэх};
+    % --- Element: Use Case 2 — Цагийн хуваарь ------------------------------
+    \node[hdellipse=paper, minimum width=3.5cm] (uc2) at (1.5, 1.2)  {Цагийн хуваарь харах};
+    % --- Element: Use Case 3 — Цаг захиалах --------------------------------
+    \node[hdellipse=paper, minimum width=3.5cm] (uc3) at (1.5, 0.2)  {Цаг захиалах};
+    % --- Element: Use Case 4 — Захиалга цуцлах ------------------------------
+    \node[hdellipse=paper, minimum width=3.5cm] (uc4) at (1.5,-0.8)  {Захиалга цуцлах};
+    % --- Element: Use Case 5 — AI чатбот -----------------------------------
+    \node[hdellipse=paper, minimum width=3.5cm] (uc5) at (1.5,-1.8)  {AI чатбот харилцах};
+    % --- Element: Use Case 6 — Тогтмол захиалга (Admin) ---------------------
+    \node[hdellipse=paper2, minimum width=3.5cm] (uc6) at (1.5,-2.6) {Тогтмол захиалга удирдах};
+
+    % --- Element: Хэрэглэгч → бүх UC --------------------------------------
+    \foreach \u in {uc1,uc2,uc3,uc4,uc5}{
+      \draw[hd, draw=ink, line width=0.5pt] (-4.25,0.95) -- (\u.west);
+    }
+    % --- Element: Admin → UC6 ------------------------------------------------
+    \draw[hd, draw=ink, line width=0.5pt] (6.75,0.95) -- (uc6.east);
+    % --- Element: <<include>> dashed харилцаа ------------------------------
+    \draw[hddash, -{Latex[length=2mm]}] (uc3.south west) to[bend right=25]
+      node[midway, sloped, above, font=\tiny\itshape] {<<include>>} (uc2.south west);
+  \end{tikzpicture}
+\end{frame}
+
+%###############################################################################
+% SLIDE 9 — ACTIVITY DIAGRAM
+% Element-ууд:
+%   s, e         — эхлэл/төгсгөл цэг
+%   login..done  — алхмууд
+%   avail        — diamond шийдвэр
+%   err          — алдаа алхам (улаан)
+%   arr-*        — алхам бүрийн сум
+%###############################################################################
+\begin{frame}{Бүлэг 2.1: Цаг захиалах Activity Diagram}
+  \centering
+  \begin{tikzpicture}[font=\scriptsize, node distance=0.55cm]
+    % --- Element: Эхлэл цэг -------------------------------------------------
+    \node[hd, draw=ink, fill=ink, circle, inner sep=2.5pt] (s) {};
+    % --- Element: Алхам 1 — Нэвтрэлт ----------------------------------------
+    \node[hdbox=paper, below=of s, minimum width=4cm]    (login)  {Email/нууц үгээр нэвтрэх};
+    % --- Element: Алхам 2 — Огноо сонгох ------------------------------------
+    \node[hdbox=paper, below=of login, minimum width=4cm](date)   {Огноо сонгох};
+    % --- Element: Алхам 3 — Цаг сонгох --------------------------------------
+    \node[hdbox=paper, below=of date, minimum width=4cm] (slot)   {Цагийн үе сонгох};
+    % --- Element: Шийдвэр — боломжтой эсэх ----------------------------------
+    \node[hddiamond=paper2, below=of slot, minimum width=2.5cm](avail) {Цаг боломжтой?};
+    % --- Element: Алдааны алхам ---------------------------------------------
+    \node[hdbox=paper, right=2cm of avail, minimum width=3cm, fill=accent!15] (err)
+      {Алдаа --- дахин сонгох};
+    % --- Element: Алхам 4 — Захиалга үүсгэх ---------------------------------
+    \node[hdbox=paper, below=of avail, minimum width=4cm] (create) {Захиалга үүсгэх (Firestore)};
+    % --- Element: Алхам 5 — DBK код ------------------------------------------
+    \node[hdbox=paper, below=of create, minimum width=4cm](code)   {DBK-xxxxx код};
+    % --- Element: Алхам 6 — Мэдэгдэл -----------------------------------------
+    \node[hdbox=paper, below=of code, minimum width=4cm] (notif)  {1 цагийн өмнөх мэдэгдэл};
+    % --- Element: Алхам 7 — Баталгаажуулалт ----------------------------------
+    \node[hdbox=paper2, below=of notif, minimum width=4cm](done)  {Баталгаажуулалт};
+    % --- Element: Төгсгөлийн цэг --------------------------------------------
+    \node[hd, draw=ink, circle, double, double distance=1.5pt, inner sep=2pt, below=of done] (e) {};
+
+    % --- Element: Сумнууд — гол урсгал --------------------------------------
+    \draw[hdarrow] (s)     -- (login);
+    \draw[hdarrow] (login) -- (date);
+    \draw[hdarrow] (date)  -- (slot);
+    \draw[hdarrow] (slot)  -- (avail);
+    \draw[hdarrow] (avail) -- node[right, font=\tiny] {Тийм} (create);
+    \draw[hdarrow] (create)-- (code);
+    \draw[hdarrow] (code)  -- (notif);
+    \draw[hdarrow] (notif) -- (done);
+    \draw[hdarrow] (done)  -- (e);
+    % --- Element: Шийдвэрээс алдаа руу --------------------------------------
+    \draw[hdarrow] (avail) -- node[above, font=\tiny] {Үгүй} (err);
+    % --- Element: Алдааны буцах урсгал --------------------------------------
+    \draw[hdarrow] (err.north)|- ([xshift=2cm]slot.east) -- (slot);
+  \end{tikzpicture}
+\end{frame}
+
+%###############################################################################
+% SLIDE 10 — EMAIL БАТАЛГААЖУУЛАЛТЫН SEQUENCE DIAGRAM
+% Element-ууд:
+%   u, a, fb, b, e   — 5 lifeline толгой
+%   life-*           — lifeline-ийн dashed шугам
+%   m1..m8           — message-ууд (зүүнээс баруунаас солбицсон)
+%###############################################################################
+\begin{frame}{Бүлэг 2.2: Email Баталгаажуулалтын Систем}
+  \centering
+  \begin{tikzpicture}[font=\scriptsize, node distance=1.5cm,
+                      every node/.append style={align=center}]
+    % --- Element: Lifeline толгойнууд ---------------------------------------
+    \node[hdbox=paper, minimum width=2.5cm, minimum height=1.2cm]              (u)  {\bfseries Хэрэглэгч};
+    \node[hdbox=paper, minimum width=2.5cm, minimum height=1.2cm, right=of u]  (a)  {\bfseries Flutter App};
+    \node[hdbox=paper, minimum width=2.5cm, minimum height=1.2cm, right=of a]  (fb) {\bfseries Firebase\\Auth};
+    \node[hdbox=paper, minimum width=2.5cm, minimum height=1.2cm, right=of fb] (b)  {\bfseries Node.js\\EC2};
+    \node[hdbox=paper, minimum width=2.5cm, minimum height=1.2cm, right=of b]  (e)  {\bfseries Gmail\\SMTP};
+
+    % --- Element: Lifeline-ийн dashed шугам ---------------------------------
+    \foreach \n in {u,a,fb,b,e}{
+      \draw[hddash] (\n.south) -- ++(0,-5);
+    }
+
+    % --- Element: Message 1 — email/нууц үг (хэрэглэгч → апп) ----------------
+    \draw[hdarrow] ($(u.south)+(0,-0.7)$)  -- node[above, font=\tiny] {1. email, нууц үг} ($(a.south)+(0,-0.7)$);
+    % --- Element: Message 2 — createUser ------------------------------------
+    \draw[hdarrow] ($(a.south)+(0,-1.3)$)  -- node[above, font=\tiny] {2. createUser} ($(fb.south)+(0,-1.3)$);
+    % --- Element: Message 3 — UID буцах -------------------------------------
+    \draw[hdarrow, draw=accent2] ($(fb.south)+(0,-1.9)$) -- node[above, font=\tiny] {3. UID} ($(a.south)+(0,-1.9)$);
+    % --- Element: Message 4 — POST /send-code -------------------------------
+    \draw[hdarrow] ($(a.south)+(0,-2.5)$)  -- node[above, font=\tiny] {4. POST /send-code} ($(b.south)+(0,-2.5)$);
+    % --- Element: Message 5 — 6-digit код илгээх ----------------------------
+    \draw[hdarrow] ($(b.south)+(0,-3.1)$)  -- node[above, font=\tiny] {5. 6-digit code} ($(e.south)+(0,-3.1)$);
+    % --- Element: Message 6 — OK хариу --------------------------------------
+    \draw[hdarrow, draw=accent2] ($(e.south)+(0,-3.7)$) -- node[above, font=\tiny] {6. OK} ($(b.south)+(0,-3.7)$);
+    % --- Element: Message 7 — 200 OK ----------------------------------------
+    \draw[hdarrow, draw=accent2] ($(b.south)+(0,-4.3)$) -- node[above, font=\tiny] {7. 200 OK} ($(a.south)+(0,-4.3)$);
+    % --- Element: Message 8 — Код оруулах -----------------------------------
+    \draw[hdarrow, draw=accent2] ($(a.south)+(0,-4.9)$) -- node[above, font=\tiny] {8. Код оруул} ($(u.south)+(0,-4.9)$);
+  \end{tikzpicture}
+\end{frame}
+
+%###############################################################################
+% SLIDE 11 — ДАВХЦАЛ ШАЛГАХ ЛОГИК
+% Element-ууд: codeBox (Firestore Query), notesBox (тайлбар)
+%###############################################################################
+\begin{frame}{Бүлэг 2.2: Давхцал шалгах логик --- Firestore Query}
+  \centering
+  \begin{tikzpicture}[font=\footnotesize]
+    % --- Element: Код блок ---------------------------------------------------
+    \node[hdbox=paper, text width=12cm, align=left, font=\ttfamily\footnotesize, inner sep=10pt] (codeBox) {%
+      \textbf{// Захиалга үүсгэхээс өмнө давхардал шалгах}\\[2pt]
+      final snap = await db.collection('bookings')\\
+      \hspace*{1em}.where('venueId', isEqualTo: venueId)\\
+      \hspace*{1em}.where('date',    isEqualTo: date)\\
+      \hspace*{1em}.where('timeSlot',isEqualTo: slot)\\
+      \hspace*{1em}.where('status',  whereIn: ['upcoming','active'])\\
+      \hspace*{1em}.get();\\[4pt]
+      \textbf{if} (snap.docs.isNotEmpty) \{\\
+      \hspace*{1em}\textbf{throw} 'Уг цаг авагдсан байна';\\
+      \}};
+    % --- Element: Тайлбар блок ----------------------------------------------
+    \node[hdbox=paper2, text width=10cm, font=\scriptsize, anchor=north] (notesBox)
+      at (0,-3.2) {\textbf{Compound index} ашигласан тул query 50ms-д дуусдаг.\\
+        Хоёр хэрэглэгч нэгэн зэрэг захиалбал \textbf{atomic transaction}-аар нэг нь л баталгаажна.};
+  \end{tikzpicture}
+\end{frame}
+
+%###############################################################################
+% SLIDE 12 — UI/UX ДЭЛГЭЦҮҮД
+% Element-ууд: phone-1..4 (4 утасны хүрээ), descBox
+%###############################################################################
+\begin{frame}{Бүлэг 2.2: Мобайл аппликейшн --- UI/UX}
+  \centering
+  \begin{tikzpicture}[font=\scriptsize]
+    % --- 4 утасны mock-up -- одоохондоо хүрээ зурдаг макрог давтсан ---------
+    \foreach \i/\title in {%
+      0/{Нүүр},%
+      1/{Цаг захиалах},%
+      2/{Захиалга баталгаажуулах},%
+      3/{Миний захиалгууд}}{
+
+        \node[hdbox=paper, minimum width=3cm, minimum height=4.5cm,
+              text width=2.6cm, font=\scriptsize, inner sep=4pt]
+          (s\i) at ({-6+\i*4}, 0.5) {%
+            \vspace{0.2cm}
+            \begin{tikzpicture}
+              % Element: Утасны бие (дэвсгэр)
+              \draw[hd, draw=ink!50, fill=paper2] (0,0) rectangle (2,3.5);
+              % Element: Толгой бар
+              \draw[hd, draw=accent3, fill=accent3!20] (0.1,3.0) rectangle (1.9,3.4);
+              % Element: 1-р мөр
+              \draw[hd, draw=ink!60] (0.2,2.4) rectangle (1.8,2.8);
+              % Element: 2-р мөр
+              \draw[hd, draw=ink!60] (0.2,1.7) rectangle (1.8,2.1);
+              % Element: 3-р мөр
+              \draw[hd, draw=ink!60] (0.2,1.0) rectangle (1.8,1.4);
+              % Element: Үндсэн товч
+              \draw[hd, draw=accent, fill=accent!30] (0.2,0.2) rectangle (1.8,0.7);
+            \end{tikzpicture}};
+        % --- Element: дэлгэцийн нэр --------------------------------------
+        \node[font=\scriptsize\bfseries, below=0.05cm of s\i] {\title};
+      }
+
+    % --- Element: Доод тайлбар ----------------------------------------------
+    \node[hdbox=paper2, text width=14cm, font=\scriptsize\itshape, anchor=north] (descBox)
+      at (0,-3.5)
+      {Material Design 3 + дулаан говийн өнгөн схем (бежий \#EDE7DA, наранжин \#D4700F)};
+  \end{tikzpicture}
+\end{frame}
+
+%###############################################################################
+% SLIDE 13 — AI ТУСЛАХ (Хоёр горим)
+% Element-ууд: app, cf, ec2, cl, gr — 5 box; arr-* сумнууд
+%###############################################################################
+\begin{frame}{Бүлэг 2.2: AI Туслах --- Хоёр горим}
+  \centering
+  \begin{tikzpicture}[font=\footnotesize, node distance=1cm]
+    % --- Element: Flutter App box -------------------------------------------
+    \node[hdbox=paper, minimum width=3.5cm, minimum height=1.2cm] (app) at (-5,1.5)
+      {\bfseries Flutter App};
+    % --- Element: Cloud Functions box (үндсэн горим) -----------------------
+    \node[hdbox=paper, minimum width=4cm, minimum height=1.2cm, fill=accent!15] (cf)
+      at (0,2.5) {\bfseries Firebase\\Cloud Functions};
+    % --- Element: Node.js / EC2 box (нөөц горим) ----------------------------
+    \node[hdbox=paper, minimum width=4cm, minimum height=1.2cm, fill=accent2!15] (ec2)
+      at (0,0.5) {\bfseries Node.js / EC2};
+    % --- Element: Claude Haiku box ------------------------------------------
+    \node[hdbox=paper, minimum width=3.2cm, minimum height=1.2cm] (cl) at (5,2.5)
+      {\bfseries Claude Haiku 4.5\\(үндсэн)};
+    % --- Element: Groq Llama box --------------------------------------------
+    \node[hdbox=paper, minimum width=3.2cm, minimum height=1.2cm] (gr) at (5,0.5)
+      {\bfseries Groq Llama 3.1\\(нөөц)};
+
+    % --- Element: Сум 1 (App → CF) ------------------------------------------
+    \draw[hdarrow] (app) -- node[above, font=\tiny] {Cloud Function} (cf);
+    % --- Element: Сум 2 (App → EC2 fallback) --------------------------------
+    \draw[hdarrow, draw=accent] (app) to[bend right=20]
+      node[below, font=\tiny\itshape] {fallback if timeout} (ec2);
+    % --- Element: Сум 3 (CF → Claude) ---------------------------------------
+    \draw[hdarrow] (cf)  -- (cl);
+    % --- Element: Сум 4 (EC2 → Groq) -----------------------------------------
+    \draw[hdarrow] (ec2) -- (gr);
+
+    % --- Element: Доод тайлбар ----------------------------------------------
+    \node[hdbox=paper2, text width=14cm, font=\scriptsize, anchor=north] (descBox)
+      at (0,-1.5){
+        \textbf{Үндсэн горим} нь Claude Haiku-аар дуудагдаж $<$ 1 секундэд хариулдаг.\\
+        \textbf{Нөөц горим} (Groq Llama) нь Claude алдаа гарсан тохиолдолд автоматаар идэвхждэг.};
+  \end{tikzpicture}
+\end{frame}
+
+%###############################################################################
+% SLIDE 14 — FIRESTORE ERD
+% Element-ууд: 4 collection (u, b, f, e); 2 relation (rel-userId, rel-uid)
+%###############################################################################
+\begin{frame}{Бүлэг 2.4: Firebase Firestore --- Өгөгдлийн схем}
+  \centering
+  \begin{tikzpicture}[font=\scriptsize, every node/.style={align=left}]
+    % --- Element: users collection ------------------------------------------
+    \node[hdbox=paper, text width=4cm, font=\scriptsize, inner sep=6pt] (u) at (-4.5, 2) {%
+      {\bfseries\color{accent3} users}\\[2pt]
+      uid (doc ID)\\
+      name : string\\
+      email : string\\
+      emailVerified : bool\\
+      createdAt : timestamp};
+    % --- Element: bookings collection ---------------------------------------
+    \node[hdbox=paper, text width=4cm, font=\scriptsize, inner sep=6pt] (b) at (4.5, 2) {%
+      {\bfseries\color{accent3} bookings}\\[2pt]
+      code : DBK-xxxxx\\
+      userId : string\\
+      venueId : string\\
+      date / dateKey\\
+      timeSlot / timeSlotEnd\\
+      status : upcoming\textbar cancelled};
+    % --- Element: fixed_bookings collection ----------------------------------
+    \node[hdbox=paper2, text width=4cm, font=\scriptsize, inner sep=6pt] (f) at (-4.5,-1.8) {%
+      {\bfseries\color{accent2} fixed\_bookings}\\[2pt]
+      venueId : string\\
+      organizationName\\
+      dayOfWeek : 0--6\\
+      timeSlot : string\\
+      isActive : bool};
+    % --- Element: email_verifications collection ----------------------------
+    \node[hdbox=paper2, text width=4cm, font=\scriptsize, inner sep=6pt] (e) at (4.5,-1.8) {%
+      {\bfseries\color{accent} email\_verifications}\\[2pt]
+      uid (doc ID)\\
+      code : 6 оронтой\\
+      email : string\\
+      expiresAt : timestamp};
+
+    % --- Element: Relation users.uid → bookings.userId ---------------------
+    \draw[hddash, draw=ink] (u.east)  -- node[above, font=\tiny] {userId} (b.west);
+    % --- Element: Relation users.uid → email_verifications.uid -------------
+    \draw[hddash, draw=ink] (u.south) -- node[right, font=\tiny] {uid} (e.north);
+  \end{tikzpicture}
+\end{frame}
+
+%###############################################################################
+% §4 — БҮЛЭГ 3 (хэсэг 4)
+\section[Бүлэг 3]{Бүлэг 3: Үүлэн орчны хэрэгжүүлэлт}
+%###############################################################################
+% SLIDE 15 — БҮЛЭГ 3 НҮҮР
+%###############################################################################
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[paper] (current page.north west) rectangle (current page.south east);
+  \end{tikzpicture}
+  \vspace{2cm}
+  \centering
+  \begin{tikzpicture}
+    % --- Element: Гол гарчиг -----------------------------------------------
+    \node[font=\Huge\bfseries\color{titlebg}] (t) {Бүлэг 3};
+    % --- Element: Дэд гарчиг ------------------------------------------------
+    \node[font=\LARGE\color{accent}, below=0.3cm of t] (s) {Үүлэн орчны хэрэгжүүлэлт};
+    % --- Element: Шугам -----------------------------------------------------
+    \draw[hd, draw=accent, line width=1.5pt]
+      ($(s.south west)+(0.5,-0.2)$) -- ($(s.south east)+(-0.5,-0.2)$);
+    % --- Element: Жижиг тайлбар --------------------------------------------
+    \node[font=\small\itshape\color{ink!70}, below=1cm of s]
+      {Docker · AWS EC2 · GitHub Actions CI/CD · туршилт};
+  \end{tikzpicture}
+\end{frame}
+
+%###############################################################################
+% SLIDE 16 — DEPLOYMENT OVERVIEW
+% Element-ууд: gh, act, ecr, ec2, ph, ps — 6 box; сум 5 ш
+%###############################################################################
+\begin{frame}{Бүлэг 3.1: Deployment overview}
+  \centering
+  \begin{tikzpicture}[font=\footnotesize]
+    % --- Element: GitHub Repo box -------------------------------------------
+    \node[hdbox=paper, minimum width=3cm, minimum height=1.4cm] (gh)
+      at (-5.5, 2)  {\bfseries GitHub\\Repository};
+    % --- Element: GitHub Actions box ----------------------------------------
+    \node[hdbox=paper, minimum width=3cm, minimum height=1.4cm] (act)
+      at (-5.5,-1) {\bfseries GitHub\\Actions CI/CD};
+    % --- Element: AWS ECR box ------------------------------------------------
+    \node[hdbox=paper, minimum width=3cm, minimum height=1.4cm, fill=accent!15] (ecr)
+      at ( 0,-1) {\bfseries AWS ECR\\Docker Registry};
+    % --- Element: AWS EC2 box ------------------------------------------------
+    \node[hdbox=paper, minimum width=3cm, minimum height=1.4cm, fill=accent2!15] (ec2)
+      at ( 0, 2) {\bfseries AWS EC2\\Docker контейнер};
+    % --- Element: Flutter App box -------------------------------------------
+    \node[hdbox=paper, minimum width=3cm, minimum height=1.4cm] (ph)
+      at ( 5.5, 2) {\bfseries Flutter App\\Android / iOS};
+    % --- Element: Play Store box --------------------------------------------
+    \node[hdbox=paper, minimum width=3cm, minimum height=1.4cm, fill=accent3!15] (ps)
+      at ( 5.5,-1) {\bfseries Google Play Store};
+
+    % --- Element: Сум 1 (GitHub → Actions: push) ----------------------------
+    \draw[hdarrow] (gh)  -- node[left, font=\tiny] {push}         (act);
+    % --- Element: Сум 2 (Actions → ECR: docker push) ------------------------
+    \draw[hdarrow] (act) -- node[above, font=\tiny] {docker push} (ecr);
+    % --- Element: Сум 3 (ECR → EC2: pull) -----------------------------------
+    \draw[hdarrow] (ecr) -- node[left, font=\tiny] {pull}         (ec2);
+    % --- Element: Сум 4 (EC2 → Flutter: REST API) ---------------------------
+    \draw[hdarrow] (ec2) -- node[above, font=\tiny] {REST API}    (ph);
+    % --- Element: Сум 5 (Play Store → Flutter: download) --------------------
+    \draw[hdarrow] (ps)  -- node[right, font=\tiny] {download}    (ph);
+
+    % --- Element: Доод тайлбар ----------------------------------------------
+    \node[font=\scriptsize\itshape\color{accent}, anchor=south]
+      at (0,-2.7) {3--4 минутын автомат байршуулалт};
+  \end{tikzpicture}
+\end{frame}
+
+%###############################################################################
+% SLIDE 17 — CI/CD PIPELINE
+% Element-ууд: p1..p7 алхмууд, fail (улаан box), сум-ууд
+%###############################################################################
+\begin{frame}{Бүлэг 3.1: CI/CD Pipeline --- Docker + AWS EC2}
+  \centering
+  \begin{tikzpicture}[font=\scriptsize, node distance=0.55cm]
+    % --- Element: Алхам 1 — git push ----------------------------------------
+    \node[hdbox=paper, minimum width=3.5cm]              (p1) {git push (\textit{backend/})};
+    % --- Element: Алхам 2 — GH Actions trigger -------------------------------
+    \node[hdbox=paper, minimum width=3.5cm, below=of p1] (p2) {GH Actions trigger};
+    % --- Element: Алхам 3 — Docker build -------------------------------------
+    \node[hdbox=paper, minimum width=3.5cm, below=of p2] (p3) {Docker build};
+    % --- Element: Шийдвэр — Build OK эсэх -----------------------------------
+    \node[hddiamond=paper2, below=of p3, minimum width=2.5cm] (p4) {Build OK?};
+    % --- Element: Алхам 5 — ECR push ----------------------------------------
+    \node[hdbox=paper, minimum width=3.5cm, below=of p4] (p5) {ECR push};
+    % --- Element: Алхам 6 — SSH to EC2 ---------------------------------------
+    \node[hdbox=paper, minimum width=3.5cm, below=of p5] (p6) {SSH to EC2};
+    % --- Element: Алхам 7 — docker pull / run --------------------------------
+    \node[hdbox=paper, minimum width=3.5cm, below=of p6] (p7) {docker pull / run};
+    % --- Element: Алдааны замбраа --------------------------------------------
+    \node[hdbox=paper, fill=accent!15, right=2.8cm of p4, minimum width=3cm] (fail)
+      {Workflow fail};
+
+    % --- Element: Сумнууд (гол урсгал) --------------------------------------
+    \foreach \a/\b in {p1/p2,p2/p3,p3/p4,p4/p5,p5/p6,p6/p7}{
+      \draw[hdarrow] (\a) -- (\b);
+    }
+    % --- Element: Үгүй сум — fail руу ---------------------------------------
+    \draw[hdarrow] (p4) -- node[above, font=\tiny] {Үгүй} (fail);
+    % --- Element: "Тийм" текст ----------------------------------------------
+    \node[font=\tiny] at ($(p4.south)+(0.6,-0.1)$) {Тийм};
+
+    % --- Element: Тайлбарын box ----------------------------------------------
+    \node[hdbox=paper2, font=\scriptsize, text width=4cm, align=left, right=1.2cm of p7] (notes)
+      {\textbf{Үе шат}: 6 алхамтай\\
+       \textbf{Хугацаа}: 3--4 минут\\
+       \textbf{Зэрэгцэх}: бүтэн автомат\\
+       \textbf{Хяналт}: GitHub UI};
+  \end{tikzpicture}
+\end{frame}
+
+%###############################################################################
+% SLIDE 18 — ХАРИУ ЦАГИЙН ХЭМЖИЛТ (xbar диаграмм)
+%###############################################################################
+\begin{frame}{Бүлэг 3.2: Хариу цагийн хэмжилт ($n=10$, 4G LTE)}
+  \centering
+  \begin{tikzpicture}[font=\small]
+    % --- Element: График ----------------------------------------------------
+    \node[hdbox=paper, inner sep=8pt] {
+      \begin{tikzpicture}[font=\footnotesize]
+        \begin{axis}[
+          xbar, width=11cm, height=5.8cm, bar width=8pt,
+          xmin=0, xmax=5.6, xlabel={Хариу цаг (секунд)},
+          ytick={1,2,3,4,5},
+          yticklabels={{AI чатбот},{Захиалга үүсгэх},{EC2 API},{Firestore},{Апп ачаалах}},
+          y tick label style={font=\footnotesize},
+          nodes near coords, nodes near coords align=horizontal,
+          every node near coord/.append style={font=\tiny},
+          enlarge y limits=0.18,
+          tick style={draw=ink}, axis line style={draw=ink},
+          legend style={at={(0.98,0.05)}, anchor=south east, font=\scriptsize, draw=ink},
+          legend cell align=left]
+          % Element: Хэмжсэн утгууд
+          \addplot[fill=accent3!40, draw=accent3] coordinates
+            {(0.9,1)(1.1,2)(0.8,3)(0.6,4)(2.3,5)};
+          % Element: Шаардлагын хязгаар
+          \addplot[fill=accent!20, draw=accent, dashed] coordinates
+            {(5.0,1)(2.0,2)(2.0,3)(2.0,4)(3.0,5)};
+          \legend{Хэмжсэн (с), Шаардлага (с)}
+        \end{axis}
+      \end{tikzpicture}};
+    % --- Element: Доод тайлбар ----------------------------------------------
+    \node[hdbox=paper2, text width=14cm, font=\scriptsize\itshape, anchor=north]
+      at (0,-3.5){Бүх үзүүлэлт шаардлагын хязгаарт нийцсэн.};
+  \end{tikzpicture}
+\end{frame}
+
+%###############################################################################
+% SLIDE 19 — ХЭРЭГЖИЛТИЙН ҮР ДҮН (хүснэгт)
+%###############################################################################
+\begin{frame}{Бүлэг 3.2: Хэрэгжилтийн үр дүн}
+  \centering
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tikzpicture}
+    \node[hdbox=paper, inner sep=8pt] {
+      \begin{tabular}{|p{4.5cm}|p{6cm}|p{2.6cm}|}
+        \hline
+        \rowcolor{paper2}\bfseries Шалгах зүйл & \bfseries Үзүүлэлт & \bfseries Үр дүн\\
+        \hline
+        % --- Row: Flutter мобайл апп -----------------------------------------
+        Flutter мобайл апп & 8 дэлгэц, iOS / Android & {\color{accent2}\textbf{DONE}}\\
+        \hline
+        % --- Row: Node.js REST API -------------------------------------------
+        Node.js REST API & 8 endpoint, production EC2 & {\color{accent2}\textbf{DONE}}\\
+        \hline
+        % --- Row: Firebase нэгтгэл --------------------------------------------
+        Firebase нэгтгэл & Firestore + Auth OTP + локал мэдэгдэл & {\color{accent2}\textbf{DONE}}\\
+        \hline
+        % --- Row: AI Chat ----------------------------------------------------
+        AI Chat туслах & Claude Haiku + Groq Llama, $<$1 сек & {\color{accent2}\textbf{DONE}}\\
+        \hline
+        % --- Row: Давхцал шалгалт ---------------------------------------------
+        Давхцал шалгалт & Compound index, atomic transaction & {\color{accent2}\textbf{DONE}}\\
+        \hline
+        % --- Row: CI/CD ------------------------------------------------------
+        CI/CD Pipeline & GitHub Actions автомат деплой & {\color{accent2}\textbf{DONE}}\\
+        \hline
+        % --- Row: Туршилт ----------------------------------------------------
+        Туршилт (нэгтгэсэн) & 9 функциональ + 5 гүйцэтгэлийн алхам & {\color{accent2}\textbf{DONE}}\\
+        \hline
+        % --- Row: Хэрэглэхэд хялбар -------------------------------------------
+        Хэрэглэхэд хялбар & 4.3 / 5.0 оноо (Usability scale) & {\color{accent2}\textbf{DONE}}\\
+        \hline
+      \end{tabular}};
+  \end{tikzpicture}
+\end{frame}
+
+%###############################################################################
+% §5 — ДҮГНЭЛТ (хэсэг 5)
+\section[Дүгнэлт]{Дүгнэлт}
+%###############################################################################
+% SLIDE 20 — ДҮГНЭЛТ (3 баган)
+% Element-ууд: topBox, col-1 шинэлэг, col-2 ач холбогдол, col-3 цаашид
+%###############################################################################
+\begin{frame}{Дүгнэлт}
+  \begin{tikzpicture}[font=\footnotesize, node distance=0.45cm]
+    % --- Element: Дүгнэлтийн дүн ---------------------------------------------
+    \node[hdbox=paper2, text width=14cm, align=left, font=\small, inner sep=10pt] (sumBox) {%
+      Flutter (Presentation), Node.js (Application), Firebase (Data) давхаргуудыг \textbf{AWS EC2} дэд бүтэцэд суурилуулан нэгтгэсэн \textbf{3 давхаргат} ухаалаг захиалгын систем амжилттай загварчлагдаж, production орчинд хэрэгжлээ.};
+
+    % --- Element: 1-р баган — Шинэлэг тал ----------------------------------
+    \node[hdbox=paper, font=\scriptsize, text width=4.4cm, align=left, anchor=north west,
+          inner sep=6pt] (col1)
+      at (-7.2,-0.5) {\textbf{\color{accent3} Шинэлэг тал}\\
+        \textbullet\ 3 давхаргат үүлэн архитектур\\
+        \textbullet\ Давхар горимын AI чатбот\\
+        \textbullet\ \texttt{fixed\_bookings} функц};
+
+    % --- Element: 2-р баган — Ач холбогдол ---------------------------------
+    \node[hdbox=paper, font=\scriptsize, text width=4.4cm, align=left, anchor=north,
+          inner sep=6pt] (col2)
+      at (0,-0.5) {\textbf{\color{accent2} Ач холбогдол}\\
+        \textbullet\ Иргэдэд хялбар\\
+        \textbullet\ Захиалгын ачаалал бууруулна\\
+        \textbullet\ Орон нутгийн жишиг};
+
+    % --- Element: 3-р баган — Цаашдын хөгжил -------------------------------
+    \node[hdbox=paper, font=\scriptsize, text width=4.4cm, align=left, anchor=north east,
+          inner sep=6pt] (col3)
+      at (7.2,-0.5) {\textbf{\color{accent} Цаашдын хөгжил}\\
+        \textbullet\ QPay/SocialPay төлбөр\\
+        \textbullet\ HTTPS/SSL\\
+        \textbullet\ Админ дэлгэц};
+  \end{tikzpicture}
+\end{frame}
+
+%###############################################################################
+% SLIDE 21 — АНХААРАЛ ТАВЬСАНД БАЯРЛАЛАА
+%###############################################################################
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[paper] (current page.north west) rectangle (current page.south east);
+  \end{tikzpicture}
+  \vspace{1.5cm}
+  \centering
+  \begin{tikzpicture}
+    % --- Element: Талархлын box ----------------------------------------------
+    \node[hdbox=paper2, text width=12cm, font=\Huge\bfseries\color{titlebg}, inner sep=20pt] (t)
+      {Анхаарал тавьсанд\\баярлалаа};
+    % --- Element: Доорх шугам ------------------------------------------------
+    \draw[hd, draw=accent, line width=1.5pt]
+      ($(t.south west)+(1,-0.4)$) -- ($(t.south east)+(-1,-0.4)$);
+  \end{tikzpicture}\\[0.6cm]
+  % --- Element: Асуултын текст ----------------------------------------------
+  {\Large\itshape\color{ink} Асуулт?}\\[1cm]
+  % --- Element: Илтгэгчийн нэр ----------------------------------------------
+  {\small\color{ink!70} М.Түвшинжаргал \quad B221940619 \quad 2026 он}
+\end{frame}
+
+\end{document}
