@@ -1,14 +1,17 @@
 const express = require('express');
 const { db } = require('../firebase');
+const requireAuth = require('../middleware/auth');
 
 const router = express.Router();
 const bookings = db.collection('bookings');
+const venueSlots = db.collection('venue_slots');
+
+function slotDocRef(venueId, dateKey, slot) {
+  return venueSlots.doc(`${venueId}_${dateKey}_${slot}`);
+}
 
 // POST /api/bookings
-// Body: { venueId, venueName, venueType, venueLocation, venueAccentColor,
-//         date (YYYY-MM-DD), timeSlots: ["09:00","10:00","11:00"], timeSlotEnd,
-//         courtType, price, userName, userEmail }
-router.post('/', async (req, res) => {
+router.post('/', requireAuth, async (req, res) => {
   const {
     venueId, venueName, venueType, venueLocation, venueAccentColor,
     date, timeSlots, timeSlotEnd, courtType, price, userName, userEmail,
@@ -26,72 +29,82 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'date формат: YYYY-MM-DD' });
   }
 
+  const code = `DBK-${Date.now() % 100000}`;
+  const groupId = timeSlots.length > 1 ? `GRP-${Date.now()}` : null;
+  const displayTimeSlot = timeSlots[0];
+  const displayTimeSlotEnd = timeSlotEnd;
+  const firstRef = bookings.doc();
+  const bookingRefs = timeSlots.map((_, idx) => (idx === 0 ? firstRef : bookings.doc()));
+  const slotRefs = timeSlots.map((slot) => slotDocRef(venueId, date, slot));
+
   try {
-    // Conflict check for every selected slot
-    for (const slot of timeSlots) {
-      const existingSnap = await bookings
-        .where('venueId', '==', venueId)
-        .where('dateKey', '==', date)
-        .where('timeSlot', '==', slot)
-        .where('status', 'in', ['upcoming', 'active'])
-        .get();
+    await db.runTransaction(async (t) => {
+      // Бүх slot-ийн availability-г нэгэн зэрэг, atomic-аар уншина
+      const slotSnaps = await Promise.all(slotRefs.map((r) => t.get(r)));
 
-      if (!existingSnap.empty) {
+      // Conflict шалгах
+      for (let i = 0; i < timeSlots.length; i++) {
+        const slot = timeSlots[i];
+        const d = slotSnaps[i].data() || { fullBooked: false, halfCount: 0 };
+
         if (courtType !== 'Хагас талбай') {
-          return res.status(409).json({ error: `${slot} цаг аль хэдийн захиалагдсан байна` });
-        }
-        const hasFullCourt = existingSnap.docs.some((d) => d.data().courtType !== 'Хагас талбай');
-        if (hasFullCourt) {
-          return res.status(409).json({ error: `${slot} цаг бүтэн талбайгаар захиалагдсан байна` });
-        }
-        const halfCount = existingSnap.docs.filter((d) => d.data().courtType === 'Хагас талбай').length;
-        if (halfCount >= 2) {
-          return res.status(409).json({ error: `${slot} цаг аль хэдийн 2 хагас талбайгаар захиалагдсан байна` });
+          if (d.fullBooked || d.halfCount > 0) {
+            const err = new Error(`${slot} цаг аль хэдийн захиалагдсан байна`);
+            err.httpCode = 409;
+            throw err;
+          }
+          t.set(slotRefs[i], { fullBooked: true, halfCount: 0, venueId, dateKey: date });
+        } else {
+          if (d.fullBooked || d.halfCount >= 2) {
+            const err = new Error(`${slot} цаг аль хэдийн захиалагдсан байна`);
+            err.httpCode = 409;
+            throw err;
+          }
+          t.set(slotRefs[i], {
+            fullBooked: false,
+            halfCount: (d.halfCount || 0) + 1,
+            venueId,
+            dateKey: date,
+          });
         }
       }
-    }
 
-    const code = `DBK-${Date.now() % 100000}`;
-    const groupId = timeSlots.length > 1 ? `GRP-${Date.now()}` : null;
-    const displayTimeSlot = timeSlots[0];
-    const displayTimeSlotEnd = timeSlotEnd;
-
-    const batch = db.batch();
-    const firstRef = bookings.doc();
-
-    timeSlots.forEach((slot, idx) => {
-      const ref = idx === 0 ? firstRef : bookings.doc();
-      const slotEndTime = timeSlots[idx + 1] || timeSlotEnd;
-      const docData = {
-        venueId,
-        venueName,
-        venueType: venueType || '',
-        venueLocation: venueLocation || '',
-        venueAccentColor: venueAccentColor || 0,
-        dateKey: date,
-        date: new Date(date),
-        timeSlot: slot,
-        timeSlotEnd: slotEndTime,
-        displayTimeSlot,
-        displayTimeSlotEnd,
-        courtType: courtType || '',
-        price: price || '',
-        userName,
-        userEmail,
-        status: 'upcoming',
-        code,
-        createdAt: new Date(),
-      };
-      if (groupId) {
-        docData.groupId = groupId;
-        docData.isGroupLeader = idx === 0;
-      }
-      batch.set(ref, docData);
+      // Захиалгын document үүсгэх
+      timeSlots.forEach((slot, idx) => {
+        const slotEndTime = timeSlots[idx + 1] || timeSlotEnd;
+        const docData = {
+          venueId,
+          venueName,
+          venueType: venueType || '',
+          venueLocation: venueLocation || '',
+          venueAccentColor: venueAccentColor || 0,
+          dateKey: date,
+          date: new Date(date),
+          timeSlot: slot,
+          timeSlotEnd: slotEndTime,
+          displayTimeSlot,
+          displayTimeSlotEnd,
+          courtType: courtType || '',
+          price: price || '',
+          userName,
+          userEmail,
+          status: 'upcoming',
+          code,
+          createdAt: new Date(),
+        };
+        if (groupId) {
+          docData.groupId = groupId;
+          docData.isGroupLeader = idx === 0;
+        }
+        t.set(bookingRefs[idx], docData);
+      });
     });
 
-    await batch.commit();
     res.status(201).json({ id: firstRef.id, code });
   } catch (err) {
+    if (err.httpCode === 409) {
+      return res.status(409).json({ error: err.message });
+    }
     console.error('Bookings алдаа:', err.message);
     res.status(500).json({ error: 'Серверийн алдаа гарлаа' });
   }
@@ -118,8 +131,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-// DELETE /api/bookings/:id — single doc эсвэл groupId-ийн бүх docуудыг цуцлах
-router.delete('/:id', async (req, res) => {
+// DELETE /api/bookings/:id — цуцлах + venue_slots шинэчлэх
+router.delete('/:id', requireAuth, async (req, res) => {
   try {
     const ref = bookings.doc(req.params.id);
     const snap = await ref.get();
@@ -134,17 +147,37 @@ router.delete('/:id', async (req, res) => {
     const { groupId } = snap.data();
     const now = new Date();
 
+    let docsToCancel;
     if (groupId) {
       const groupSnap = await bookings
         .where('groupId', '==', groupId)
         .where('status', 'in', ['upcoming', 'active'])
         .get();
-      const batch = db.batch();
-      groupSnap.docs.forEach((d) => batch.update(d.ref, { status: 'cancelled', cancelledAt: now }));
-      await batch.commit();
+      docsToCancel = groupSnap.docs;
     } else {
-      await ref.update({ status: 'cancelled', cancelledAt: now });
+      docsToCancel = [snap];
     }
+
+    await db.runTransaction(async (t) => {
+      const slotInfos = docsToCancel.map((d) => {
+        const { venueId, dateKey, timeSlot, courtType } = d.data();
+        return { ref: slotDocRef(venueId, dateKey, timeSlot), courtType };
+      });
+
+      const slotSnaps = await Promise.all(slotInfos.map(({ ref: sr }) => t.get(sr)));
+
+      slotInfos.forEach(({ ref: sr, courtType }, i) => {
+        if (!slotSnaps[i].exists) return;
+        const d = slotSnaps[i].data();
+        if (courtType === 'Хагас талбай') {
+          t.update(sr, { halfCount: Math.max(0, (d.halfCount || 1) - 1) });
+        } else {
+          t.update(sr, { fullBooked: false });
+        }
+      });
+
+      docsToCancel.forEach((d) => t.update(d.ref, { status: 'cancelled', cancelledAt: now }));
+    });
 
     res.json({ success: true });
   } catch (err) {

@@ -10,9 +10,13 @@ class ApiService {
   // Сүлжээ удаашрах эсвэл тасрах үед UI хязгааргүй хүлээхээс сэргийлэх
   static const _timeout = Duration(seconds: 15);
 
-  static Map<String, String> get _headers => {
-        'Content-Type': 'application/json',
-      };
+  static Future<Map<String, String>> _authHeaders() async {
+    final token = await AuthService.currentUser?.getIdToken();
+    return {
+      'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
+  }
 
   // ── Хэрэглэгч ─────────────────────────────────────────────────────────────
 
@@ -23,7 +27,7 @@ class ApiService {
     final res = await http
         .post(
           Uri.parse(AppConfig.usersEndpoint),
-          headers: _headers,
+          headers: await _authHeaders(),
           body: jsonEncode({'name': name, 'email': email, 'uid': _currentUid()}),
         )
         .timeout(_timeout);
@@ -61,7 +65,7 @@ class ApiService {
     final res = await http
         .post(
           Uri.parse(AppConfig.bookingsEndpoint),
-          headers: _headers,
+          headers: await _authHeaders(),
           body: jsonEncode({
             'venueId': venueId,
             'venueName': venueName,
@@ -91,7 +95,7 @@ class ApiService {
     final res = await http
         .delete(
           Uri.parse('${AppConfig.bookingsEndpoint}/$bookingId'),
-          headers: _headers,
+          headers: await _authHeaders(),
         )
         .timeout(_timeout);
     if (res.statusCode != 200) {
@@ -109,7 +113,7 @@ class ApiService {
     final uri = Uri.parse(AppConfig.scheduleEndpoint)
         .replace(queryParameters: {'venueId': venueId, 'date': dateKey});
 
-    final res = await http.get(uri, headers: _headers).timeout(_timeout);
+    final res = await http.get(uri, headers: await _authHeaders()).timeout(_timeout);
     if (res.statusCode != 200) {
       throw Exception(_error(res));
     }

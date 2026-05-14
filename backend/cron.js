@@ -27,9 +27,8 @@ async function updateExpiredBookings() {
 
     if (snap.empty) return;
 
-    const batch = db.batch();
-    let count = 0;
     const nowMs = Date.now();
+    const toComplete = [];
 
     for (const doc of snap.docs) {
       const data = doc.data();
@@ -39,16 +38,22 @@ async function updateExpiredBookings() {
       // Group leader uses displayTimeSlotEnd (overall end) so the booking card
       // stays "upcoming" until the last slot finishes, not just the first slot
       const endUtcMs = bookingEndUtcMs(dateKey, displayTimeSlotEnd || timeSlotEnd);
-      if (nowMs > endUtcMs) {
-        batch.update(doc.ref, { status: 'completed', completedAt: new Date() });
-        count++;
-      }
+      if (nowMs > endUtcMs) toComplete.push(doc.ref);
     }
 
-    if (count > 0) {
+    if (toComplete.length === 0) return;
+
+    // Firestore batch limit: 500 operation тул chunk хэлбэрээр явуулна
+    const CHUNK = 499;
+    const completedAt = new Date();
+    for (let i = 0; i < toComplete.length; i += CHUNK) {
+      const batch = db.batch();
+      toComplete.slice(i, i + CHUNK).forEach((ref) =>
+        batch.update(ref, { status: 'completed', completedAt })
+      );
       await batch.commit();
-      console.log(`[Cron] ${count} захиалга "completed" болголоо`);
     }
+    console.log(`[Cron] ${toComplete.length} захиалга "completed" болголоо`);
   } catch (err) {
     console.error('[Cron] Алдаа:', err.message);
   }

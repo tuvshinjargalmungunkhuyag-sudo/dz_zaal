@@ -110,6 +110,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen>
         );
         if (!mounted || AuthService.currentUser == null) return;
         await _prefillFromAuth();
+        if (mounted) _emailController.text = AuthService.currentEmail ?? '';
       }
 
       if (_nameController.text.trim().isEmpty) {

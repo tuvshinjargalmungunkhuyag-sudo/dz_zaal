@@ -1,5 +1,6 @@
 const express = require('express');
 const { db } = require('../firebase');
+const requireAuth = require('../middleware/auth');
 
 const router = express.Router();
 const users = db.collection('users');
@@ -7,7 +8,7 @@ const users = db.collection('users');
 // Хэрэглэгч бүртгэх / шинэчлэх (uid-аар upsert)
 // POST /api/users
 // Body: { name, email, uid }
-router.post('/', async (req, res) => {
+router.post('/', requireAuth, async (req, res) => {
   const { name, email, uid } = req.body;
   if (!name || !email || !uid) {
     return res.status(400).json({ error: 'name, email, uid шаардлагатай' });
