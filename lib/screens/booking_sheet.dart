@@ -275,7 +275,10 @@ class _BookingSheetState extends State<_BookingSheet> {
                           icon: Icons.crop_square_rounded,
                           isSelected: _isFullCourt,
                           accentColor: widget.venue.accentColor,
-                          onTap: () => setState(() => _isFullCourt = true),
+                          onTap: () => setState(() {
+                            _clearSlotSelection();
+                            _isFullCourt = true;
+                          }),
                         ),
                         const SizedBox(width: 10),
                         _CourtTypeCard(
@@ -284,7 +287,10 @@ class _BookingSheetState extends State<_BookingSheet> {
                           icon: Icons.vertical_split_rounded,
                           isSelected: !_isFullCourt,
                           accentColor: widget.venue.accentColor,
-                          onTap: () => setState(() => _isFullCourt = false),
+                          onTap: () => setState(() {
+                            _clearSlotSelection();
+                            _isFullCourt = false;
+                          }),
                         ),
                       ],
                     ),

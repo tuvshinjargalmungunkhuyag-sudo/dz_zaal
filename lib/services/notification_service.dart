@@ -55,8 +55,14 @@ class NotificationService {
 
     if (tzReminderTime.isBefore(tz.TZDateTime.now(tz.local))) return;
 
+    final notifId = Object.hash(
+      venue.id,
+      '${date.year}-${date.month}-${date.day}',
+      timeSlot.time,
+    ) & 0x7FFFFFFF;
+
     await _plugin.zonedSchedule(
-      venue.id.hashCode & 0x7FFFFFFF,
+      notifId,
       '⏰ Захиалгын сануулга',
       '${venue.name} заалд ${timeSlot.time} цагаас захиалга байна — 1 цаг үлдлээ',
       tzReminderTime,
@@ -85,7 +91,16 @@ class NotificationService {
     );
   }
 
-  static Future<void> cancelBookingReminder(String venueId) async {
-    await _plugin.cancel(venueId.hashCode & 0x7FFFFFFF);
+  static Future<void> cancelBookingReminder({
+    required String venueId,
+    required DateTime date,
+    required String timeSlot,
+  }) async {
+    final notifId = Object.hash(
+      venueId,
+      '${date.year}-${date.month}-${date.day}',
+      timeSlot,
+    ) & 0x7FFFFFFF;
+    await _plugin.cancel(notifId);
   }
 }
