@@ -28,6 +28,7 @@ class _BookingSheetState extends State<_BookingSheet> {
   List<TimeSlot> _selectedSlots = [];
   bool _isFullCourt = true;
   bool _isLoadingSlots = false;
+  int _loadGeneration = 0;
 
   static const _weekDays = ['Да', 'Мя', 'Лх', 'Пү', 'Ба', 'Бя', 'Ня'];
 
@@ -58,20 +59,25 @@ class _BookingSheetState extends State<_BookingSheet> {
   }
 
   Future<void> _loadSlots(DateTime date) async {
+    final generation = ++_loadGeneration;
     setState(() {
       _isLoadingSlots = true;
       _selectedSlots = [];
     });
     try {
       final slots = await ApiService.getSchedule(widget.venue.id, date);
-      if (mounted) setState(() => _timeSlots = slots);
+      if (mounted && generation == _loadGeneration) {
+        setState(() => _timeSlots = slots);
+      }
     } catch (_) {
       // API-д холбогдохгүй бол hardcode fallback ашиглана
-      if (mounted) {
+      if (mounted && generation == _loadGeneration) {
         setState(() => _timeSlots = AppData.generateTimeSlots(widget.venue.id, date));
       }
     } finally {
-      if (mounted) setState(() => _isLoadingSlots = false);
+      if (mounted && generation == _loadGeneration) {
+        setState(() => _isLoadingSlots = false);
+      }
     }
   }
 
