@@ -32,6 +32,29 @@ jobs:
           docker build -t $ECR_REGISTRY/dz-zaal-backend:latest ./backend
           docker push $ECR_REGISTRY/dz-zaal-backend:latest
 
+      - name: Open ports 80 and 443 in EC2 security group
+        run: |
+          # EC2 нь ap-northeast-1 (Tokyo) бүсэд байгаа тул тухайн бүсээр хайна
+          for REGION in ap-northeast-1 ap-southeast-1; do
+            INSTANCE_ID=$(aws ec2 describe-instances \
+              --filters "Name=network-interface.association.public-ip,Values=${{ secrets.EC2_HOST }}" \
+              --query 'Reservations[0].Instances[0].InstanceId' \
+              --output text --region $REGION 2>/dev/null || echo "")
+            if [ -n "$INSTANCE_ID" ] && [ "$INSTANCE_ID" != "None" ]; then
+              SG_ID=$(aws ec2 describe-instances \
+                --instance-ids "$INSTANCE_ID" \
+                --query 'Reservations[0].Instances[0].SecurityGroups[0].GroupId' \
+                --output text --region $REGION)
+              aws ec2 authorize-security-group-ingress \
+                --group-id "$SG_ID" --region $REGION \
+                --ip-permissions \
+                  '[{"IpProtocol":"tcp","FromPort":80,"ToPort":80,"IpRanges":[{"CidrIp":"0.0.0.0/0"}]},{"IpProtocol":"tcp","FromPort":443,"ToPort":443,"IpRanges":[{"CidrIp":"0.0.0.0/0"}]}]' \
+                2>/dev/null || true
+              echo "Security group $SG_ID updated ($REGION)"
+              break
+            fi
+          done
+
       - name: Deploy to EC2
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
@@ -43,9 +66,43 @@ jobs:
         run: |
           printf '%s\n' "$EC2_SSH_KEY" | tr -d '\r' > /tmp/deploy_key
           chmod 600 /tmp/deploy_key
-          ssh -i /tmp/deploy_key \
-            -o StrictHostKeyChecking=no \
+
+          # nginx config-г EC2-д хуулах
+          ssh -i /tmp/deploy_key -o StrictHostKeyChecking=no \
+            ${EC2_USER:-ec2-user}@$EC2_HOST "mkdir -p ~/backend/nginx"
+          scp -i /tmp/deploy_key -o StrictHostKeyChecking=no \
+            backend/nginx/backend.conf \
+            ${EC2_USER:-ec2-user}@$EC2_HOST:~/backend/nginx/backend.conf
+
+          ssh -i /tmp/deploy_key -o StrictHostKeyChecking=no \
             ${EC2_USER:-ec2-user}@$EC2_HOST "
+              DOMAIN='13-112-91-27.sslip.io'
+
+              # ── 1. nginx суулгах (анх удаа л) ──────────────────────────────
+              if ! command -v nginx &>/dev/null; then
+                if command -v dnf &>/dev/null; then
+                  sudo dnf install -y nginx certbot python3-certbot-nginx
+                else
+                  sudo apt-get update -y
+                  sudo apt-get install -y nginx certbot python3-certbot-nginx
+                fi
+                sudo systemctl enable --now nginx
+              fi
+
+              # ── 2. nginx config байрлуулах (анх удаа л) ────────────────────
+              if [ ! -f '/etc/nginx/conf.d/backend.conf' ]; then
+                sudo cp ~/backend/nginx/backend.conf /etc/nginx/conf.d/backend.conf
+                sudo nginx -t && sudo systemctl reload nginx
+              fi
+
+              # ── 3. SSL сертификат авах (анх удаа л) ────────────────────────
+              if [ ! -d \"/etc/letsencrypt/live/\$DOMAIN\" ]; then
+                sudo certbot --nginx -d \$DOMAIN \
+                  --email tuvshinjargalmungunkhuyag@gmail.com \
+                  --agree-tos --non-interactive --redirect
+              fi
+
+              # ── 4. Docker container шинэчлэх ───────────────────────────────
               aws ecr get-login-password --region ap-southeast-1 | \
                 docker login --username AWS --password-stdin $ECR_REGISTRY
               docker pull $ECR_REGISTRY/dz-zaal-backend:latest
@@ -57,7 +114,9 @@ jobs:
                 --env-file ~/backend/.env \
                 -e EMAIL_USER=$EMAIL_USER \
                 -e EMAIL_PASS=$EMAIL_PASS \
-                -p 3000:3000 \
+                -p 127.0.0.1:3000:3000 \
                 $ECR_REGISTRY/dz-zaal-backend:latest
+
+              sudo nginx -t && sudo systemctl reload nginx
             "
           rm /tmp/deploy_key
