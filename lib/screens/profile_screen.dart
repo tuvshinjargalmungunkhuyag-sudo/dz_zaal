@@ -26,9 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _loadProfile() async {
     try {
       final email = AuthService.currentEmail;
-
       final name = await AuthService.getUserName();
-
       int total = 0;
       int upcoming = 0;
       if (email != null) {
@@ -41,7 +39,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             .where((d) => d.data()['status'] == 'upcoming')
             .length;
       }
-
       if (mounted) {
         setState(() {
           _userName = name;
@@ -83,17 +80,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SizedBox(height: 12),
             _HelpItem(
               icon: Icons.calendar_today_rounded,
-              text: 'Заалд дарж өдөр, цаг, талбайн төрлөө сонгоод захиалга хийнэ үү.',
+              text:
+                  'Заалд дарж өдөр, цаг, талбайн төрлөө сонгоод захиалга хийнэ үү.',
             ),
             SizedBox(height: 12),
             _HelpItem(
               icon: Icons.cancel_rounded,
-              text: '"Захиалга" хэсгээс хүлээгдэж буй захиалгаа цуцлах боломжтой.',
+              text:
+                  '"Захиалга" хэсгээс хүлээгдэж буй захиалгаа цуцлах боломжтой.',
             ),
             SizedBox(height: 12),
             _HelpItem(
               icon: Icons.smart_toy_rounded,
-              text: 'AI туслахаас захиалга, үнэ, байршлын талаар асуулт тавьж болно.',
+              text:
+                  'AI туслахаас захиалга, үнэ, байршлын талаар асуулт тавьж болно.',
             ),
           ],
         ),
@@ -144,8 +144,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 4),
             const Text(
               'Хувилбар 1.0.0',
-              style:
-                  TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+              style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
             ),
             const SizedBox(height: 16),
             const Divider(color: AppTheme.divider),
@@ -175,21 +174,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: AppTheme.cardColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Гарах уу?',
-            style: TextStyle(color: AppTheme.textPrimary)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Row(
+          children: [
+            Icon(Icons.logout_rounded, color: Colors.redAccent, size: 20),
+            SizedBox(width: 10),
+            Text('Гарах уу?',
+                style: TextStyle(
+                    color: AppTheme.textPrimary, fontWeight: FontWeight.w700)),
+          ],
+        ),
         content: const Text('Аккаунтаас гарах уу?',
-            style: TextStyle(color: AppTheme.textSecondary)),
+            style: TextStyle(color: AppTheme.textSecondary, height: 1.5)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: const Text('Болих',
                 style: TextStyle(color: AppTheme.textSecondary)),
           ),
-          TextButton(
+          ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Гарах',
-                style: TextStyle(color: Colors.redAccent)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+            ),
+            child: const Text('Гарах'),
           ),
         ],
       ),
@@ -207,129 +219,178 @@ class _ProfileScreenState extends State<ProfileScreen> {
             : '?';
 
     return Scaffold(
+      backgroundColor: AppTheme.primary,
       appBar: AppBar(
         title: const Text('Профайл'),
         automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout_rounded, color: Colors.redAccent),
-            tooltip: 'Гарах',
-            onPressed: _logout,
-          ),
-        ],
       ),
       body: _isLoading
           ? const Center(
               child: CircularProgressIndicator(
                   color: AppTheme.secondary, strokeWidth: 2))
           : ListView(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
               children: [
-                // ── Профайл header ──────────────────────────────────────────
+                // ── Профайл header ──────────────────────────────────────
                 Container(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [AppTheme.secondary, AppTheme.accent],
                     ),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(24),
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.secondary.withValues(alpha: 0.35),
-                        blurRadius: 20,
-                        offset: const Offset(0, 8),
+                        color: AppTheme.secondary.withValues(alpha: 0.30),
+                        blurRadius: 24,
+                        offset: const Offset(0, 10),
                       ),
                     ],
                   ),
                   child: Column(
                     children: [
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Container(
-                            width: 80,
-                            height: 80,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.25),
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.5),
-                                width: 2,
-                              ),
-                            ),
-                            child: Center(
-                              child: Text(
-                                initials,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.w800,
-                                ),
+                      // Avatar with rings
+                      Container(
+                        width: 96,
+                        height: 96,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.35),
+                              width: 3),
+                        ),
+                        child: Container(
+                          margin: const EdgeInsets.all(3),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.2),
+                          ),
+                          child: Center(
+                            child: Text(
+                              initials,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 34,
+                                fontWeight: FontWeight.w800,
                               ),
                             ),
                           ),
-                        ],
+                        ),
                       ),
-                      const SizedBox(height: 14),
+
+                      const SizedBox(height: 16),
+
                       Text(
                         _userName ?? 'Хэрэглэгч',
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.3,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 5),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.email_outlined,
-                              color: Colors.white.withValues(alpha: 0.8), size: 13),
-                          const SizedBox(width: 4),
-                          Text(
-                            email,
-                            style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.8), fontSize: 13),
+                              color: Colors.white.withValues(alpha: 0.75),
+                              size: 13),
+                          const SizedBox(width: 5),
+                          Flexible(
+                            child: Text(
+                              email,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.75),
+                                  fontSize: 13),
+                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _StatPill(
-                                value: '$_totalBookings',
-                                label: 'Нийт захиалга'),
-                          ),
-                          Container(
-                              width: 1, height: 30, color: Colors.white.withValues(alpha: 0.3)),
-                          Expanded(
-                            child: _StatPill(
-                                value: '$_upcomingBookings',
-                                label: 'Хүлээгдэж буй'),
-                          ),
-                          Container(
-                              width: 1, height: 30, color: Colors.white.withValues(alpha: 0.3)),
-                          const Expanded(
-                            child: _StatPill(value: '🏅', label: 'Гишүүн'),
-                          ),
-                        ],
+
+                      const SizedBox(height: 6),
+                      // Membership badge
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.25)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.verified_rounded,
+                                color: Colors.white.withValues(alpha: 0.9),
+                                size: 13),
+                            const SizedBox(width: 5),
+                            Text(
+                              'Гишүүн',
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.9),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
 
+                const SizedBox(height: 16),
+
+                // ── Статистик ────────────────────────────────────────────
+                Row(
+                  children: [
+                    Expanded(
+                      child: _StatCard(
+                        icon: Icons.receipt_long_rounded,
+                        value: '$_totalBookings',
+                        label: 'Нийт захиалга',
+                        iconColor: AppTheme.secondary,
+                        iconBg: AppTheme.secondary.withValues(alpha: 0.1),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _StatCard(
+                        icon: Icons.pending_actions_rounded,
+                        value: '$_upcomingBookings',
+                        label: 'Хүлээгдэж буй',
+                        iconColor: const Color(0xFF1565C0),
+                        iconBg: const Color(0xFF1565C0).withValues(alpha: 0.1),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _StatCard(
+                        icon: Icons.check_circle_rounded,
+                        value: '${_totalBookings - _upcomingBookings}',
+                        label: 'Дууссан',
+                        iconColor: AppTheme.success,
+                        iconBg: AppTheme.success.withValues(alpha: 0.1),
+                      ),
+                    ),
+                  ],
+                ),
+
                 const SizedBox(height: 24),
 
-                // ── Тохиргоо ────────────────────────────────────────────────
+                // ── Тохиргоо ────────────────────────────────────────────
                 _MenuSection(
-                  title: 'Тохиргоо',
+                  title: 'ТОХИРГОО',
                   items: [
                     _MenuItem(
                       icon: Icons.notifications_rounded,
                       label: 'Мэдэгдэл',
+                      iconColor: AppTheme.secondary,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -339,78 +400,118 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _MenuItem(
                       icon: Icons.help_rounded,
                       label: 'Тусламж',
+                      iconColor: const Color(0xFF2E7D32),
                       onTap: () => _showHelpDialog(context),
                     ),
                     _MenuItem(
                       icon: Icons.info_rounded,
                       label: 'Апп тухай',
+                      iconColor: const Color(0xFF1565C0),
                       onTap: () => _showAboutDialog(context),
                     ),
                   ],
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 32),
 
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: _logout,
-                    icon: const Icon(Icons.logout_rounded,
-                        color: Colors.redAccent, size: 18),
-                    label: const Text(
-                      'Гарах',
-                      style: TextStyle(
-                          color: Colors.redAccent,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600),
+                // ── Logout ───────────────────────────────────────────────
+                GestureDetector(
+                  onTap: _logout,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    decoration: BoxDecoration(
+                      color: Colors.redAccent.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                          color: Colors.redAccent.withValues(alpha: 0.3)),
                     ),
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Colors.redAccent),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14)),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.logout_rounded,
+                            color: Colors.redAccent, size: 18),
+                        SizedBox(width: 8),
+                        Text(
+                          'Аккаунтаас гарах',
+                          style: TextStyle(
+                            color: Colors.redAccent,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-
-                const SizedBox(height: 8),
               ],
             ),
     );
   }
 }
 
+// ── Stat Card ────────────────────────────────────────────────────────────────
 
-class _StatPill extends StatelessWidget {
+class _StatCard extends StatelessWidget {
+  final IconData icon;
   final String value;
   final String label;
-  const _StatPill({required this.value, required this.label});
+  final Color iconColor;
+  final Color iconBg;
+
+  const _StatCard({
+    required this.icon,
+    required this.value,
+    required this.label,
+    required this.iconColor,
+    required this.iconBg,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          value,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 17,
-            fontWeight: FontWeight.w800,
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+      decoration: BoxDecoration(
+        color: AppTheme.cardColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.divider),
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: iconBg,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: iconColor, size: 18),
           ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          label,
-          textAlign: TextAlign.center,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.75), fontSize: 10),
-        ),
-      ],
+          const SizedBox(height: 10),
+          Text(
+            value,
+            style: const TextStyle(
+              color: AppTheme.textPrimary,
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 3),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: AppTheme.textSecondary,
+              fontSize: 10,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
+
+// ── Menu Section ─────────────────────────────────────────────────────────────
 
 class _MenuSection extends StatelessWidget {
   final String title;
@@ -428,16 +529,16 @@ class _MenuSection extends StatelessWidget {
             title,
             style: const TextStyle(
               color: AppTheme.textSecondary,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.5,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.2,
             ),
           ),
         ),
         Container(
           decoration: BoxDecoration(
             color: AppTheme.cardColor,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(18),
             border: Border.all(color: AppTheme.divider),
           ),
           child: Column(
@@ -450,7 +551,7 @@ class _MenuSection extends StatelessWidget {
                     const Divider(
                       color: AppTheme.divider,
                       height: 1,
-                      indent: 56,
+                      indent: 60,
                     ),
                 ],
               );
@@ -461,6 +562,67 @@ class _MenuSection extends StatelessWidget {
     );
   }
 }
+
+// ── Menu Item ────────────────────────────────────────────────────────────────
+
+class _MenuItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color iconColor;
+  final VoidCallback onTap;
+
+  const _MenuItem({
+    required this.icon,
+    required this.label,
+    required this.iconColor,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+          child: Row(
+            children: [
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: iconColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(11),
+                ),
+                child: Icon(icon, color: iconColor, size: 18),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    color: AppTheme.textPrimary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              const Icon(
+                Icons.arrow_forward_ios_rounded,
+                color: AppTheme.textSecondary,
+                size: 13,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Help Item ────────────────────────────────────────────────────────────────
 
 class _HelpItem extends StatelessWidget {
   final IconData icon;
@@ -482,45 +644,6 @@ class _HelpItem extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _MenuItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-  const _MenuItem(
-      {required this.icon, required this.label, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      onTap: onTap,
-      leading: Container(
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          color: AppTheme.secondary.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Icon(icon, color: AppTheme.secondary, size: 18),
-      ),
-      title: Text(
-        label,
-        style: const TextStyle(
-          color: AppTheme.textPrimary,
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      trailing: const Icon(
-        Icons.arrow_forward_ios_rounded,
-        color: AppTheme.textSecondary,
-        size: 13,
-      ),
-      contentPadding:
-          const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
     );
   }
 }

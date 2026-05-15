@@ -1,4 +1,4 @@
-const BASE = 'http://13.112.91.27:3000';
+const BASE = 'https://13-112-91-27.sslip.io';
 const ADMIN_KEY = 'goviyn-sport-admin-2026';
 
 const headers = {
